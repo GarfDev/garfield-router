@@ -139,13 +139,13 @@ rules:
     priority: 140
     match:
       priority_level: interactive
-    backends: [chiasegpu-gpt-5-4-mini, chiasegpu-gpt-5-4, chiasegpu-gpt-5-5]
+    backends: [chiasegpu-gpt-5-5, chiasegpu-gpt-5-5-high, chiasegpu-gpt-5-5-xhigh]
 
   - name: light-work
     priority: 120
     match:
       tier: 2
-    backends: [chiasegpu-gpt-5-4-mini, chiasegpu-cx-gpt-5-4, chiasegpu-gpt-5-4]
+    backends: [chiasegpu-gpt-5-5, chiasegpu-gpt-5-5-high, chiasegpu-gpt-5-5-xhigh]
 
   - name: heavy-reasoning
     priority: 110
@@ -157,10 +157,10 @@ rules:
     priority: 100
     match:
       priority_level: bulk
-    backends: [chiasegpu-gpt-5-4-mini, chiasegpu-cx-gpt-5-4, chiasegpu-gpt-5-4]
+    backends: [chiasegpu-gpt-5-5, chiasegpu-gpt-5-5-high, chiasegpu-gpt-5-5-xhigh]
 
 defaults:
-  fallback_chain: [chiasegpu-gpt-5-4-mini, chiasegpu-gpt-5-4, chiasegpu-gpt-5-5, chiasegpu-gpt-5-5-high]
+  fallback_chain: [chiasegpu-gpt-5-5, chiasegpu-gpt-5-5-high, chiasegpu-gpt-5-5-xhigh]
   default_timeout_ms: 120000
 
 batching:
