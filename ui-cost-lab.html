@@ -192,6 +192,13 @@
   const $$ = sel => Array.from(document.querySelectorAll(sel));
   const fmtUSD = (n, currency = 'GBP') => new Intl.NumberFormat('en-GB', { style: 'currency', currency }).format(n || 0);
   const fmtNum = n => new Intl.NumberFormat('en-GB').format(n || 0);
+  let apiToken = localStorage.getItem('kronaxis_router_token') || '';
+  const tokenFromURL = new URLSearchParams(location.search).get('token');
+  if (tokenFromURL) {
+    apiToken = tokenFromURL.trim();
+    localStorage.setItem('kronaxis_router_token', apiToken);
+    history.replaceState(null, '', location.pathname);
+  }
 
   function showError(msg) {
     const box = $('#errBox');
@@ -200,26 +207,38 @@
   }
 
   async function fetchJSON(path) {
-    const res = await fetch(path);
+    const headers = apiToken ? { Authorization: 'Bearer ' + apiToken } : {};
+    let res = await fetch(path, { headers });
+    if (res.status === 401) {
+      const token = prompt('Router API token required for Cost Lab');
+      if (token) {
+        apiToken = token.trim();
+        localStorage.setItem('kronaxis_router_token', apiToken);
+        res = await fetch(path, { headers: { Authorization: 'Bearer ' + apiToken } });
+      }
+    }
     if (!res.ok) throw new Error(path + ' -> ' + res.status);
     return res.json();
   }
 
   async function renderToday() {
     try {
-      const [costs, backends] = await Promise.all([
+      const [costs, backends, stats] = await Promise.all([
         fetchJSON('/api/costs').catch(() => ({})),
         fetchJSON('/api/backends').catch(() => ({})),
+        fetchJSON('/api/stats').catch(() => ({})),
       ]);
       const services = costs.daily_costs || costs.services || {};
       const grid = $('#todayStats');
       grid.innerHTML = '';
-      const entries = Object.entries(services);
+      const requestCounts = stats.requests_by_service || {};
+      const keys = new Set([...Object.keys(services), ...Object.keys(requestCounts)]);
+      const entries = Array.from(keys).map(k => [k, services[k] || 0, requestCounts[k] || 0]);
       $('#todayEmpty').style.display = entries.length === 0 ? 'block' : 'none';
-      entries.forEach(([service, spend]) => {
+      entries.forEach(([service, spend, requests]) => {
         const div = document.createElement('div');
         div.className = 'stat';
-        div.innerHTML = `<div class="stat-label">${escapeHTML(service)}</div><div class="stat-value">${fmtUSD(spend, 'USD')}</div>`;
+        div.innerHTML = `<div class="stat-label">${escapeHTML(service || 'unknown')}</div><div class="stat-value">${fmtUSD(spend, 'USD')}</div><div class="subtitle">${fmtNum(requests)} requests</div>`;
         grid.appendChild(div);
       });
       const tbody = $('#backendTable tbody');

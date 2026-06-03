@@ -212,9 +212,11 @@ func handleCosts(w http.ResponseWriter, r *http.Request) {
 	costs.mu.RUnlock()
 
 	result := map[string]interface{}{
-		"date":    time.Now().Format("2006-01-02"),
-		"daily":   daily,
-		"budgets": budgets,
+		"date":        time.Now().Format("2006-01-02"),
+		"daily":       daily,
+		"daily_costs": daily,
+		"services":    daily,
+		"budgets":     budgets,
 	}
 
 	// If DB is available, add breakdown by model and call type
@@ -278,14 +280,14 @@ func getCostBreakdown(period string) []map[string]interface{} {
 			continue
 		}
 		result = append(result, map[string]interface{}{
-			"service":            service,
-			"model":              model,
-			"call_type":          callType,
-			"request_count":      reqCount,
-			"total_input_tokens": inputTokens,
+			"service":             service,
+			"model":               model,
+			"call_type":           callType,
+			"request_count":       reqCount,
+			"total_input_tokens":  inputTokens,
 			"total_output_tokens": outputTokens,
-			"total_cost_usd":     totalCost,
-			"avg_latency_ms":     avgLatency,
+			"total_cost_usd":      totalCost,
+			"avg_latency_ms":      avgLatency,
 		})
 	}
 	return result
