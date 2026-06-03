@@ -286,6 +286,7 @@ type BackendConfig struct {
 	MaxConcurrent  int              `yaml:"max_concurrent" json:"max_concurrent"`
 	LoRAAdapters   []string         `yaml:"lora_adapters" json:"lora_adapters"`
 	APIKey         string           `yaml:"api_key" json:"api_key,omitempty"`
+	APIKeys        []string         `yaml:"api_keys" json:"api_keys,omitempty"`
 	Dynamic        bool             `yaml:"dynamic" json:"dynamic"`
 	HealthEndpoint string           `yaml:"health_endpoint" json:"health_endpoint"`
 	KVPinning      *KVPinningConfig `yaml:"kv_pinning,omitempty" json:"kv_pinning,omitempty"`
@@ -450,6 +451,9 @@ func applyDefaults(c *Config) {
 func resolveEnvVars(c *Config) {
 	for i := range c.Backends {
 		c.Backends[i].APIKey = resolveEnv(c.Backends[i].APIKey)
+		for j := range c.Backends[i].APIKeys {
+			c.Backends[i].APIKeys[j] = resolveEnv(c.Backends[i].APIKeys[j])
+		}
 		c.Backends[i].URL = resolveEnv(c.Backends[i].URL)
 	}
 	// Env vars override per-tenant rate limit defaults. Useful for ops

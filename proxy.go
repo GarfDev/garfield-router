@@ -544,8 +544,8 @@ func forwardToOpenAI(backend *Backend, body []byte) (int, map[string]string, []b
 		return 0, nil, nil, err
 	}
 	httpReq.Header.Set("Content-Type", "application/json")
-	if backend.Config.APIKey != "" {
-		httpReq.Header.Set("Authorization", "Bearer "+backend.Config.APIKey)
+	if apiKey := backend.APIKey(); apiKey != "" {
+		httpReq.Header.Set("Authorization", "Bearer "+apiKey)
 	}
 
 	resp, err := llmClient.Do(httpReq)
@@ -583,8 +583,8 @@ func forwardToGemini(backend *Backend, _ []byte, req *ChatRequest) (int, map[str
 	}
 	httpReq.Header.Set("Content-Type", "application/json")
 	// Use header-based auth to keep API key out of URLs and logs
-	if backend.Config.APIKey != "" {
-		httpReq.Header.Set("x-goog-api-key", backend.Config.APIKey)
+	if apiKey := backend.APIKey(); apiKey != "" {
+		httpReq.Header.Set("x-goog-api-key", apiKey)
 	}
 
 	resp, err := llmClient.Do(httpReq)
@@ -903,8 +903,8 @@ func handleStreaming(
 		return
 	}
 	httpReq.Header.Set("Content-Type", "application/json")
-	if backend.Config.APIKey != "" {
-		httpReq.Header.Set("Authorization", "Bearer "+backend.Config.APIKey)
+	if apiKey := backend.APIKey(); apiKey != "" {
+		httpReq.Header.Set("Authorization", "Bearer "+apiKey)
 	}
 
 	resp, err := streamClient.Do(httpReq)

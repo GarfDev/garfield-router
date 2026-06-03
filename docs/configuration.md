@@ -32,7 +32,9 @@ backends:
     lora_adapters:                    # LoRA adapter names loaded on this backend
       - default
       - sdr
-    api_key: "env:GEMINI_API_KEY"     # API key (supports env: prefix)
+    api_key: "env:GEMINI_API_KEY"     # Single API key (supports env: prefix)
+    # Or rotate multiple keys for the same backend/provider per request:
+    # api_keys: ["env:GEMINI_API_KEY_1", "env:GEMINI_API_KEY_2"]
     dynamic: false                    # true = registered via API, survives reloads
     health_endpoint: "/v1/models"     # Health check path
 
@@ -113,6 +115,7 @@ batching:
 
 Backend fields that support `env:` prefix resolution:
 - `api_key: "env:MY_API_KEY"` resolves to the value of `$MY_API_KEY`
+- `api_keys: ["env:KEY_1", "env:KEY_2"]` rotates keys round-robin per request for the same backend. If `api_keys` is set, it is used instead of `api_key`.
 - `url: "env:MY_BACKEND_URL"` resolves to the value of `$MY_BACKEND_URL`
 
 ## Backend Types

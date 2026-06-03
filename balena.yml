@@ -1,0 +1,13 @@
+name: kronaxis-router
+type: sw.application
+description: Kronaxis Router on Raspberry Pi 4B via Balena
+assets:
+  repository:
+    type: blob.asset
+    data:
+      url: https://github.com/Kronaxis/kronaxis-router
+data:
+  applicationEnvironmentVariables:
+    - ROUTER_PORT: "8050"
+    - CACHE_MAX_SIZE: "1000"
+  defaultDeviceType: raspberrypi4-64

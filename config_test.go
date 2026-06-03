@@ -55,6 +55,50 @@ func TestResolveEnv(t *testing.T) {
 	}
 }
 
+func TestBackendAPIKeysResolveAndRotate(t *testing.T) {
+	os.Setenv("TEST_API_KEY_1", "key-1")
+	os.Setenv("TEST_API_KEY_2", "key-2")
+	defer os.Unsetenv("TEST_API_KEY_1")
+	defer os.Unsetenv("TEST_API_KEY_2")
+
+	yaml := []byte(`
+backends:
+  - name: test
+    url: "http://localhost:8000"
+    type: openai
+    api_key: "env:TEST_API_KEY_1"
+    api_keys: ["env:TEST_API_KEY_1", "env:TEST_API_KEY_2"]
+`)
+	cfg, err := loadConfigFromBytes(yaml)
+	if err != nil {
+		t.Fatalf("failed to parse: %v", err)
+	}
+	if cfg.Backends[0].APIKey != "key-1" {
+		t.Errorf("api_key should resolve env, got %q", cfg.Backends[0].APIKey)
+	}
+	if got := cfg.Backends[0].APIKeys; len(got) != 2 || got[0] != "key-1" || got[1] != "key-2" {
+		t.Fatalf("api_keys should resolve env, got %#v", got)
+	}
+
+	backend := &Backend{Config: cfg.Backends[0]}
+	if got := backend.APIKey(); got != "key-1" {
+		t.Errorf("first rotated key = %q, want key-1", got)
+	}
+	if got := backend.APIKey(); got != "key-2" {
+		t.Errorf("second rotated key = %q, want key-2", got)
+	}
+	if got := backend.APIKey(); got != "key-1" {
+		t.Errorf("third rotated key = %q, want key-1", got)
+	}
+}
+
+func TestBackendAPIKeyFallback(t *testing.T) {
+	backend := &Backend{Config: BackendConfig{APIKey: "single-key"}}
+	if got := backend.APIKey(); got != "single-key" {
+		t.Errorf("fallback key = %q, want single-key", got)
+	}
+}
+
 func TestSortRules(t *testing.T) {
 	c := &Config{
 		Rules: []RoutingRule{

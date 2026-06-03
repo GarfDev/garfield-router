@@ -199,7 +199,7 @@ func trueVLLMBatch(entries []*BatchEntry) bool {
 
 	// Send to /v1/completions (not /v1/chat/completions)
 	url := backend.Config.URL + "/v1/completions"
-	resp, err := postJSON(url, backend.Config.APIKey, body)
+	resp, err := postJSON(url, backend.APIKey(), body)
 	if err != nil {
 		return false
 	}

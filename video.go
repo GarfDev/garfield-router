@@ -33,17 +33,17 @@ import (
 
 // VideoGenerateRequest is the inbound request shape.
 type VideoGenerateRequest struct {
-	Prompt             string  `json:"prompt"`
-	NegativePrompt     string  `json:"negative_prompt,omitempty"`
-	Image              string  `json:"image,omitempty"`
-	DurationSeconds    float64 `json:"duration_seconds,omitempty"`
-	Width              int     `json:"width,omitempty"`
-	Height             int     `json:"height,omitempty"`
-	FPS                int     `json:"fps,omitempty"`
-	NumInferenceSteps  int     `json:"num_inference_steps,omitempty"`
-	GuidanceScale      float64 `json:"guidance_scale,omitempty"`
-	Seed               *int64  `json:"seed,omitempty"`
-	OutputFormat       string  `json:"output_format,omitempty"`
+	Prompt            string  `json:"prompt"`
+	NegativePrompt    string  `json:"negative_prompt,omitempty"`
+	Image             string  `json:"image,omitempty"`
+	DurationSeconds   float64 `json:"duration_seconds,omitempty"`
+	Width             int     `json:"width,omitempty"`
+	Height            int     `json:"height,omitempty"`
+	FPS               int     `json:"fps,omitempty"`
+	NumInferenceSteps int     `json:"num_inference_steps,omitempty"`
+	GuidanceScale     float64 `json:"guidance_scale,omitempty"`
+	Seed              *int64  `json:"seed,omitempty"`
+	OutputFormat      string  `json:"output_format,omitempty"`
 	// Kronaxis metadata (not forwarded to backend)
 	Model    string `json:"model,omitempty"`    // if set, prefer specific backend
 	Vertical string `json:"vertical,omitempty"` // persona vertical — for logging
@@ -80,20 +80,20 @@ func handleVideoGenerate(w http.ResponseWriter, r *http.Request) {
 
 	// Proxy to backend — strip Kronaxis-only fields before forwarding
 	stripped, _ := json.Marshal(map[string]interface{}{
-		"prompt":               req.Prompt,
-		"negative_prompt":      req.NegativePrompt,
-		"image":                req.Image,
-		"duration_seconds":     req.DurationSeconds,
-		"width":                req.Width,
-		"height":               req.Height,
-		"fps":                  req.FPS,
-		"num_inference_steps":  req.NumInferenceSteps,
-		"guidance_scale":       req.GuidanceScale,
-		"seed":                 req.Seed,
-		"output_format":        req.OutputFormat,
+		"prompt":              req.Prompt,
+		"negative_prompt":     req.NegativePrompt,
+		"image":               req.Image,
+		"duration_seconds":    req.DurationSeconds,
+		"width":               req.Width,
+		"height":              req.Height,
+		"fps":                 req.FPS,
+		"num_inference_steps": req.NumInferenceSteps,
+		"guidance_scale":      req.GuidanceScale,
+		"seed":                req.Seed,
+		"output_format":       req.OutputFormat,
 	})
 
-	targetURL := strings.TrimRight(backend.URL, "/") + "/v1/video/generate"
+	targetURL := strings.TrimRight(backend.Config.URL, "/") + "/v1/video/generate"
 	start := time.Now()
 
 	proxyReq, err := http.NewRequest(http.MethodPost, targetURL, bytes.NewReader(stripped))
@@ -102,14 +102,14 @@ func handleVideoGenerate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	proxyReq.Header.Set("Content-Type", "application/json")
-	if backend.APIKey != "" {
-		proxyReq.Header.Set("Authorization", "Bearer "+backend.APIKey)
+	if apiKey := backend.APIKey(); apiKey != "" {
+		proxyReq.Header.Set("Authorization", "Bearer "+apiKey)
 	}
 
 	client := &http.Client{Timeout: 600 * time.Second} // video gen can take 5+ min
 	resp, err := client.Do(proxyReq)
 	if err != nil {
-		log.Printf("[video] backend %s error: %v", backend.Name, err)
+		log.Printf("[video] backend %s error: %v", backend.Config.Name, err)
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusBadGateway)
 		json.NewEncoder(w).Encode(map[string]string{"error": err.Error()})
@@ -119,7 +119,7 @@ func handleVideoGenerate(w http.ResponseWriter, r *http.Request) {
 
 	elapsed := time.Since(start)
 	log.Printf("[video] %s vertical=%s status=%d %.1fs",
-		backend.Name, req.Vertical, resp.StatusCode, elapsed.Seconds())
+		backend.Config.Name, req.Vertical, resp.StatusCode, elapsed.Seconds())
 
 	// Forward response
 	for k, v := range resp.Header {
@@ -127,7 +127,7 @@ func handleVideoGenerate(w http.ResponseWriter, r *http.Request) {
 			w.Header().Add(k, vv)
 		}
 	}
-	w.Header().Set("X-Kronaxis-Backend", backend.Name)
+	w.Header().Set("X-Kronaxis-Backend", backend.Config.Name)
 	w.Header().Set("X-Kronaxis-Duration", elapsed.String())
 	w.WriteHeader(resp.StatusCode)
 	io.Copy(w, resp.Body)
@@ -141,7 +141,7 @@ func handleVideoProxy(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	targetURL := strings.TrimRight(backend.URL, "/") + r.URL.Path
+	targetURL := strings.TrimRight(backend.Config.URL, "/") + r.URL.Path
 	proxyReq, err := http.NewRequest(r.Method, targetURL, r.Body)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -167,11 +167,11 @@ func handleVideoProxy(w http.ResponseWriter, r *http.Request) {
 
 // selectVideoBackend returns the first healthy backend with "video" capability.
 // If preferName is set, tries to find that backend first.
-func selectVideoBackend(preferName string) *BackendConfig {
+func selectVideoBackend(preferName string) *Backend {
 	pool.mu.RLock()
 	defer pool.mu.RUnlock()
 
-	var fallback *BackendConfig
+	var fallback *Backend
 
 	for name, b := range pool.backends {
 		if !hasCapabilitySlice(b.Config.Capabilities, "video") {
@@ -181,12 +181,10 @@ func selectVideoBackend(preferName string) *BackendConfig {
 			continue
 		}
 		if preferName != "" && name == preferName {
-			cfg := b.Config
-			return &cfg
+			return b
 		}
 		if fallback == nil {
-			cfg := b.Config
-			fallback = &cfg
+			fallback = b
 		}
 	}
 	return fallback

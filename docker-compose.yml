@@ -1,0 +1,23 @@
+version: "2.1"
+
+services:
+  kronaxis-router:
+    build:
+      context: .
+      dockerfile: Dockerfile.balena
+    ports:
+      - "8050:8050"
+    environment:
+      CONFIG_PATH: /app/config.yaml
+      ROUTER_PORT: "8050"
+      ROUTER_API_TOKEN: "${ROUTER_API_TOKEN}"
+      CHIASEGPU_API_KEY_1: "${CHIASEGPU_API_KEY_1}"
+      CHIASEGPU_API_KEY_2: "${CHIASEGPU_API_KEY_2}"
+      BATCH_DATA_DIR: /data/batches
+      CACHE_MAX_SIZE: "1000"
+    volumes:
+      - router-data:/data
+    restart: always
+
+volumes:
+  router-data:

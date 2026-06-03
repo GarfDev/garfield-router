@@ -51,7 +51,19 @@ type Backend struct {
 	// latency is a rolling window of recent end-to-end request latencies, used
 	// by predictive SLA routing (max_ttft_ms). Populated on each served request.
 	latency latencyWindow
+	apiKey  atomic.Uint64
 	mu      sync.RWMutex
+}
+
+// APIKey returns this backend's auth key. If api_keys is configured, keys are
+// rotated round-robin per request; api_key remains the single-key fallback.
+func (b *Backend) APIKey() string {
+	keys := b.Config.APIKeys
+	if len(keys) == 0 {
+		return b.Config.APIKey
+	}
+	idx := b.apiKey.Add(1) - 1
+	return keys[int(idx%uint64(len(keys)))]
 }
 
 // QueueLoad returns the backend's total in-flight pressure as seen at the

@@ -16,26 +16,26 @@ import (
 // BatchJob represents an async batch job submitted to a provider's
 // batch API for 50% cost reduction.
 type BatchJob struct {
-	ID           string       `json:"id"`
-	Provider     string       `json:"provider"`    // openai, anthropic, gemini, mistral, groq, together, fireworks
-	BackendName  string       `json:"backend_name"`
-	Status       string       `json:"status"`      // pending, submitted, processing, completed, failed, expired
-	InputFile    string       `json:"input_file"`
-	OutputFile   string       `json:"output_file"`
-	ProviderID   string       `json:"provider_id"` // provider's batch job ID
-	RequestCount int          `json:"request_count"`
-	CreatedAt    time.Time    `json:"created_at"`
-	CompletedAt  *time.Time   `json:"completed_at,omitempty"`
-	Error        string       `json:"error,omitempty"`
-	CallbackURL  string       `json:"callback_url,omitempty"`
+	ID           string     `json:"id"`
+	Provider     string     `json:"provider"` // openai, anthropic, gemini, mistral, groq, together, fireworks
+	BackendName  string     `json:"backend_name"`
+	Status       string     `json:"status"` // pending, submitted, processing, completed, failed, expired
+	InputFile    string     `json:"input_file"`
+	OutputFile   string     `json:"output_file"`
+	ProviderID   string     `json:"provider_id"` // provider's batch job ID
+	RequestCount int        `json:"request_count"`
+	CreatedAt    time.Time  `json:"created_at"`
+	CompletedAt  *time.Time `json:"completed_at,omitempty"`
+	Error        string     `json:"error,omitempty"`
+	CallbackURL  string     `json:"callback_url,omitempty"`
 }
 
 // BatchRequest is a single request within a batch job.
 type BatchRequest struct {
-	CustomID string       `json:"custom_id"`
-	Method   string       `json:"method"`
-	URL      string       `json:"url"`
-	Body     ChatRequest  `json:"body"`
+	CustomID string      `json:"custom_id"`
+	Method   string      `json:"method"`
+	URL      string      `json:"url"`
+	Body     ChatRequest `json:"body"`
 }
 
 // BatchResult is a single result from a completed batch job.
@@ -365,7 +365,7 @@ func submitOpenAIBatch(backend *Backend, inputPath string) (string, error) {
 
 	req, _ := http.NewRequest("POST", baseURL+"/files", &body)
 	req.Header.Set("Content-Type", "multipart/form-data; boundary="+boundary)
-	req.Header.Set("Authorization", "Bearer "+backend.Config.APIKey)
+	req.Header.Set("Authorization", "Bearer "+backend.APIKey())
 
 	resp, err := llmClient.Do(req)
 	if err != nil {
@@ -396,7 +396,7 @@ func submitOpenAIBatch(backend *Backend, inputPath string) (string, error) {
 
 	req2, _ := http.NewRequest("POST", baseURL+"/batches", bytes.NewReader(batchBody))
 	req2.Header.Set("Content-Type", "application/json")
-	req2.Header.Set("Authorization", "Bearer "+backend.Config.APIKey)
+	req2.Header.Set("Authorization", "Bearer "+backend.APIKey())
 
 	resp2, err := llmClient.Do(req2)
 	if err != nil {
@@ -432,7 +432,7 @@ func submitAnthropicBatch(backend *Backend, requests []BatchRequest) (string, er
 
 	httpReq, _ := http.NewRequest("POST", "https://api.anthropic.com/v1/messages/batches", bytes.NewReader(body))
 	httpReq.Header.Set("Content-Type", "application/json")
-	httpReq.Header.Set("x-api-key", backend.Config.APIKey)
+	httpReq.Header.Set("x-api-key", backend.APIKey())
 	httpReq.Header.Set("anthropic-version", "2023-06-01")
 
 	resp, err := llmClient.Do(httpReq)
@@ -473,7 +473,7 @@ func submitGeminiBatch(backend *Backend, requests []BatchRequest) (string, error
 
 	httpReq, _ := http.NewRequest("POST", url, bytes.NewReader(body))
 	httpReq.Header.Set("Content-Type", "application/json")
-	httpReq.Header.Set("x-goog-api-key", backend.Config.APIKey)
+	httpReq.Header.Set("x-goog-api-key", backend.APIKey())
 
 	resp, err := llmClient.Do(httpReq)
 	if err != nil {
@@ -581,7 +581,7 @@ func checkProviderStatus(backend *Backend, provider, providerID string) (string,
 func checkOpenAIBatchStatus(backend *Backend, batchID string) (string, string, error) {
 	baseURL := strings.TrimSuffix(backend.Config.URL, "/v1") + "/v1"
 	req, _ := http.NewRequest("GET", baseURL+"/batches/"+batchID, nil)
-	req.Header.Set("Authorization", "Bearer "+backend.Config.APIKey)
+	req.Header.Set("Authorization", "Bearer "+backend.APIKey())
 
 	resp, err := llmClient.Do(req)
 	if err != nil {
@@ -600,7 +600,7 @@ func checkOpenAIBatchStatus(backend *Backend, batchID string) (string, string, e
 
 func checkAnthropicBatchStatus(backend *Backend, batchID string) (string, string, error) {
 	req, _ := http.NewRequest("GET", "https://api.anthropic.com/v1/messages/batches/"+batchID, nil)
-	req.Header.Set("x-api-key", backend.Config.APIKey)
+	req.Header.Set("x-api-key", backend.APIKey())
 	req.Header.Set("anthropic-version", "2023-06-01")
 
 	resp, err := llmClient.Do(req)
@@ -629,7 +629,7 @@ func checkAnthropicBatchStatus(backend *Backend, batchID string) (string, string
 func checkGeminiBatchStatus(backend *Backend, batchName string) (string, string, error) {
 	url := backend.Config.URL + "/" + batchName
 	req, _ := http.NewRequest("GET", url, nil)
-	req.Header.Set("x-goog-api-key", backend.Config.APIKey)
+	req.Header.Set("x-goog-api-key", backend.APIKey())
 
 	resp, err := llmClient.Do(req)
 	if err != nil {
@@ -659,7 +659,7 @@ func (bm *BatchManager) downloadResults(job *BatchJob, backend *Backend, outputF
 	case "openai", "groq", "together", "mistral":
 		baseURL := strings.TrimSuffix(backend.Config.URL, "/v1") + "/v1"
 		req, _ := http.NewRequest("GET", baseURL+"/files/"+outputFileID+"/content", nil)
-		req.Header.Set("Authorization", "Bearer "+backend.Config.APIKey)
+		req.Header.Set("Authorization", "Bearer "+backend.APIKey())
 
 		resp, err := llmClient.Do(req)
 		if err != nil {
@@ -673,7 +673,7 @@ func (bm *BatchManager) downloadResults(job *BatchJob, backend *Backend, outputF
 	case "anthropic":
 		// Anthropic streams results from the batch endpoint
 		req, _ := http.NewRequest("GET", "https://api.anthropic.com/v1/messages/batches/"+outputFileID+"/results", nil)
-		req.Header.Set("x-api-key", backend.Config.APIKey)
+		req.Header.Set("x-api-key", backend.APIKey())
 		req.Header.Set("anthropic-version", "2023-06-01")
 
 		resp, err := llmClient.Do(req)
