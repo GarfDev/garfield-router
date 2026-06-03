@@ -50,7 +50,7 @@ func runConsensus(req *ChatRequest, body []byte, meta RouteRequest, candidates [
 		wg.Add(1)
 		go func(i int) {
 			defer wg.Done()
-			st, _, b, err := forwardToBackend(picks[i].Backend, picks[i].ModelName, body, req, meta)
+			st, _, b, err := forwardToBackend(picks[i].Backend, picks[i].ModelName, body, req, meta, picks[i].Backend.APIKey())
 			results[i] = res{body: b, status: st, content: extractContent(b), err: err}
 		}(i)
 	}
@@ -109,7 +109,7 @@ func runConsensus(req *ChatRequest, body []byte, meta RouteRequest, candidates [
 	if err != nil {
 		return ok[0].body, ok[0].status, "agreed"
 	}
-	st, _, arbResp, err := forwardToBackend(arb, arb.Config.ModelName, arbBody, &arbReq, meta)
+	st, _, arbResp, err := forwardToBackend(arb, arb.Config.ModelName, arbBody, &arbReq, meta, arb.APIKey())
 	if err != nil || st >= 400 || extractContent(arbResp) == "" {
 		return ok[0].body, ok[0].status, "agreed"
 	}

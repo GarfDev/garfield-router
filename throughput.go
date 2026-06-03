@@ -299,6 +299,7 @@ func dispatchSingle(entry *BatchEntry) *BatchResponse {
 		entry.Body,
 		entry.Parsed,
 		entry.Meta,
+		entry.Route.Backend.APIKey(),
 	)
 	return &BatchResponse{
 		StatusCode: statusCode,

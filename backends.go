@@ -52,18 +52,64 @@ type Backend struct {
 	// by predictive SLA routing (max_ttft_ms). Populated on each served request.
 	latency latencyWindow
 	apiKey  atomic.Uint64
+	keyMu   sync.Mutex
+	keyDown []int64
 	mu      sync.RWMutex
+}
+
+const apiKeyCooldown = 5 * time.Minute
+
+type apiKeyLease struct {
+	Key    string
+	Index  int
+	Pooled bool
 }
 
 // APIKey returns this backend's auth key. If api_keys is configured, keys are
 // rotated round-robin per request; api_key remains the single-key fallback.
 func (b *Backend) APIKey() string {
+	return b.NextAPIKey().Key
+}
+
+// NextAPIKey returns the next active key, skipping keys temporarily cooled down
+// by auth/rate-limit failures. If all keys are cooling down, it still returns
+// the next key so requests fail visibly instead of hanging forever.
+func (b *Backend) NextAPIKey() apiKeyLease {
 	keys := b.Config.APIKeys
 	if len(keys) == 0 {
-		return b.Config.APIKey
+		return apiKeyLease{Key: b.Config.APIKey, Index: -1, Pooled: false}
 	}
-	idx := b.apiKey.Add(1) - 1
-	return keys[int(idx%uint64(len(keys)))]
+	now := time.Now().UnixNano()
+	b.keyMu.Lock()
+	if len(b.keyDown) != len(keys) {
+		b.keyDown = make([]int64, len(keys))
+	}
+	b.keyMu.Unlock()
+	for range keys {
+		idx := int((b.apiKey.Add(1) - 1) % uint64(len(keys)))
+		b.keyMu.Lock()
+		downUntil := b.keyDown[idx]
+		b.keyMu.Unlock()
+		if downUntil <= now {
+			return apiKeyLease{Key: keys[idx], Index: idx, Pooled: true}
+		}
+	}
+	idx := int((b.apiKey.Add(1) - 1) % uint64(len(keys)))
+	return apiKeyLease{Key: keys[idx], Index: idx, Pooled: true}
+}
+
+func (b *Backend) CooldownAPIKey(index int) {
+	if index < 0 {
+		return
+	}
+	b.keyMu.Lock()
+	defer b.keyMu.Unlock()
+	if len(b.keyDown) != len(b.Config.APIKeys) {
+		b.keyDown = make([]int64, len(b.Config.APIKeys))
+	}
+	if index < len(b.keyDown) {
+		b.keyDown[index] = time.Now().Add(apiKeyCooldown).UnixNano()
+	}
 }
 
 // QueueLoad returns the backend's total in-flight pressure as seen at the

@@ -35,9 +35,9 @@ type QualityValidator struct {
 }
 
 type qualityScore struct {
-	Samples    int     `json:"samples"`
-	AvgScore   float64 `json:"avg_score"`
-	TotalScore float64 `json:"-"`
+	Samples    int       `json:"samples"`
+	AvgScore   float64   `json:"avg_score"`
+	TotalScore float64   `json:"-"`
 	LastCheck  time.Time `json:"last_check"`
 }
 
@@ -108,7 +108,7 @@ func (qv *QualityValidator) ValidateAsync(
 			return
 		}
 
-		statusCode, _, respBody, err := forwardToBackend(refBackend, refBackend.Config.ModelName, body, &refReq, meta)
+		statusCode, _, respBody, err := forwardToBackend(refBackend, refBackend.Config.ModelName, body, &refReq, meta, refBackend.APIKey())
 		if err != nil || statusCode >= 400 {
 			return
 		}

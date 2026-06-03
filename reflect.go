@@ -41,7 +41,7 @@ func runReflection(req *ChatRequest, meta RouteRequest, backend *Backend, modelN
 		return initialBody, false
 	}
 
-	status, _, refined, err := forwardToBackend(backend, modelName, body, &rr, meta)
+	status, _, refined, err := forwardToBackend(backend, modelName, body, &rr, meta, backend.APIKey())
 	if err != nil || status >= 400 || len(refined) == 0 {
 		return initialBody, false
 	}

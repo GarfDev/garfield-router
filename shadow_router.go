@@ -22,9 +22,9 @@ import (
 // backend A → B?" with empirical data. After enough comparisons, the
 // dashboard surfaces "swapping primary to B saves $X/day at Y% similarity".
 type ShadowRouter struct {
-	splitPctByName map[string]int           // shadow backend name → 0-100
-	configMu       sync.RWMutex             // guards splitPctByName + tests map
-	tests          map[string]*ShadowTest   // test name → config
+	splitPctByName map[string]int         // shadow backend name → 0-100
+	configMu       sync.RWMutex           // guards splitPctByName + tests map
+	tests          map[string]*ShadowTest // test name → config
 	results        chan ShadowComparison
 	resultsCount   atomic.Uint64
 	logPath        string
@@ -37,11 +37,11 @@ type ShadowRouter struct {
 // Mode = "shadow" (B's output is logged but not returned). "promote"
 // is reserved for future use where B's output replaces A's.
 type ShadowTest struct {
-	Name      string `json:"name"`
-	VariantA  string `json:"variant_a"`
-	VariantB  string `json:"variant_b"`
-	SplitPct  int    `json:"split_pct"`
-	Match     map[string]string `json:"match,omitempty"`
+	Name     string            `json:"name"`
+	VariantA string            `json:"variant_a"`
+	VariantB string            `json:"variant_b"`
+	SplitPct int               `json:"split_pct"`
+	Match    map[string]string `json:"match,omitempty"`
 }
 
 // ShadowComparison is one A/B sample.
@@ -201,7 +201,7 @@ func (sr *ShadowRouter) invokeShadow(ctx context.Context, backendName string, bo
 	// Use a fake metadata to get through forwardToBackend; the meta
 	// fields we don't care about for shadow comparisons.
 	meta := RouteRequest{}
-	statusCode, _, respBody, err := forwardToBackend(backend, "", body, &ChatRequest{}, meta)
+	statusCode, _, respBody, err := forwardToBackend(backend, "", body, &ChatRequest{}, meta, backend.APIKey())
 	if err != nil {
 		return "", 0, err
 	}

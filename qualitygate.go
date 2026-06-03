@@ -162,7 +162,7 @@ func (qg *QualityGate) GateParallel(
 	fallback := pool.Get(fallbackName)
 	if fallback == nil || !fallback.IsAvailable() {
 		// No fallback: just use cheap model
-		statusCode, _, respBody, err := forwardToBackend(cheapBackend, cheapModelName, body, req, meta)
+		statusCode, _, respBody, err := forwardToBackend(cheapBackend, cheapModelName, body, req, meta, cheapBackend.APIKey())
 		if err != nil {
 			return nil, 502, false
 		}
@@ -182,7 +182,7 @@ func (qg *QualityGate) GateParallel(
 
 	// Cheap model
 	go func() {
-		statusCode, _, respBody, err := forwardToBackend(cheapBackend, cheapModelName, body, req, meta)
+		statusCode, _, respBody, err := forwardToBackend(cheapBackend, cheapModelName, body, req, meta, cheapBackend.APIKey())
 		results <- result{respBody, statusCode, err, "cheap"}
 	}()
 
@@ -193,7 +193,7 @@ func (qg *QualityGate) GateParallel(
 	fallbackBody, _ := json.Marshal(fallbackReq)
 
 	go func() {
-		statusCode, _, respBody, err := forwardToBackend(fallback, fallback.Config.ModelName, fallbackBody, &fallbackReq, meta)
+		statusCode, _, respBody, err := forwardToBackend(fallback, fallback.Config.ModelName, fallbackBody, &fallbackReq, meta, fallback.APIKey())
 		results <- result{respBody, statusCode, err, "fallback"}
 	}()
 
@@ -313,7 +313,7 @@ func (qg *QualityGate) retryOnFallback(req *ChatRequest, meta RouteRequest) ([]b
 	injectQwenThinkingDisabled(&fallbackReq, fallback)
 	body, _ := json.Marshal(fallbackReq)
 
-	statusCode, _, respBody, err := forwardToBackend(fallback, fallback.Config.ModelName, body, &fallbackReq, meta)
+	statusCode, _, respBody, err := forwardToBackend(fallback, fallback.Config.ModelName, body, &fallbackReq, meta, fallback.APIKey())
 	if err != nil {
 		return nil, 502, true
 	}

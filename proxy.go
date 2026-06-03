@@ -458,14 +458,40 @@ func handleChatCompletions(w http.ResponseWriter, r *http.Request) {
 func forwardWithRetry(
 	backend *Backend, modelName string, body []byte, req *ChatRequest, meta RouteRequest,
 ) (int, map[string]string, []byte, error) {
-	statusCode, headers, respBody, err := forwardToBackend(backend, modelName, body, req, meta)
-	if err == nil {
-		return statusCode, headers, respBody, nil
+	maxAttempts := 1
+	if len(backend.Config.APIKeys) > 1 {
+		maxAttempts = len(backend.Config.APIKeys)
+	}
+	var lastStatus int
+	var lastHeaders map[string]string
+	var lastBody []byte
+	var lastErr error
+	for attempt := 0; attempt < maxAttempts; attempt++ {
+		key := backend.NextAPIKey()
+		statusCode, headers, respBody, err := forwardToBackend(backend, modelName, body, req, meta, key.Key)
+		if err == nil && !isAPIKeyFailureStatus(statusCode) {
+			return statusCode, headers, respBody, nil
+		}
+		lastStatus, lastHeaders, lastBody, lastErr = statusCode, headers, respBody, err
+		if !key.Pooled || !isAPIKeyFailureStatus(statusCode) {
+			break
+		}
+		backend.CooldownAPIKey(key.Index)
+		logger.Printf("backend %s api key %d cooled down after status %d; trying next key",
+			backend.Config.Name, key.Index+1, statusCode)
+	}
+	if lastErr == nil {
+		return lastStatus, lastHeaders, lastBody, nil
 	}
 
 	// Retry once after a short backoff for transport errors
 	time.Sleep(500 * time.Millisecond)
-	return forwardToBackend(backend, modelName, body, req, meta)
+	key := backend.NextAPIKey()
+	return forwardToBackend(backend, modelName, body, req, meta, key.Key)
+}
+
+func isAPIKeyFailureStatus(statusCode int) bool {
+	return statusCode == http.StatusUnauthorized || statusCode == http.StatusForbidden || statusCode == http.StatusTooManyRequests
 }
 
 // forwardToBackend sends a request to the selected backend and tracks errors
@@ -476,6 +502,7 @@ func forwardToBackend(
 	body []byte,
 	req *ChatRequest,
 	meta RouteRequest,
+	apiKey string,
 ) (int, map[string]string, []byte, error) {
 	backend.ActiveReqs.Add(1)
 	defer backend.ActiveReqs.Add(-1)
@@ -495,11 +522,11 @@ func forwardToBackend(
 
 	switch backend.Config.Type {
 	case "gemini":
-		statusCode, headers, respBody, err = forwardToGemini(backend, body, req)
+		statusCode, headers, respBody, err = forwardToGemini(backend, body, req, apiKey)
 	case "ollama":
 		statusCode, headers, respBody, err = forwardToOllama(backend, body, req)
 	default:
-		statusCode, headers, respBody, err = forwardToOpenAI(backend, body)
+		statusCode, headers, respBody, err = forwardToOpenAI(backend, body, apiKey)
 	}
 
 	// On a successful dispatch, record this prompt prefix as warm in the
@@ -536,7 +563,7 @@ func forwardToBackend(
 }
 
 // forwardToOpenAI sends to an OpenAI-compatible endpoint (vLLM, OpenAI, etc.)
-func forwardToOpenAI(backend *Backend, body []byte) (int, map[string]string, []byte, error) {
+func forwardToOpenAI(backend *Backend, body []byte, apiKey string) (int, map[string]string, []byte, error) {
 	url := backend.Config.URL + "/v1/chat/completions"
 
 	httpReq, err := http.NewRequest(http.MethodPost, url, bytes.NewReader(body))
@@ -544,7 +571,7 @@ func forwardToOpenAI(backend *Backend, body []byte) (int, map[string]string, []b
 		return 0, nil, nil, err
 	}
 	httpReq.Header.Set("Content-Type", "application/json")
-	if apiKey := backend.APIKey(); apiKey != "" {
+	if apiKey != "" {
 		httpReq.Header.Set("Authorization", "Bearer "+apiKey)
 	}
 
@@ -566,7 +593,7 @@ func forwardToOpenAI(backend *Backend, body []byte) (int, map[string]string, []b
 }
 
 // forwardToGemini transforms the request to Gemini's REST format.
-func forwardToGemini(backend *Backend, _ []byte, req *ChatRequest) (int, map[string]string, []byte, error) {
+func forwardToGemini(backend *Backend, _ []byte, req *ChatRequest, apiKey string) (int, map[string]string, []byte, error) {
 	model := backend.Config.ModelName
 	url := backend.Config.URL + "/models/" + model + ":generateContent"
 
@@ -583,7 +610,7 @@ func forwardToGemini(backend *Backend, _ []byte, req *ChatRequest) (int, map[str
 	}
 	httpReq.Header.Set("Content-Type", "application/json")
 	// Use header-based auth to keep API key out of URLs and logs
-	if apiKey := backend.APIKey(); apiKey != "" {
+	if apiKey != "" {
 		httpReq.Header.Set("x-goog-api-key", apiKey)
 	}
 
@@ -868,7 +895,7 @@ func handleStreaming(
 	// Only OpenAI-compatible backends support streaming via SSE
 	if backend.Config.Type == "gemini" || backend.Config.Type == "ollama" {
 		// Fall back to non-streaming (forwardToBackend manages its own ActiveReqs)
-		statusCode, respHeaders, respBody, err := forwardToBackend(backend, route.ModelName, body, req, meta)
+		statusCode, respHeaders, respBody, err := forwardToBackend(backend, route.ModelName, body, req, meta, backend.APIKey())
 		latency := time.Since(start)
 		if err != nil {
 			recordStat(meta, route, latency, false)

@@ -141,6 +141,54 @@ func TestProxyHandler_Failover(t *testing.T) {
 	}
 }
 
+func TestProxyHandler_APIKeyFailoverWithinBackend(t *testing.T) {
+	var authHeaders []string
+	mock := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == "/v1/models" || r.URL.Path == "/health" {
+			w.WriteHeader(200)
+			return
+		}
+		auth := r.Header.Get("Authorization")
+		authHeaders = append(authHeaders, auth)
+		if auth == "Bearer exhausted" {
+			w.WriteHeader(http.StatusUnauthorized)
+			w.Write([]byte(`{"error":"key exhausted"}`))
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(200)
+		w.Write([]byte(validChatResponse("key failover success")))
+	}))
+	defer mock.Close()
+
+	setupTestRouter(
+		[]BackendConfig{{Name: "test", URL: mock.URL, Type: "openai", APIKeys: []string{"exhausted", "working"}, MaxConcurrent: 10}},
+		[]RoutingRule{{Name: "test", Priority: 100, Match: RuleMatch{}, Backends: []string{"test"}}},
+	)
+
+	body := `{"model":"test","messages":[{"role":"user","content":"hi"}]}`
+	req := httptest.NewRequest("POST", "/v1/chat/completions", strings.NewReader(body))
+	req.Header.Set("Content-Type", "application/json")
+	rr := httptest.NewRecorder()
+	handleChatCompletions(rr, req)
+
+	if rr.Code != 200 {
+		t.Fatalf("expected 200 after key failover, got %d: %s", rr.Code, rr.Body.String())
+	}
+	if len(authHeaders) != 2 {
+		t.Fatalf("expected 2 backend attempts, got %d: %#v", len(authHeaders), authHeaders)
+	}
+	if authHeaders[0] != "Bearer exhausted" || authHeaders[1] != "Bearer working" {
+		t.Fatalf("unexpected auth sequence: %#v", authHeaders)
+	}
+
+	var resp ChatResponse
+	json.Unmarshal(rr.Body.Bytes(), &resp)
+	if len(resp.Choices) == 0 || resp.Choices[0].Message.Content != "key failover success" {
+		t.Fatalf("unexpected response: %s", rr.Body.String())
+	}
+}
+
 func TestProxyHandler_AllBackendsFail(t *testing.T) {
 	bad := mockBackendServer(`{"error":"down"}`, 500, 0)
 	defer bad.Close()
