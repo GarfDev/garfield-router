@@ -127,6 +127,9 @@ func (r *Router) RouteCandidates(req RouteRequest) []RouteResult {
 
 		candidates := r.resolveAllBackends(rule, req, loraAdapter)
 		if len(candidates) == 0 {
+			if rule.Match.Model != "" {
+				return nil
+			}
 			continue
 		}
 		return r.balanceCandidatesPrompt(candidates, req.KVPrompt)

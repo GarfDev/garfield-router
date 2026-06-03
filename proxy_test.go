@@ -189,6 +189,66 @@ func TestProxyHandler_APIKeyFailoverWithinBackend(t *testing.T) {
 	}
 }
 
+func TestProxyHandler_PreservesOpenAIToolFields(t *testing.T) {
+	var backendBody map[string]interface{}
+	mock := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == "/v1/models" || r.URL.Path == "/health" {
+			w.WriteHeader(200)
+			return
+		}
+		if err := json.NewDecoder(r.Body).Decode(&backendBody); err != nil {
+			t.Fatalf("decode backend body: %v", err)
+		}
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(200)
+		w.Write([]byte(validChatResponse("ok")))
+	}))
+	defer mock.Close()
+
+	setupTestRouter(
+		[]BackendConfig{{Name: "test", URL: mock.URL, Type: "openai", ModelName: "backend-model", MaxConcurrent: 10}},
+		[]RoutingRule{{Name: "test", Priority: 100, Match: RuleMatch{}, Backends: []string{"test"}}},
+	)
+
+	body := `{"model":"test","messages":[{"role":"user","content":"what time?","providerOptions":{"bad":true}},{"role":"assistant","content":null,"tool_calls":[{"id":"call_1","type":"function","function":{"name":"get_time","arguments":"{}"}}],"id":"internal"},{"role":"tool","tool_call_id":"call_1","content":"noon","extra":"bad"}],"tools":[{"type":"function","function":{"name":"get_time","parameters":{"type":"object","properties":{}}}}],"tool_choice":"auto"}`
+	req := httptest.NewRequest("POST", "/v1/chat/completions", strings.NewReader(body))
+	req.Header.Set("Content-Type", "application/json")
+
+	rr := httptest.NewRecorder()
+	handleChatCompletions(rr, req)
+
+	if rr.Code != 200 {
+		t.Fatalf("expected 200, got %d: %s", rr.Code, rr.Body.String())
+	}
+	if backendBody["model"] != "backend-model" {
+		t.Fatalf("expected routed model, got %#v", backendBody["model"])
+	}
+	if _, ok := backendBody["tools"].([]interface{}); !ok {
+		t.Fatalf("tools field was not preserved: %#v", backendBody)
+	}
+	if backendBody["tool_choice"] != "auto" {
+		t.Fatalf("tool_choice was not preserved: %#v", backendBody["tool_choice"])
+	}
+	messages, ok := backendBody["messages"].([]interface{})
+	if !ok || len(messages) != 3 {
+		t.Fatalf("messages were not preserved: %#v", backendBody["messages"])
+	}
+	assistant, ok := messages[1].(map[string]interface{})
+	if !ok || assistant["tool_calls"] == nil {
+		t.Fatalf("assistant tool_calls were not preserved: %#v", messages[1])
+	}
+	if assistant["id"] != nil {
+		t.Fatalf("assistant internal fields were not stripped: %#v", messages[1])
+	}
+	tool, ok := messages[2].(map[string]interface{})
+	if !ok || tool["tool_call_id"] != "call_1" {
+		t.Fatalf("tool_call_id was not preserved: %#v", messages[2])
+	}
+	if tool["extra"] != nil {
+		t.Fatalf("tool internal fields were not stripped: %#v", messages[2])
+	}
+}
+
 func TestProxyHandler_AllBackendsFail(t *testing.T) {
 	bad := mockBackendServer(`{"error":"down"}`, 500, 0)
 	defer bad.Close()

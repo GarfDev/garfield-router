@@ -121,6 +121,78 @@ backends:
     health_endpoint: "/v1/models"
 
 rules:
+  - name: exact-gpt-5-4-mini
+    priority: 300
+    match:
+      model: gpt-5.4-mini
+    backends: [chiasegpu-gpt-5-4-mini]
+
+  - name: exact-gpt-5-4
+    priority: 300
+    match:
+      model: gpt-5.4
+    backends: [chiasegpu-gpt-5-4]
+
+  - name: exact-gpt-5-5
+    priority: 300
+    match:
+      model: gpt-5.5
+    backends: [chiasegpu-gpt-5-5]
+
+  - name: exact-cx-gpt-5-4
+    priority: 300
+    match:
+      model: cx/gpt-5.4
+    backends: [chiasegpu-cx-gpt-5-4]
+
+  - name: exact-cx-gpt-5-4-alias
+    priority: 300
+    match:
+      model: cx-gpt-5.4
+    backends: [chiasegpu-cx-gpt-5-4]
+
+  - name: exact-cx-gpt-5-5
+    priority: 300
+    match:
+      model: cx/gpt-5.5
+    backends: [chiasegpu-cx-gpt-5-5]
+
+  - name: exact-cx-gpt-5-5-alias
+    priority: 300
+    match:
+      model: cx-gpt-5.5
+    backends: [chiasegpu-cx-gpt-5-5]
+
+  - name: exact-gpt-5-5-high
+    priority: 300
+    match:
+      model: gpt-5.5-high
+    backends: [chiasegpu-gpt-5-5-high]
+
+  - name: exact-gpt-5-5-xhigh
+    priority: 300
+    match:
+      model: gpt-5.5-xhigh
+    backends: [chiasegpu-gpt-5-5-xhigh]
+
+  - name: exact-gpt-5-3-codex
+    priority: 300
+    match:
+      model: gpt-5.3-codex
+    backends: [chiasegpu-gpt-5-3-codex]
+
+  - name: exact-gpt-5-3-codex-high
+    priority: 300
+    match:
+      model: gpt-5.3-codex-high
+    backends: [chiasegpu-gpt-5-3-codex-high]
+
+  - name: exact-gpt-5-3-codex-xhigh
+    priority: 300
+    match:
+      model: gpt-5.3-codex-xhigh
+    backends: [chiasegpu-gpt-5-3-codex-xhigh]
+
   - name: vision
     priority: 180
     match:

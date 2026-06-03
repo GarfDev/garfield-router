@@ -39,6 +39,93 @@ type ChatMessage struct {
 	Content interface{} `json:"content"` // string or []ContentPart
 }
 
+func marshalRequestPreservingUnknown(original []byte, req ChatRequest) ([]byte, error) {
+	var raw map[string]interface{}
+	if err := json.Unmarshal(original, &raw); err != nil {
+		return nil, err
+	}
+	raw["model"] = req.Model
+	if messages, ok := raw["messages"]; ok {
+		raw["messages"] = sanitizeOpenAIMessages(messages)
+	}
+	if req.MaxTokens > 0 {
+		raw["max_tokens"] = req.MaxTokens
+	} else {
+		delete(raw, "max_tokens")
+	}
+	if req.Temperature != nil {
+		raw["temperature"] = *req.Temperature
+	} else {
+		delete(raw, "temperature")
+	}
+	if req.TopP != nil {
+		raw["top_p"] = *req.TopP
+	} else {
+		delete(raw, "top_p")
+	}
+	if req.Stream {
+		raw["stream"] = req.Stream
+	} else {
+		delete(raw, "stream")
+	}
+	if req.Stop != nil {
+		raw["stop"] = req.Stop
+	} else {
+		delete(raw, "stop")
+	}
+	if req.FrequencyPenalty != nil {
+		raw["frequency_penalty"] = *req.FrequencyPenalty
+	} else {
+		delete(raw, "frequency_penalty")
+	}
+	if req.PresencePenalty != nil {
+		raw["presence_penalty"] = *req.PresencePenalty
+	} else {
+		delete(raw, "presence_penalty")
+	}
+	if req.N > 0 {
+		raw["n"] = req.N
+	} else {
+		delete(raw, "n")
+	}
+	if req.ChatTemplateKwargs != nil {
+		raw["chat_template_kwargs"] = req.ChatTemplateKwargs
+	} else {
+		delete(raw, "chat_template_kwargs")
+	}
+	return json.Marshal(raw)
+}
+
+func sanitizeOpenAIMessages(messages interface{}) interface{} {
+	items, ok := messages.([]interface{})
+	if !ok {
+		return messages
+	}
+	allowed := map[string]bool{
+		"role":         true,
+		"content":      true,
+		"name":         true,
+		"tool_calls":   true,
+		"tool_call_id": true,
+	}
+	out := make([]interface{}, 0, len(items))
+	for _, item := range items {
+		msg, ok := item.(map[string]interface{})
+		if !ok {
+			out = append(out, item)
+			continue
+		}
+		clean := make(map[string]interface{}, len(msg))
+		for k, v := range msg {
+			if allowed[k] {
+				clean[k] = v
+			}
+		}
+		out = append(out, clean)
+	}
+	return out
+}
+
 type ContentPart struct {
 	Type     string          `json:"type"`
 	Text     string          `json:"text,omitempty"`
@@ -283,7 +370,7 @@ func handleChatCompletions(w http.ResponseWriter, r *http.Request) {
 		reqCopy := req
 		injectQwenThinkingDisabled(&reqCopy, routeResult.Backend)
 		reqCopy.Model = routeResult.ModelName
-		modifiedBody, err := json.Marshal(reqCopy)
+		modifiedBody, err := marshalRequestPreservingUnknown(body, reqCopy)
 		if err != nil {
 			continue
 		}

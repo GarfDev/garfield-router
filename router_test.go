@@ -163,6 +163,25 @@ func TestRouteCandidates_SkipsDownBackends(t *testing.T) {
 	}
 }
 
+func TestRouteCandidates_ModelMatchDoesNotFallThrough(t *testing.T) {
+	bp := newBackendPool([]BackendConfig{
+		{Name: "mini", URL: "http://localhost:8001", Type: "vllm", ModelName: "gpt-5.4-mini", MaxConcurrent: 10},
+		{Name: "premium", URL: "http://localhost:8002", Type: "vllm", ModelName: "gpt-5.5-xhigh", MaxConcurrent: 10},
+	})
+	bp.backends["mini"].Status = StatusDown
+
+	rules := []RoutingRule{
+		{Name: "exact-mini", Priority: 300, Match: RuleMatch{Model: "gpt-5.4-mini"}, Backends: []string{"mini"}},
+		{Name: "default-premium", Priority: 100, Match: RuleMatch{}, Backends: []string{"premium"}},
+	}
+
+	r := newRouter(rules, DefaultsConfig{FallbackChain: []string{"premium"}}, bp)
+	candidates := r.RouteCandidates(RouteRequest{ModelField: "gpt-5.4-mini"})
+	if len(candidates) != 0 {
+		t.Fatalf("explicit model should not fall through to premium, got %s", candidates[0].Backend.Config.Name)
+	}
+}
+
 func TestRouteCandidates_FallbackChain(t *testing.T) {
 	bp := newBackendPool([]BackendConfig{
 		{Name: "a", URL: "http://localhost:8001", Type: "vllm", MaxConcurrent: 10},
