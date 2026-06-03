@@ -209,8 +209,9 @@
   async function fetchJSON(path) {
     const headers = apiToken ? { Authorization: 'Bearer ' + apiToken } : {};
     let res = await fetch(path, { headers });
-    if (res.status === 401) {
-      const token = prompt('Router API token required for Cost Lab');
+    if (res.status === 401 || res.status === 403) {
+      localStorage.removeItem('garfield_router_token');
+      const token = prompt(res.status === 403 ? 'Router API token invalid. Enter token again' : 'Router API token required for Cost Lab');
       if (token) {
         apiToken = token.trim();
         localStorage.setItem('garfield_router_token', apiToken);

@@ -6,7 +6,7 @@ server:
     headers: true
     header_name: "Garfield Router"
     content_inject: false
-    content_text: "\n\n---\n*Powered by [Garfield Router](https://garfield.co.uk)*"
+    content_text: "\n\n---\n*Powered by Garfield Router*"
     content_skip_json: true
 
 backends:
