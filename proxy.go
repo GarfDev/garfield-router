@@ -44,6 +44,7 @@ func marshalRequestPreservingUnknown(original []byte, req ChatRequest) ([]byte, 
 	if err := json.Unmarshal(original, &raw); err != nil {
 		return nil, err
 	}
+	raw = sanitizeOpenAIRequest(raw)
 	raw["model"] = req.Model
 	if messages, ok := raw["messages"]; ok {
 		raw["messages"] = sanitizeOpenAIMessages(messages)
@@ -94,6 +95,36 @@ func marshalRequestPreservingUnknown(original []byte, req ChatRequest) ([]byte, 
 		delete(raw, "chat_template_kwargs")
 	}
 	return json.Marshal(raw)
+}
+
+func sanitizeOpenAIRequest(raw map[string]interface{}) map[string]interface{} {
+	allowed := map[string]bool{
+		"model":              true,
+		"messages":           true,
+		"max_tokens":         true,
+		"temperature":        true,
+		"top_p":              true,
+		"stream":             true,
+		"stream_options":     true,
+		"stop":               true,
+		"frequency_penalty":  true,
+		"presence_penalty":   true,
+		"n":                  true,
+		"tools":              true,
+		"tool_choice":        true,
+		"parallel_tool_calls": true,
+		"response_format":    true,
+		"seed":               true,
+		"user":               true,
+		"metadata":           true,
+	}
+	clean := make(map[string]interface{}, len(raw))
+	for k, v := range raw {
+		if allowed[k] {
+			clean[k] = v
+		}
+	}
+	return clean
 }
 
 func sanitizeOpenAIMessages(messages interface{}) interface{} {

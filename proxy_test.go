@@ -210,7 +210,7 @@ func TestProxyHandler_PreservesOpenAIToolFields(t *testing.T) {
 		[]RoutingRule{{Name: "test", Priority: 100, Match: RuleMatch{}, Backends: []string{"test"}}},
 	)
 
-	body := `{"model":"test","messages":[{"role":"user","content":"what time?","providerOptions":{"bad":true}},{"role":"assistant","content":null,"tool_calls":[{"id":"call_1","type":"function","function":{"name":"get_time","arguments":"{}"}}],"id":"internal"},{"role":"tool","tool_call_id":"call_1","content":"noon","extra":"bad"}],"tools":[{"type":"function","function":{"name":"get_time","parameters":{"type":"object","properties":{}}}}],"tool_choice":"auto"}`
+	body := `{"model":"test","messages":[{"role":"user","content":"what time?","providerOptions":{"bad":true}},{"role":"assistant","content":null,"tool_calls":[{"id":"call_1","type":"function","function":{"name":"get_time","arguments":"{}"}}],"id":"internal"},{"role":"tool","tool_call_id":"call_1","content":"noon","extra":"bad"}],"tools":[{"type":"function","function":{"name":"get_time","parameters":{"type":"object","properties":{}}}}],"tool_choice":"auto","reasoningSummary":"auto","verbosity":"low"}`
 	req := httptest.NewRequest("POST", "/v1/chat/completions", strings.NewReader(body))
 	req.Header.Set("Content-Type", "application/json")
 
@@ -228,6 +228,9 @@ func TestProxyHandler_PreservesOpenAIToolFields(t *testing.T) {
 	}
 	if backendBody["tool_choice"] != "auto" {
 		t.Fatalf("tool_choice was not preserved: %#v", backendBody["tool_choice"])
+	}
+	if backendBody["reasoningSummary"] != nil || backendBody["verbosity"] != nil {
+		t.Fatalf("provider-specific top-level fields were not stripped: %#v", backendBody)
 	}
 	messages, ok := backendBody["messages"].([]interface{})
 	if !ok || len(messages) != 3 {
