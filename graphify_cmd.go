@@ -12,16 +12,17 @@ import (
 	_ "github.com/lib/pq"
 )
 
-// runGraphifyCmd handles `kronaxis-router ingest [paths...]` and
-// `kronaxis-router graphify <subcommand>`.
+// runGraphifyCmd handles `garfield-router ingest [paths...]` and
+// `garfield-router graphify <subcommand>`.
 //
 // Subcommands:
-//   ingest <paths...>   ingest files into pgvector (default if no subcmd)
-//   reset               drop kr_chunks (use when changing embedder dim)
-//   stats               print row count + token totals
+//
+//	ingest <paths...>   ingest files into pgvector (default if no subcmd)
+//	reset               drop kr_chunks (use when changing embedder dim)
+//	stats               print row count + token totals
 func runGraphifyCmd(args []string) {
 	if len(args) == 0 {
-		fmt.Println("usage: kronaxis-router graphify <subcommand> [args]")
+		fmt.Println("usage: garfield-router graphify <subcommand> [args]")
 		fmt.Println("subcommands: ingest <paths...>, reset, stats")
 		os.Exit(2)
 	}
@@ -55,7 +56,7 @@ func runIngest(args []string) {
 	}
 	roots := fs.Args()
 	if len(roots) == 0 {
-		fmt.Println("usage: kronaxis-router ingest <path> [<path>...] [--config FILE] [-v] [--reset] [--exclude name1,name2]")
+		fmt.Println("usage: garfield-router ingest <path> [<path>...] [--config FILE] [-v] [--reset] [--exclude name1,name2]")
 		os.Exit(2)
 	}
 

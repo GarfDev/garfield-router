@@ -1,9 +1,9 @@
 # agent-gateway
 
-OpenAI-compatible HTTP gateway that wraps any genuine terminal agent CLI behind a single `/v1/chat/completions` endpoint. Lives next to `kronaxis-router` and is fronted by it as a regular OpenAI-compatible backend.
+OpenAI-compatible HTTP gateway that wraps any genuine terminal agent CLI behind a single `/v1/chat/completions` endpoint. Lives next to `garfield-router` and is fronted by it as a regular OpenAI-compatible backend.
 
 **Port:** 8055
-**Location:** `kronaxis-router/agent-gateway/`
+**Location:** `garfield-router/agent-gateway/`
 **Design (current):** [../../docs/plans/2026-05-09-cli-agent-gateway-expansion-design.md](../../docs/plans/2026-05-09-cli-agent-gateway-expansion-design.md)
 **Plan (current):** [../../docs/plans/2026-05-09-cli-agent-gateway-expansion-implementation-plan.md](../../docs/plans/2026-05-09-cli-agent-gateway-expansion-implementation-plan.md)
 **Predecessor design (claude-only v1):** [../../docs/plans/2026-05-08-agent-gateway-design.md](../../docs/plans/2026-05-08-agent-gateway-design.md)
@@ -38,7 +38,7 @@ Drop YAML overrides into `${KR_AGENT_PROFILES_DIR}` (or `./agents/`) to add cust
 ## Build + run
 
 ```bash
-cd kronaxis-router/agent-gateway
+cd garfield-router/agent-gateway
 go mod tidy
 go build -o agent-gateway .
 ./agent-gateway -config config.yaml
@@ -125,7 +125,7 @@ data: {"choices":[{"delta":{"tool_calls":[{"index":0,"function":{"arguments":"{\
 data: {"choices":[{"delta":{"tool_calls":[{"index":0,"function":{"arguments":"hello.go\"}"}}]}}]}
 data: {"choices":[{"delta":{"content":"Created hello.go"}}]}
 data: {"choices":[{"delta":{},"finish_reason":"stop"}]}
-data: {"kronaxis":{"workspace_path":"...","git_diff":"...","num_turns":2,"adapter":"claude-cli","duration_ms":4200,"workspace_id":"ws_..."}}
+data: {"garfield":{"workspace_path":"...","git_diff":"...","num_turns":2,"adapter":"claude-cli","duration_ms":4200,"workspace_id":"ws_..."}}
 data: [DONE]
 ```
 
@@ -288,9 +288,9 @@ Env overrides: `AGENT_GATEWAY_PORT`, `AGENT_GATEWAY_CLAUDE_BIN`, `AGENT_GATEWAY_
   - `agent_gateway_uptime_seconds` (gauge)
 - **Live UI** at `/`: dashboard with totals + last-50 request rows, fed via `/api/live` SSE.
 
-## Wire into kronaxis-router
+## Wire into garfield-router
 
-Uncomment the `claude-code-agent` stanza in `kronaxis-router/config.yaml` (already present, commented):
+Uncomment the `claude-code-agent` stanza in `garfield-router/config.yaml` (already present, commented):
 
 ```yaml
 - name: claude-code-agent

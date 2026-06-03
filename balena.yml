@@ -1,11 +1,11 @@
-name: kronaxis-router
+name: garfield-router
 type: sw.application
-description: Kronaxis Router on Raspberry Pi 4B via Balena
+description: Garfield Router on Raspberry Pi 4B via Balena
 assets:
   repository:
     type: blob.asset
     data:
-      url: https://github.com/Kronaxis/kronaxis-router
+      url: https://github.com/Garfield/garfield-router
 data:
   applicationEnvironmentVariables:
     - ROUTER_PORT: "8050"

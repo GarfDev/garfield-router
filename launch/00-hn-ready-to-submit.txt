@@ -5,8 +5,8 @@
 
 OPTION A: URL submission (recommended, then paste pitch as first comment)
 ─────────────────────────────────────────────────────────────────────────
-Title: Show HN: Kronaxis Router – stop paying frontier prices for tasks a local model handles
-URL:   https://github.com/Kronaxis/kronaxis-router
+Title: Show HN: Garfield Router – stop paying frontier prices for tasks a local model handles
+URL:   https://github.com/Garfield/garfield-router
 Text:  (leave empty)
 
 Then immediately post the OPTION B text below as your first comment.
@@ -14,7 +14,7 @@ Then immediately post the OPTION B text below as your first comment.
 
 OPTION B: Text submission (if you prefer body text instead of URL)
 ──────────────────────────────────────────────────────────────────
-Title: Show HN: Kronaxis Router – stop paying frontier prices for tasks a local model handles
+Title: Show HN: Garfield Router – stop paying frontier prices for tasks a local model handles
 URL:   (leave empty)
 Text:  (paste everything below this line)
 
@@ -24,7 +24,7 @@ Small open-weight models got good. Qwen 9B, Llama 8B, Gemma 4B handle 80% of pro
 
 The problem is nobody routes. Every request hits the same endpoint. You are paying $3-15/1M tokens for work a free local model does identically.
 
-Kronaxis Router fixes this. Single Go binary, sits between your app and your models, classifies each request, sends it to the cheapest capable backend.
+Garfield Router fixes this. Single Go binary, sits between your app and your models, classifies each request, sends it to the cheapest capable backend.
 
 The economics: local 9B costs ~$0.005/1M tokens. Cloud frontier costs $3-15/1M. 80% of traffic is extraction/classification/summarisation. Route that 80% locally and your blended cost drops from ~$10 to ~$0.50/1M.
 
@@ -34,9 +34,9 @@ What else: failover chains, batch API routing (50% off across 7 providers), resp
 
 Install:
 
-  curl -fsSL https://raw.githubusercontent.com/Kronaxis/kronaxis-router/main/install.sh | bash
-  kronaxis-router init
-  kronaxis-router
+  curl -fsSL https://raw.githubusercontent.com/Garfield/garfield-router/main/install.sh | bash
+  garfield-router init
+  garfield-router
 
 One command detects Ollama, vLLM, and cloud API keys, generates config, and you are routing. OpenAI-compatible API, existing code changes one URL.
 
@@ -54,9 +54,9 @@ Honest summary: need 100+ providers, use LiteLLM. Want zero setup, use OpenRoute
 
 Single binary. 81 tests. BSL 1.1.
 
-https://github.com/Kronaxis/kronaxis-router
+https://github.com/Garfield/garfield-router
 
-Blog with full cost tables and comparison: https://kronaxis.co.uk/blog/llm-routing-cost-savings
+Blog with full cost tables and comparison: https://garfield.co.uk/blog/llm-routing-cost-savings
 
 ─── END PASTE ───
 (2,842 characters -- under the 4,000 limit)

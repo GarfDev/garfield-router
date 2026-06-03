@@ -74,17 +74,17 @@ func handleGraphifyRetrieve(w http.ResponseWriter, r *http.Request) {
 }
 
 type graphifyStatsResponse struct {
-	Enabled               bool   `json:"enabled"`
-	Embedder              string `json:"embedder,omitempty"`
-	EmbedderDim           int    `json:"embedder_dim,omitempty"`
-	Mode                  string `json:"default_mode"`
-	RequestsTotal         uint64 `json:"requests_total"`
-	AugmentsTotal         uint64 `json:"augments_total"`
-	CompressTotal         uint64 `json:"compress_total"`
-	OffTotal              uint64 `json:"off_total"`
-	ChunksRetrievedTotal  uint64 `json:"chunks_retrieved_total"`
-	TokensSavedTotal      uint64 `json:"tokens_saved_total"`
-	ErrorsTotal           uint64 `json:"errors_total"`
+	Enabled              bool   `json:"enabled"`
+	Embedder             string `json:"embedder,omitempty"`
+	EmbedderDim          int    `json:"embedder_dim,omitempty"`
+	Mode                 string `json:"default_mode"`
+	RequestsTotal        uint64 `json:"requests_total"`
+	AugmentsTotal        uint64 `json:"augments_total"`
+	CompressTotal        uint64 `json:"compress_total"`
+	OffTotal             uint64 `json:"off_total"`
+	ChunksRetrievedTotal uint64 `json:"chunks_retrieved_total"`
+	TokensSavedTotal     uint64 `json:"tokens_saved_total"`
+	ErrorsTotal          uint64 `json:"errors_total"`
 }
 
 func handleGraphifyStats(w http.ResponseWriter, _ *http.Request) {

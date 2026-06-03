@@ -1,4 +1,4 @@
-# Kronaxis Router vs LiteLLM vs Portkey
+# Garfield Router vs LiteLLM vs Portkey
 
 ## Three tools, three problems
 
@@ -8,11 +8,11 @@ LLM proxy is an overloaded term. These three tools sit at different points in th
 
 **Portkey** is a managed gateway. Logging, caching, fallback, guardrails, a dashboard. SaaS product with a generous free tier.
 
-**Kronaxis Router** makes the routing decision. Given this specific prompt, which model tier should handle it? It auto-classifies, routes, validates quality, and enforces budgets.
+**Garfield Router** makes the routing decision. Given this specific prompt, which model tier should handle it? It auto-classifies, routes, validates quality, and enforces budgets.
 
 ## Comparison
 
-| Feature | Kronaxis Router | LiteLLM | Portkey |
+| Feature | Garfield Router | LiteLLM | Portkey |
 |---|---|---|---|
 | **Primary value** | Cost-optimised routing | Provider normalisation | Observability + gateway |
 | **Auto-classification** | Yes (<1ms, rule-based) | No | No |
@@ -31,14 +31,14 @@ LLM proxy is an overloaded term. These three tools sit at different points in th
 
 **Use Portkey when** you need managed observability with guardrails and a polished dashboard, and you are comfortable with SaaS.
 
-**Use Kronaxis Router when** you run a mix of model sizes and want automatic cost optimisation with quality safety nets.
+**Use Garfield Router when** you run a mix of model sizes and want automatic cost optimisation with quality safety nets.
 
 ## Combining them
 
 The most powerful setup:
 
 ```
-Application --> Kronaxis Router --> LiteLLM --> Multiple providers
+Application --> Garfield Router --> LiteLLM --> Multiple providers
                     |
               (routing decision)
 ```
@@ -47,11 +47,11 @@ Router decides which tier. LiteLLM normalises the downstream providers within ea
 
 ## The honest assessment
 
-Kronaxis Router is new and narrowly scoped. It does one thing well. LiteLLM has years of production hardening. Portkey has the best dashboard.
+Garfield Router is new and narrowly scoped. It does one thing well. LiteLLM has years of production hardening. Portkey has the best dashboard.
 
-If you do not have multiple model tiers, Kronaxis Router adds no value. Pick the tool that solves the problem you actually have.
+If you do not have multiple model tiers, Garfield Router adds no value. Pick the tool that solves the problem you actually have.
 
 GitHub links:
-- Kronaxis Router: https://github.com/kronaxis/kronaxis-router
+- Garfield Router: https://github.com/GarfDev/garfield-router
 - LiteLLM: https://github.com/BerriAI/litellm
 - Portkey: https://github.com/portkey-ai/gateway

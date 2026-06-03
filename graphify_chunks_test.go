@@ -6,7 +6,7 @@ import (
 )
 
 func TestChunkCharWindow_Small(t *testing.T) {
-	body := "hello kronaxis world"
+	body := "hello garfield world"
 	chunks := chunkCharWindow("/x/y.txt", body)
 	if len(chunks) != 1 {
 		t.Fatalf("len=%d want 1", len(chunks))
@@ -14,7 +14,7 @@ func TestChunkCharWindow_Small(t *testing.T) {
 	if !strings.Contains(chunks[0].Content, "[file: /x/y.txt]") {
 		t.Errorf("chunk missing file tag: %q", chunks[0].Content)
 	}
-	if !strings.Contains(chunks[0].Content, "kronaxis") {
+	if !strings.Contains(chunks[0].Content, "garfield") {
 		t.Errorf("chunk missing body: %q", chunks[0].Content)
 	}
 }
@@ -163,9 +163,9 @@ func TestLooksLikeText(t *testing.T) {
 		want bool
 	}{
 		{"ascii", []byte("hello world"), true},
-		{"valid utf8 british", []byte("hello — kronaxis"), true},
-		{"valid utf8 emoji", []byte("kronaxis 🚀"), true},
-		{"valid utf8 mixed scripts", []byte("kronaxis 北京 العربية"), true},
+		{"valid utf8 british", []byte("hello — garfield"), true},
+		{"valid utf8 emoji", []byte("garfield 🚀"), true},
+		{"valid utf8 mixed scripts", []byte("garfield 北京 العربية"), true},
 		{"nul early", []byte{0x68, 0x00, 0x65}, false},
 		{"nul late (whole-buffer scan)", append([]byte("hello "), 0x00), false},
 		{"empty", []byte(""), false},

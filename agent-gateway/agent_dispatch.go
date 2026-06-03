@@ -6,10 +6,10 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/kronaxis/agent-gateway/accounts"
-	regpkg "github.com/kronaxis/agent-gateway/registry"
-	"github.com/kronaxis/agent-gateway/runner"
-	"github.com/kronaxis/agent-gateway/workspace"
+	"github.com/GarfDev/garfield-router/agent-gateway/accounts"
+	regpkg "github.com/GarfDev/garfield-router/agent-gateway/registry"
+	"github.com/GarfDev/garfield-router/agent-gateway/runner"
+	"github.com/GarfDev/garfield-router/agent-gateway/workspace"
 )
 
 // dispatchProfileAgent runs a profile-driven CLI agent and forwards events
@@ -74,7 +74,7 @@ func (s *Server) dispatchProfileAgent(ctx context.Context, model string, req Age
 		RequestID:    req.RequestID,
 		AuxDirs:      auxDirs,
 		GitInit:      wsType == workspace.TypeWorktreeEphemeral,
-		GitUserEmail: "agent@kronaxis.local",
+		GitUserEmail: "agent@garfield.local",
 		GitUserName:  "agent",
 	})
 	if err != nil {

@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to kronaxis-router. Format loosely follows [Keep a Changelog](https://keepachangelog.com/).
+All notable changes to garfield-router. Format loosely follows [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
@@ -12,13 +12,13 @@ New `graphify.embedder.type: ollama` reuses a running Ollama (e.g. `nomic-embed-
 
 - **Predictive SLA routing** — each backend keeps a rolling p95 latency window (`sla.go`); a rule's `max_ttft_ms` drops backends over budget (never empties the candidate set).
 - **Spot-market arbitrage** — `server.cost_aware_routing` prefers the cheapest eligible backend; an optional `price_feed_url` (`pricefeed.go`) keeps effective per-backend cost live.
-- **Semantic / fuzzy prompt cache** — `semantic_cache.enabled` embeds the prompt and returns a cached answer on cosine ≥ `min_similarity` (default 0.96). Reuses the graphify embedder + pgvector (`semcache.go`); response header `X-Kronaxis-Cache: SEMANTIC`. Only on already-cacheable (deterministic) requests.
-- **System-2 reflection** — `X-Kronaxis-Reflect: 1` runs a review pass on the model's answer (`reflect.go`); header `X-Kronaxis-Reflected: true`. Non-streaming, best-effort.
-- **Adversarial consensus** — `X-Kronaxis-Consensus: 1` dispatches to several backends, returns the agreed answer (Jaccard ≥ 0.8) or resolves divergence with `server.consensus_arbiter` (`consensus.go`); header `X-Kronaxis-Consensus: agreed|arbitrated`.
+- **Semantic / fuzzy prompt cache** — `semantic_cache.enabled` embeds the prompt and returns a cached answer on cosine ≥ `min_similarity` (default 0.96). Reuses the graphify embedder + pgvector (`semcache.go`); response header `X-Garfield-Cache: SEMANTIC`. Only on already-cacheable (deterministic) requests.
+- **System-2 reflection** — `X-Garfield-Reflect: 1` runs a review pass on the model's answer (`reflect.go`); header `X-Garfield-Reflected: true`. Non-streaming, best-effort.
+- **Adversarial consensus** — `X-Garfield-Consensus: 1` dispatches to several backends, returns the agreed answer (Jaccard ≥ 0.8) or resolves divergence with `server.consensus_arbiter` (`consensus.go`); header `X-Garfield-Consensus: agreed|arbitrated`.
 
 ### Added: per-request response-schema validation (wired the quality gate)
 
-The `SchemaValidator` shipped in v0.3.0 but was never reachable from a request — there was no way to supply a schema. Now `X-Kronaxis-Response-Schema: <json-schema>` on a request makes the quality gate validate the model's JSON output against it and silently retry on the fallback backend on violation, so the client receives schema-valid JSON. A request-supplied schema activates gating regardless of the global `QUALITY_GATE_ENABLED` flag (streaming excluded); the retry needs `QUALITY_GATE_FALLBACK` set, else the original response is returned unchanged. Wired through both sequential and parallel gate modes.
+The `SchemaValidator` shipped in v0.3.0 but was never reachable from a request — there was no way to supply a schema. Now `X-Garfield-Response-Schema: <json-schema>` on a request makes the quality gate validate the model's JSON output against it and silently retry on the fallback backend on violation, so the client receives schema-valid JSON. A request-supplied schema activates gating regardless of the global `QUALITY_GATE_ENABLED` flag (streaming excluded); the retry needs `QUALITY_GATE_FALLBACK` set, else the original response is returned unchanged. Wired through both sequential and parallel gate modes.
 
 ### Added: queue-aware load balancing (ROADMAP Phase 1)
 
@@ -62,7 +62,7 @@ Endpoint: `GET /api/kv-trees` returns per backend node count and max age.
 
 ### Added: Stateful sessions (Phase 1)
 
-Server stored conversation transcripts. Client uploads the full messages array once via `X-Kronaxis-Session-Create: true`, gets back `X-Kronaxis-Session-ID: sess_...`, then sends only the new turn on subsequent calls. Postgres `kr_sessions` table auto created in `runMigrations`. TTL sweeper evicts idle sessions every 5 minutes; in memory hot cache absorbs consecutive turn bursts. Endpoints: `GET /v1/sessions`, `GET /v1/sessions/<id>`, `DELETE /v1/sessions/<id>`. Override TTL via `X-Kronaxis-Session-TTL: <seconds>`.
+Server stored conversation transcripts. Client uploads the full messages array once via `X-Garfield-Session-Create: true`, gets back `X-Garfield-Session-ID: sess_...`, then sends only the new turn on subsequent calls. Postgres `kr_sessions` table auto created in `runMigrations`. TTL sweeper evicts idle sessions every 5 minutes; in memory hot cache absorbs consecutive turn bursts. Endpoints: `GET /v1/sessions`, `GET /v1/sessions/<id>`, `DELETE /v1/sessions/<id>`. Override TTL via `X-Garfield-Session-TTL: <seconds>`.
 
 ### Added: Anthropic cache breakpoint injection
 
@@ -111,12 +111,12 @@ The agent-gateway sub-service has graduated from a Claude-Code-specific wrapper 
 
 - **Tiered registry** of profiles. Built-in defaults shipped: `claude-cli`, `codex-cli`, `aider` (first-class, deep stream parsers) plus `gemini-cli`, `grok-cli`, `llm` (supported, generic stdout streamer). User overrides drop into `agent-gateway/agents/<name>.yaml` and hot-reload via fsnotify.
 - **Universal account pool** generalised from the previous Anthropic-only pool. Pool config in `accounts.yaml`; provider-aware cooldowns; round-robin checkout; concurrent-safe leases. Env interpolation via `${VAR}` resolves at checkout time.
-- **Profile-declared workspace** lifecycle: `worktree-ephemeral` (default for file-editing agents), `dir-ephemeral` (chat-class CLIs), `stateless`. Per-request `X-Kronaxis-Workspace` override available.
+- **Profile-declared workspace** lifecycle: `worktree-ephemeral` (default for file-editing agents), `dir-ephemeral` (chat-class CLIs), `stateless`. Per-request `X-Garfield-Workspace` override available.
 - **Submodel surface**: `model: <agent>/<submodel>` is parsed, validated against the profile's `submodel.allowed` allowlist, and substituted into the CLI's `--model` flag (or env, per profile). Profiles with `supports: false` reject submodel-suffixed requests with a clear 400.
-- **Profile-declared graphify default**: agentic file-editing CLIs default to `off` (they manage their own context); chat-class CLIs default to `compress`. Per-request `X-Kronaxis-Graphify` header overrides.
-- **Rule synthesis**: `kronaxis-router agents register <name>` writes a backend stanza pointing at the gateway and appends the agent to the matching tier rule (creates `tier-<n>-auto` if absent). Idempotent re-registration. Capability tags stashed as backend metadata for future capability-based rules.
+- **Profile-declared graphify default**: agentic file-editing CLIs default to `off` (they manage their own context); chat-class CLIs default to `compress`. Per-request `X-Garfield-Graphify` header overrides.
+- **Rule synthesis**: `garfield-router agents register <name>` writes a backend stanza pointing at the gateway and appends the agent to the matching tier rule (creates `tier-<n>-auto` if absent). Idempotent re-registration. Capability tags stashed as backend metadata for future capability-based rules.
 - **New API surface**: `GET/POST /v1/agents`, `GET/DELETE /v1/agents/<name>`, `POST /v1/accounts/test`, extended `GET /v1/accounts` enumerating all pools.
-- **CLI subcommand**: `kronaxis-router agents register|list|remove|test`.
+- **CLI subcommand**: `garfield-router agents register|list|remove|test`.
 
 Code shape: 4 new packages in `agent-gateway/` (registry / accounts / workspace / runner) + 4 first-class output parsers + 6 builtin profile YAMLs embedded via `embed.FS` + the new dispatch path in `server.go`. Router-side: `synth.go` (idempotent YAML mutation that preserves comments and unrelated keys) + `agents_cmd.go`. Test coverage: 50+ unit tests across the new packages, all running under `go test -race`.
 
@@ -135,15 +135,15 @@ Token-saving retrieval-augmented generation that runs before classifier and cost
   - `compress` -- replace the largest fat user message with retrieved chunks (use for prompts that dump a whole file or doc)
   - `auto` -- heuristic on largest message size
   - `off` -- skip; pass-through unchanged
-- **Selection precedence**: `X-Kronaxis-Graphify` header > `X-Kronaxis-Service` override (chat-service -> augment, bulk-extractor -> compress, mixed-workload -> auto, ...) > `graphify.default` in config.
+- **Selection precedence**: `X-Garfield-Graphify` header > `X-Garfield-Service` override (chat-service -> augment, bulk-extractor -> compress, mixed-workload -> auto, ...) > `graphify.default` in config.
 - **Substrate**: `kr_chunks` table (id, source_path, chunk_idx, content, embedding VECTOR(N), metadata JSONB, source_mtime, ingested_at) with HNSW + GIN(content) + path indexes. Auto-created on startup with the embedder's dim.
 - **Hybrid retrieval**: pgvector cosine + BM25 reranking, with configurable weight, min cosine similarity, and token budget. Drops weak matches to avoid noise injection.
 - **Pluggable embedder**:
   - `local-st` (default): Python Flask + sentence-transformers Docker sidecar at `embedding-service/`. Default model `BAAI/bge-small-en-v1.5` (384 dim). Free, ~20 ms / embed. Bakes model into image layers; entrypoint populates the volume on first start so swaps are persisted.
   - `gemini`: text-embedding-004 batch API (768 dim).
   - `openai`: text-embedding-3-small (1536 dim).
-- **CLI**: `kronaxis-router ingest <paths...> [--reset] [--exclude] [-v]`, `kronaxis-router graphify {stats,reset}`.
-- **HTTP**: `POST /v1/retrieve`, `GET /api/graphify`, plus Prometheus counters at `/metrics` (`kronaxis_router_graphify_*`).
+- **CLI**: `garfield-router ingest <paths...> [--reset] [--exclude] [-v]`, `garfield-router graphify {stats,reset}`.
+- **HTTP**: `POST /v1/retrieve`, `GET /api/graphify`, plus Prometheus counters at `/metrics` (`garfield_router_graphify_*`).
 - **Live re-ingest**: optional fsnotify watcher (`graphify.watch_enabled`) re-ingests changed files within ~2 s of write/create.
 - **Concurrency**: parallel walker goroutines feed worker goroutines that batch + embed + upsert. Default 4 workers.
 

@@ -1,4 +1,4 @@
-module github.com/kronaxis/agent-gateway
+module github.com/GarfDev/garfield-router/agent-gateway
 
 go 1.22
 

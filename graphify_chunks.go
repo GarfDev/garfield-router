@@ -19,9 +19,9 @@ import (
 // All chunks include a leading "[file: path]\n" tag so the LLM has provenance.
 
 const (
-	chunkTargetTokens = 800
+	chunkTargetTokens  = 800
 	chunkOverlapTokens = 150
-	avgCharsPerToken  = 4
+	avgCharsPerToken   = 4
 )
 
 type Chunk struct {

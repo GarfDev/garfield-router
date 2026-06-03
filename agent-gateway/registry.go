@@ -50,7 +50,7 @@ func (r *Registry) Models() []ModelInfo {
 		out = append(out, ModelInfo{
 			ID:        id,
 			Object:    "model",
-			OwnedBy:   "kronaxis",
+			OwnedBy:   "garfield",
 			Available: a.Available(),
 			Adapter:   a.Name(),
 		})

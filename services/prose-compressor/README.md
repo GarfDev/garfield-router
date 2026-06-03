@@ -1,6 +1,6 @@
 # prose-compressor
 
-Learned prose-compression sidecar for `kronaxis-router`. Wraps **LLMLingua-2**
+Learned prose-compression sidecar for `garfield-router`. Wraps **LLMLingua-2**
 behind a tiny HTTP API. The router calls it on the aggressive compress path for
 prose segments only (never code or JSON), and falls back to its lexical passes
 on any error — so this service is strictly additive and safe to deploy/remove.

@@ -4,7 +4,7 @@ const uiHTML = `<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>kronaxis agent-gateway</title>
+<title>garfield agent-gateway</title>
 <style>
   :root { color-scheme: dark light; }
   body { font: 14px/1.4 ui-monospace, Menlo, Consolas, monospace; margin: 24px; max-width: 1100px; }
@@ -27,7 +27,7 @@ const uiHTML = `<!doctype html>
 </style>
 </head>
 <body>
-<h1>kronaxis agent-gateway</h1>
+<h1>garfield agent-gateway</h1>
 <div class="sub" id="sub">Live request feed. /metrics for Prometheus, /v1/models for adapters.</div>
 
 <div class="grid">

@@ -11,7 +11,7 @@ Source-released the tool that does this. Thread:
 The problem: every service in your stack has its own LLM fallback code. Some call GPT-4 for JSON extraction. Others use Claude for entity tagging. Nobody knows which service is burning the budget. Nobody wrote the routing logic because it is boring glue code.
 
 ## Tweet 3
-Kronaxis Router sits between your apps and your models. Auto-classifies each prompt (extraction? reasoning? summarisation?) and routes to the cheapest model that handles it.
+Garfield Router sits between your apps and your models. Auto-classifies each prompt (extraction? reasoning? summarisation?) and routes to the cheapest model that handles it.
 
 A 9B handles 80% of our traffic. The 27B only sees the 20% that actually needs it. Same quality. 94% cost reduction on the routed traffic.
 
@@ -31,4 +31,4 @@ Single Go binary. 70 tests. BSL 1.1. Python + TypeScript SDKs. Helm chart.
 
 No cloud dependency. Runs in front of local vLLM, Ollama, or any OpenAI-compatible endpoint.
 
-GitHub: https://github.com/kronaxis/kronaxis-router
+GitHub: https://github.com/GarfDev/garfield-router

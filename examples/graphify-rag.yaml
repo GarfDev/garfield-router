@@ -13,18 +13,18 @@
 # Prereqs:
 #   - Postgres with pgvector ext (CREATE EXTENSION vector;)
 #   - DATABASE_URL env var
-#   - embedding-service running (see kronaxis-router/embedding-service/)
+#   - embedding-service running (see garfield-router/embedding-service/)
 #
 # Bring up the embedding service:
-#   cd kronaxis-router/embedding-service
-#   docker build -t kronaxis/embedding-service .
-#   docker run -d --name kx-embedding -p 8053:8053 kronaxis/embedding-service
+#   cd garfield-router/embedding-service
+#   docker build -t garfield/embedding-service .
+#   docker run -d --name kx-embedding -p 8053:8053 garfield/embedding-service
 #
 # Ingest a project:
-#   DATABASE_URL=postgres://... kronaxis-router graphify ingest /path/to/repo
+#   DATABASE_URL=postgres://... garfield-router graphify ingest /path/to/repo
 #
 # Run the router:
-#   DATABASE_URL=postgres://... kronaxis-router serve --config examples/graphify-rag.yaml
+#   DATABASE_URL=postgres://... garfield-router serve --config examples/graphify-rag.yaml
 
 server:
   port: 8050
@@ -75,14 +75,14 @@ defaults:
 graphify:
   enabled: true
 
-  # Default behaviour for requests that don't set X-Kronaxis-Graphify:
+  # Default behaviour for requests that don't set X-Garfield-Graphify:
   #   off       no RAG (pass through)
   #   augment   prepend a system message with retrieved chunks
   #   compress  replace the fat user message with retrieved chunks
   #   auto      heuristic on largest message size
   default: "auto"
 
-  # Roots to ingest (used by `kronaxis-router graphify ingest <paths>`).
+  # Roots to ingest (used by `garfield-router graphify ingest <paths>`).
   ingest_roots:
     - /path/to/your/project
   ingest_excludes: []         # plus built-in defaults (.git, node_modules, vendor, etc.)
@@ -102,7 +102,7 @@ graphify:
   auto_compress_chars: 8000   # auto: messages bigger than this trigger compress
   auto_augment_max_chars: 4000 # auto: messages smaller than this trigger augment
 
-  # Per-service mode override (read from X-Kronaxis-Service header).
+  # Per-service mode override (read from X-Garfield-Service header).
   service_overrides:
     chat-service: "augment"
     bulk-extractor: "compress"

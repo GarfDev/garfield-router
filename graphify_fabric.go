@@ -1,6 +1,6 @@
 package main
 
-// Kronaxis Platform integration: when graphify.fabric_url is set we
+// Garfield Platform integration: when graphify.fabric_url is set we
 // delegate the RAG pre-stage to the Fabric service instead of running
 // embedded pgvector + the local sentence-transformers embedder.
 //
@@ -124,7 +124,7 @@ func fabricRetrieve(ctx context.Context, cfg GraphifyConfig, opts RetrieveOpts) 
 	if cfg.FabricKey != "" {
 		req.Header.Set("Authorization", "Bearer "+cfg.FabricKey)
 	}
-	req.Header.Set("User-Agent", "kronaxis-router/"+version+" (fabric-delegate)")
+	req.Header.Set("User-Agent", "garfield-router/"+version+" (fabric-delegate)")
 
 	logger.Printf("graphify: delegating to fabric url=%s top_k=%d weights=cosine:%.2f,tsvector:%.2f,recency:%.2f q_chars=%d",
 		cfg.FabricURL, body.TopK, body.Weights.Cosine, body.Weights.TSVector, body.Weights.Recency, len(opts.Query))
@@ -195,20 +195,20 @@ func isLikelyRange(s string) bool {
 // already emits the embedded-graphify counters.
 func fabricMetricsLines() string {
 	var b strings.Builder
-	b.WriteString("# HELP kronaxis_router_graphify_fabric_calls_total Calls to Fabric /v1/rag\n")
-	b.WriteString("# TYPE kronaxis_router_graphify_fabric_calls_total counter\n")
-	fmt.Fprintf(&b, "kronaxis_router_graphify_fabric_calls_total %d\n", graphifyFabricCallsTotal.Load())
+	b.WriteString("# HELP garfield_router_graphify_fabric_calls_total Calls to Fabric /v1/rag\n")
+	b.WriteString("# TYPE garfield_router_graphify_fabric_calls_total counter\n")
+	fmt.Fprintf(&b, "garfield_router_graphify_fabric_calls_total %d\n", graphifyFabricCallsTotal.Load())
 
-	b.WriteString("# HELP kronaxis_router_graphify_fabric_fails_total Fabric /v1/rag call failures\n")
-	b.WriteString("# TYPE kronaxis_router_graphify_fabric_fails_total counter\n")
-	fmt.Fprintf(&b, "kronaxis_router_graphify_fabric_fails_total %d\n", graphifyFabricFailsTotal.Load())
+	b.WriteString("# HELP garfield_router_graphify_fabric_fails_total Fabric /v1/rag call failures\n")
+	b.WriteString("# TYPE garfield_router_graphify_fabric_fails_total counter\n")
+	fmt.Fprintf(&b, "garfield_router_graphify_fabric_fails_total %d\n", graphifyFabricFailsTotal.Load())
 
-	b.WriteString("# HELP kronaxis_router_graphify_fabric_chunks_total Chunks returned by Fabric\n")
-	b.WriteString("# TYPE kronaxis_router_graphify_fabric_chunks_total counter\n")
-	fmt.Fprintf(&b, "kronaxis_router_graphify_fabric_chunks_total %d\n", graphifyFabricChunksTotal.Load())
+	b.WriteString("# HELP garfield_router_graphify_fabric_chunks_total Chunks returned by Fabric\n")
+	b.WriteString("# TYPE garfield_router_graphify_fabric_chunks_total counter\n")
+	fmt.Fprintf(&b, "garfield_router_graphify_fabric_chunks_total %d\n", graphifyFabricChunksTotal.Load())
 
-	b.WriteString("# HELP kronaxis_router_graphify_fabric_fallbacks_total Fallbacks to embedded graphify after fabric failure\n")
-	b.WriteString("# TYPE kronaxis_router_graphify_fabric_fallbacks_total counter\n")
-	fmt.Fprintf(&b, "kronaxis_router_graphify_fabric_fallbacks_total %d\n", graphifyFabricFallbacksTotal.Load())
+	b.WriteString("# HELP garfield_router_graphify_fabric_fallbacks_total Fallbacks to embedded graphify after fabric failure\n")
+	b.WriteString("# TYPE garfield_router_graphify_fabric_fallbacks_total counter\n")
+	fmt.Fprintf(&b, "garfield_router_graphify_fabric_fallbacks_total %d\n", graphifyFabricFallbacksTotal.Load())
 	return b.String()
 }

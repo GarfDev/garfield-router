@@ -1,14 +1,14 @@
 /**
- * Kronaxis Router TypeScript SDK.
+ * Garfield Router TypeScript SDK.
  *
  * Zero-dependency client that wraps the OpenAI-compatible API with
  * automatic routing metadata for cost-optimised backend selection.
  *
  * @example
  * ```typescript
- * import { KronaxisRouter, Tier } from 'kronaxis-router';
+ * import { GarfieldRouter, Tier } from 'garfield-router';
  *
- * const router = new KronaxisRouter('http://localhost:8050', { service: 'my-app' });
+ * const router = new GarfieldRouter('http://localhost:8050', { service: 'my-app' });
  * const response = await router.chat('Summarise this...', { tier: Tier.Light });
  * ```
  */
@@ -55,7 +55,7 @@ export interface RouterConfig {
   timeout?: number;
 }
 
-export class KronaxisRouter {
+export class GarfieldRouter {
   private baseUrl: string;
   private service: string;
   private defaultTier: Tier;
@@ -98,16 +98,16 @@ export class KronaxisRouter {
 
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
-      'X-Kronaxis-Service': this.service,
-      'X-Kronaxis-Priority': options.priority || this.defaultPriority,
+      'X-Garfield-Service': this.service,
+      'X-Garfield-Priority': options.priority || this.defaultPriority,
     };
 
     const tier = options.tier ?? this.defaultTier;
     if (tier !== Tier.Auto) {
-      headers['X-Kronaxis-Tier'] = String(tier);
+      headers['X-Garfield-Tier'] = String(tier);
     }
-    if (options.callType) headers['X-Kronaxis-CallType'] = options.callType;
-    if (options.personaId) headers['X-Kronaxis-PersonaID'] = options.personaId;
+    if (options.callType) headers['X-Garfield-CallType'] = options.callType;
+    if (options.personaId) headers['X-Garfield-PersonaID'] = options.personaId;
     if (this.apiToken) headers['Authorization'] = `Bearer ${this.apiToken}`;
 
     const resp = await this.fetch(`${this.baseUrl}/v1/chat/completions`, {

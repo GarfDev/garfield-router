@@ -1,7 +1,7 @@
 ---
-name: kronaxis-router
+name: garfield-router
 description: >
-  Manage LLM routing, costs, and backends via the Kronaxis Router.
+  Manage LLM routing, costs, and backends via the Garfield Router.
   Use when the user asks about LLM costs, backend health, routing rules,
   or wants to add/remove/configure LLM backends.
   Triggers on: "router", "LLM costs", "backend health", "routing rules",
@@ -21,9 +21,9 @@ tools:
   - router_reload
 ---
 
-# Kronaxis Router Skill
+# Garfield Router Skill
 
-You have access to the Kronaxis Router MCP tools for managing LLM routing and costs.
+You have access to the Garfield Router MCP tools for managing LLM routing and costs.
 
 ## Available Tools
 
@@ -45,7 +45,7 @@ You have access to the Kronaxis Router MCP tools for managing LLM routing and co
 ## How Routing Works
 
 Requests arrive at the router's OpenAI-compatible endpoint. The router:
-1. Extracts metadata from `X-Kronaxis-*` headers (service, call_type, tier, priority)
+1. Extracts metadata from `X-Garfield-*` headers (service, call_type, tier, priority)
 2. Evaluates rules in priority order (highest first)
 3. Filters backends by health, capabilities, LoRA adapters, and cost ceiling
 4. Forwards to the first healthy, capable backend
@@ -116,14 +116,14 @@ If the router is not running, tell the user:
 
 ```bash
 # Install
-curl -fsSL https://raw.githubusercontent.com/Kronaxis/kronaxis-router/main/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/Garfield/garfield-router/main/install.sh | sh
 
 # Auto-detect backends and generate config
-kronaxis-router init
+garfield-router init
 
 # Start
-kronaxis-router
+garfield-router
 
 # Configure Claude Code MCP (one-time)
-kronaxis-router init --claude
+garfield-router init --claude
 ```

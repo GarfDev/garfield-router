@@ -24,8 +24,8 @@ func TestMCPInitialize(t *testing.T) {
 	if result.ProtocolVersion != mcpProtocolVersion {
 		t.Errorf("protocol version = %s, want %s", result.ProtocolVersion, mcpProtocolVersion)
 	}
-	if result.ServerInfo.Name != "kronaxis-router" {
-		t.Errorf("server name = %s, want kronaxis-router", result.ServerInfo.Name)
+	if result.ServerInfo.Name != "garfield-router" {
+		t.Errorf("server name = %s, want garfield-router", result.ServerInfo.Name)
 	}
 	if result.Capabilities.Tools == nil {
 		t.Error("tools capability is nil")
@@ -184,8 +184,8 @@ func TestInitSanitiseName(t *testing.T) {
 
 func TestInitPriorityForModel(t *testing.T) {
 	tests := []struct {
-		model    string
-		minPri   int
+		model  string
+		minPri int
 	}{
 		{"llama3.1:70b", 80},
 		{"qwen2.5:14b", 40},
@@ -222,4 +222,3 @@ func TestFormatResponseError(t *testing.T) {
 		t.Error("expected IsError=true for 500")
 	}
 }
-

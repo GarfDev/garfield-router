@@ -29,17 +29,17 @@ type CodexParser struct{}
 func (CodexParser) Name() string { return "codex" }
 
 type codexLine struct {
-	Type        string         `json:"type"`
-	Content     string         `json:"content,omitempty"`
-	Text        string         `json:"text,omitempty"`
-	Name        string         `json:"name,omitempty"`
-	ID          string         `json:"id,omitempty"`
-	Arguments   string         `json:"arguments,omitempty"`
-	StopReason  string         `json:"stop_reason,omitempty"`
-	FinishReason string        `json:"finish_reason,omitempty"`
-	Message     string         `json:"message,omitempty"`
-	Usage       *codexUsage    `json:"usage,omitempty"`
-	NumTurns    int            `json:"num_turns,omitempty"`
+	Type         string      `json:"type"`
+	Content      string      `json:"content,omitempty"`
+	Text         string      `json:"text,omitempty"`
+	Name         string      `json:"name,omitempty"`
+	ID           string      `json:"id,omitempty"`
+	Arguments    string      `json:"arguments,omitempty"`
+	StopReason   string      `json:"stop_reason,omitempty"`
+	FinishReason string      `json:"finish_reason,omitempty"`
+	Message      string      `json:"message,omitempty"`
+	Usage        *codexUsage `json:"usage,omitempty"`
+	NumTurns     int         `json:"num_turns,omitempty"`
 }
 
 type codexUsage struct {

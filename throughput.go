@@ -224,7 +224,7 @@ func trueVLLMBatch(entries []*BatchEntry) bool {
 	for i, choice := range batchResp.Choices {
 		// Convert completions response to chat response format
 		chatResp := ChatResponse{
-			ID:      "chatcmpl-kronaxis-batch",
+			ID:      "chatcmpl-garfield-batch",
 			Object:  "chat.completion",
 			Created: time.Now().Unix(),
 			Model:   entries[i].Route.ModelName,

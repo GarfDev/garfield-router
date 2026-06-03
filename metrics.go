@@ -103,65 +103,65 @@ func handleMetrics(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/plain; version=0.0.4; charset=utf-8")
 
 	// Request counters
-	fmt.Fprintln(w, "# HELP kronaxis_router_requests_total Total requests by service, backend, and rule.")
-	fmt.Fprintln(w, "# TYPE kronaxis_router_requests_total counter")
+	fmt.Fprintln(w, "# HELP garfield_router_requests_total Total requests by service, backend, and rule.")
+	fmt.Fprintln(w, "# TYPE garfield_router_requests_total counter")
 	prom.mu.RLock()
 	keys := sortedKeys(prom.requestsTotal)
 	for _, label := range keys {
-		fmt.Fprintf(w, "kronaxis_router_requests_total{%s} %d\n", label, prom.requestsTotal[label].Load())
+		fmt.Fprintf(w, "garfield_router_requests_total{%s} %d\n", label, prom.requestsTotal[label].Load())
 	}
 
 	// Error counters
-	fmt.Fprintln(w, "# HELP kronaxis_router_errors_total Error responses (4xx/5xx) by label.")
-	fmt.Fprintln(w, "# TYPE kronaxis_router_errors_total counter")
+	fmt.Fprintln(w, "# HELP garfield_router_errors_total Error responses (4xx/5xx) by label.")
+	fmt.Fprintln(w, "# TYPE garfield_router_errors_total counter")
 	keys = sortedKeys(prom.errorsTotal)
 	for _, label := range keys {
-		fmt.Fprintf(w, "kronaxis_router_errors_total{%s} %d\n", label, prom.errorsTotal[label].Load())
+		fmt.Fprintf(w, "garfield_router_errors_total{%s} %d\n", label, prom.errorsTotal[label].Load())
 	}
 
 	// Latency histogram
-	fmt.Fprintln(w, "# HELP kronaxis_router_request_duration_ms Request latency in milliseconds.")
-	fmt.Fprintln(w, "# TYPE kronaxis_router_request_duration_ms histogram")
+	fmt.Fprintln(w, "# HELP garfield_router_request_duration_ms Request latency in milliseconds.")
+	fmt.Fprintln(w, "# TYPE garfield_router_request_duration_ms histogram")
 	for _, label := range sortedKeys(prom.latencyBuckets) {
 		buckets := prom.latencyBuckets[label]
 		cumulative := int64(0)
 		for i, bound := range bucketBounds {
 			cumulative += buckets[i].Load()
-			fmt.Fprintf(w, "kronaxis_router_request_duration_ms_bucket{%s,le=\"%.0f\"} %d\n", label, bound, cumulative)
+			fmt.Fprintf(w, "garfield_router_request_duration_ms_bucket{%s,le=\"%.0f\"} %d\n", label, bound, cumulative)
 		}
-		fmt.Fprintf(w, "kronaxis_router_request_duration_ms_bucket{%s,le=\"+Inf\"} %d\n", label, prom.latencyCount[label].Load())
-		fmt.Fprintf(w, "kronaxis_router_request_duration_ms_sum{%s} %d\n", label, prom.latencySumMS[label].Load())
-		fmt.Fprintf(w, "kronaxis_router_request_duration_ms_count{%s} %d\n", label, prom.latencyCount[label].Load())
+		fmt.Fprintf(w, "garfield_router_request_duration_ms_bucket{%s,le=\"+Inf\"} %d\n", label, prom.latencyCount[label].Load())
+		fmt.Fprintf(w, "garfield_router_request_duration_ms_sum{%s} %d\n", label, prom.latencySumMS[label].Load())
+		fmt.Fprintf(w, "garfield_router_request_duration_ms_count{%s} %d\n", label, prom.latencyCount[label].Load())
 	}
 	prom.mu.RUnlock()
 
 	// Graphify pre-stage metrics
 	fmt.Fprint(w, graphifyMetricsLines())
-	// Fabric-delegate metrics (Kronaxis Platform integration)
+	// Fabric-delegate metrics (Garfield Platform integration)
 	fmt.Fprint(w, fabricMetricsLines())
 
 	// Cache metrics
-	fmt.Fprintln(w, "# HELP kronaxis_router_cache_hits_total Cache hits.")
-	fmt.Fprintln(w, "# TYPE kronaxis_router_cache_hits_total counter")
-	fmt.Fprintf(w, "kronaxis_router_cache_hits_total %d\n", prom.cacheHits.Load())
-	fmt.Fprintln(w, "# HELP kronaxis_router_cache_misses_total Cache misses.")
-	fmt.Fprintln(w, "# TYPE kronaxis_router_cache_misses_total counter")
-	fmt.Fprintf(w, "kronaxis_router_cache_misses_total %d\n", prom.cacheMisses.Load())
+	fmt.Fprintln(w, "# HELP garfield_router_cache_hits_total Cache hits.")
+	fmt.Fprintln(w, "# TYPE garfield_router_cache_hits_total counter")
+	fmt.Fprintf(w, "garfield_router_cache_hits_total %d\n", prom.cacheHits.Load())
+	fmt.Fprintln(w, "# HELP garfield_router_cache_misses_total Cache misses.")
+	fmt.Fprintln(w, "# TYPE garfield_router_cache_misses_total counter")
+	fmt.Fprintf(w, "garfield_router_cache_misses_total %d\n", prom.cacheMisses.Load())
 
 	// Batch metrics
-	fmt.Fprintln(w, "# HELP kronaxis_router_batch_submitted_total Batch jobs submitted.")
-	fmt.Fprintln(w, "# TYPE kronaxis_router_batch_submitted_total counter")
-	fmt.Fprintf(w, "kronaxis_router_batch_submitted_total %d\n", prom.batchSubmitted.Load())
-	fmt.Fprintln(w, "# HELP kronaxis_router_batch_completed_total Batch jobs completed.")
-	fmt.Fprintln(w, "# TYPE kronaxis_router_batch_completed_total counter")
-	fmt.Fprintf(w, "kronaxis_router_batch_completed_total %d\n", prom.batchCompleted.Load())
-	fmt.Fprintln(w, "# HELP kronaxis_router_batch_failed_total Batch jobs failed.")
-	fmt.Fprintln(w, "# TYPE kronaxis_router_batch_failed_total counter")
-	fmt.Fprintf(w, "kronaxis_router_batch_failed_total %d\n", prom.batchFailed.Load())
+	fmt.Fprintln(w, "# HELP garfield_router_batch_submitted_total Batch jobs submitted.")
+	fmt.Fprintln(w, "# TYPE garfield_router_batch_submitted_total counter")
+	fmt.Fprintf(w, "garfield_router_batch_submitted_total %d\n", prom.batchSubmitted.Load())
+	fmt.Fprintln(w, "# HELP garfield_router_batch_completed_total Batch jobs completed.")
+	fmt.Fprintln(w, "# TYPE garfield_router_batch_completed_total counter")
+	fmt.Fprintf(w, "garfield_router_batch_completed_total %d\n", prom.batchCompleted.Load())
+	fmt.Fprintln(w, "# HELP garfield_router_batch_failed_total Batch jobs failed.")
+	fmt.Fprintln(w, "# TYPE garfield_router_batch_failed_total counter")
+	fmt.Fprintf(w, "garfield_router_batch_failed_total %d\n", prom.batchFailed.Load())
 
 	// Backend health gauges
-	fmt.Fprintln(w, "# HELP kronaxis_router_backend_healthy Whether a backend is healthy (1=yes, 0=no).")
-	fmt.Fprintln(w, "# TYPE kronaxis_router_backend_healthy gauge")
+	fmt.Fprintln(w, "# HELP garfield_router_backend_healthy Whether a backend is healthy (1=yes, 0=no).")
+	fmt.Fprintln(w, "# TYPE garfield_router_backend_healthy gauge")
 	pool.mu.RLock()
 	for _, b := range pool.backends {
 		b.mu.RLock()
@@ -169,8 +169,8 @@ func handleMetrics(w http.ResponseWriter, r *http.Request) {
 		if b.Status == StatusHealthy {
 			healthy = 1
 		}
-		fmt.Fprintf(w, "kronaxis_router_backend_healthy{backend=%q,type=%q} %d\n", b.Config.Name, b.Config.Type, healthy)
-		fmt.Fprintf(w, "kronaxis_router_backend_active_requests{backend=%q,type=%q} %d\n", b.Config.Name, b.Config.Type, b.ActiveReqs.Load())
+		fmt.Fprintf(w, "garfield_router_backend_healthy{backend=%q,type=%q} %d\n", b.Config.Name, b.Config.Type, healthy)
+		fmt.Fprintf(w, "garfield_router_backend_active_requests{backend=%q,type=%q} %d\n", b.Config.Name, b.Config.Type, b.ActiveReqs.Load())
 		b.mu.RUnlock()
 	}
 	pool.mu.RUnlock()
@@ -194,9 +194,9 @@ func handleMetrics(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Uptime
-	fmt.Fprintln(w, "# HELP kronaxis_router_uptime_seconds Uptime in seconds.")
-	fmt.Fprintln(w, "# TYPE kronaxis_router_uptime_seconds gauge")
-	fmt.Fprintf(w, "kronaxis_router_uptime_seconds %d\n", int(time.Since(startupTime).Seconds()))
+	fmt.Fprintln(w, "# HELP garfield_router_uptime_seconds Uptime in seconds.")
+	fmt.Fprintln(w, "# TYPE garfield_router_uptime_seconds gauge")
+	fmt.Fprintf(w, "garfield_router_uptime_seconds %d\n", int(time.Since(startupTime).Seconds()))
 }
 
 func sortedKeys[V any](m map[string]V) []string {

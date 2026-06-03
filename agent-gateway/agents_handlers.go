@@ -11,8 +11,8 @@ import (
 
 	"gopkg.in/yaml.v3"
 
-	"github.com/kronaxis/agent-gateway/accounts"
-	regpkg "github.com/kronaxis/agent-gateway/registry"
+	"github.com/GarfDev/garfield-router/agent-gateway/accounts"
+	regpkg "github.com/GarfDev/garfield-router/agent-gateway/registry"
 )
 
 // handleAgents serves /v1/agents (list) and /v1/agents (POST = register).

@@ -40,16 +40,16 @@ type Server struct {
 
 func newServer(cfg *Config, reg *Registry, logger *log.Logger, audit AuditLogger, pool *WarmPool, metrics *Metrics, bus *liveBus, auth *AuthPool, profileReg *registryDeps, accountMgr *accountsDeps, profileDir string) *Server {
 	return &Server{
-		cfg:        cfg,
-		registry:   reg,
-		sem:        make(chan struct{}, cfg.MaxConcurrent),
-		logger:     logger,
-		audit:      audit,
-		pool:       pool,
-		metrics:    metrics,
-		wsStore:    newWorkspaceStore(),
-		liveBus:    bus,
-		auth:       auth,
+		cfg:           cfg,
+		registry:      reg,
+		sem:           make(chan struct{}, cfg.MaxConcurrent),
+		logger:        logger,
+		audit:         audit,
+		pool:          pool,
+		metrics:       metrics,
+		wsStore:       newWorkspaceStore(),
+		liveBus:       bus,
+		auth:          auth,
 		profileReg:    profileReg,
 		accountMgr:    accountMgr,
 		profileDir:    profileDir,
@@ -108,12 +108,12 @@ func (s *Server) handleModels(w http.ResponseWriter, _ *http.Request) {
 	if s.profileReg != nil {
 		for _, p := range s.profileReg.List() {
 			models = append(models, ModelInfo{
-				ID: p.Name, Object: "model", OwnedBy: "kronaxis", Available: true, Adapter: string(p.Tier),
+				ID: p.Name, Object: "model", OwnedBy: "garfield", Available: true, Adapter: string(p.Tier),
 			})
 			if p.Submodel.Supports {
 				for _, sm := range p.Submodel.Allowed {
 					models = append(models, ModelInfo{
-						ID: p.Name + "/" + sm, Object: "model", OwnedBy: "kronaxis", Available: true, Adapter: string(p.Tier),
+						ID: p.Name + "/" + sm, Object: "model", OwnedBy: "garfield", Available: true, Adapter: string(p.Tier),
 					})
 				}
 			}
@@ -221,9 +221,9 @@ func (s *Server) handleChat(w http.ResponseWriter, r *http.Request) {
 
 	// Resolve workspace: warm pool > existing workspace_id > inline create.
 	var (
-		ws       *Workspace
-		wsID     string
-		wsOwned  bool
+		ws      *Workspace
+		wsID    string
+		wsOwned bool
 	)
 	if req.WorkspaceID != "" {
 		stored, ok := s.wsStore.Get(req.WorkspaceID)
@@ -461,7 +461,7 @@ streamLoop:
 
 	durationMS := time.Since(startTime).Milliseconds()
 	extras := map[string]any{
-		"kronaxis": KronaxisExtras{
+		"garfield": GarfieldExtras{
 			WorkspacePath: ws.Path,
 			GitDiff:       diff,
 			NumTurns:      numTurns,
@@ -588,7 +588,7 @@ func (s *Server) bufferedCompletion(
 			FinishReason: &finish,
 		}},
 		Usage: &Usage{CostUSD: costUSD},
-		Kronaxis: &KronaxisExtras{
+		Garfield: &GarfieldExtras{
 			WorkspacePath: ws.Path,
 			GitDiff:       diff,
 			NumTurns:      numTurns,

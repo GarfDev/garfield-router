@@ -59,7 +59,7 @@ type BatchManager struct {
 
 func newBatchManager(dataDir string) *BatchManager {
 	if dataDir == "" {
-		dataDir = "/tmp/kronaxis-router-batches"
+		dataDir = "/tmp/garfield-router-batches"
 	}
 	os.MkdirAll(dataDir, 0755)
 	bm := &BatchManager{
@@ -708,8 +708,8 @@ func (bm *BatchManager) deliverWebhook(job *BatchJob) {
 	for attempt := 0; attempt < 3; attempt++ {
 		req, _ := http.NewRequest("POST", job.CallbackURL, bytes.NewReader(body))
 		req.Header.Set("Content-Type", "application/json")
-		req.Header.Set("X-Kronaxis-Event", "batch.completed")
-		req.Header.Set("X-Kronaxis-Batch-ID", job.ID)
+		req.Header.Set("X-Garfield-Event", "batch.completed")
+		req.Header.Set("X-Garfield-Batch-ID", job.ID)
 
 		resp, err := llmClient.Do(req)
 		if err == nil && resp.StatusCode < 400 {

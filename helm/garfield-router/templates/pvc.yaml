@@ -2,9 +2,9 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ include "kronaxis-router.fullname" . }}-data
+  name: {{ include "garfield-router.fullname" . }}-data
   labels:
-    {{- include "kronaxis-router.labels" . | nindent 4 }}
+    {{- include "garfield-router.labels" . | nindent 4 }}
 spec:
   accessModes:
     {{- range .Values.persistence.accessModes }}

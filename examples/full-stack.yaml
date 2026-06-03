@@ -1,7 +1,7 @@
 # Everything at once: cost routing + caching + batching + graphify RAG +
 # agent-gateway + multi-account pools.
 #
-# This is what kronaxis itself runs in production. Most users want a subset;
+# This is what garfield itself runs in production. Most users want a subset;
 # this is the "all features turned on" reference.
 #
 # Pipeline a request takes:
@@ -28,7 +28,7 @@ server:
   default_timeout: 120s
   branding:
     headers: true
-    header_name: "Kronaxis Router"
+    header_name: "Garfield Router"
 
 backends:
   # Local vLLM (cheapest, GPU electricity only).

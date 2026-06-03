@@ -11,27 +11,27 @@ import (
 
 // RouteRequest contains the metadata extracted from an incoming request.
 type RouteRequest struct {
-	Service         string          // X-Kronaxis-Service header
-	CallType        string          // X-Kronaxis-CallType header
-	Priority        string          // X-Kronaxis-Priority header (interactive, normal, background, bulk)
-	Tier            int             // X-Kronaxis-Tier header (0=auto, 1=heavy, 2=light)
-	PersonaID       string          // X-Kronaxis-PersonaID header
+	Service         string          // X-Garfield-Service header
+	CallType        string          // X-Garfield-CallType header
+	Priority        string          // X-Garfield-Priority header (interactive, normal, background, bulk)
+	Tier            int             // X-Garfield-Tier header (0=auto, 1=heavy, 2=light)
+	PersonaID       string          // X-Garfield-PersonaID header
 	ModelField      string          // model field from OpenAI request body
 	ContentType     string          // "text" or "vision" (detected from message content)
 	Stream          bool            // stream field from OpenAI request body
 	ComplexityScore ComplexityScore // 0-100 auto-classified complexity
 
 	// ResponseSchema is a JSON Schema supplied by the client via the
-	// X-Kronaxis-Response-Schema header. When set, the quality gate validates
+	// X-Garfield-Response-Schema header. When set, the quality gate validates
 	// the model's JSON output against it and retries on the fallback backend on
 	// violation, so the client always receives schema-valid JSON.
 	ResponseSchema string
 
-	// Reflect, set via X-Kronaxis-Reflect: 1, runs a System-2 review pass on the
+	// Reflect, set via X-Garfield-Reflect: 1, runs a System-2 review pass on the
 	// model's first answer before returning it (non-streaming only).
 	Reflect bool
 
-	// Consensus, set via X-Kronaxis-Consensus: 1, dispatches to several backends
+	// Consensus, set via X-Garfield-Consensus: 1, dispatches to several backends
 	// and resolves divergence with an arbiter before returning.
 	Consensus bool
 

@@ -1,10 +1,10 @@
 Metadata-Version: 2.4
-Name: kronaxis-router
+Name: garfield-router
 Version: 0.1.0
-Summary: Python SDK for Kronaxis Router - intelligent LLM proxy
-Home-page: https://github.com/kronaxis/kronaxis-router
-Author: Kronaxis
-Author-email: dev@kronaxis.co.uk
+Summary: Python SDK for Garfield Router - intelligent LLM proxy
+Home-page: https://github.com/GarfDev/garfield-router
+Author: Garfield
+Author-email: dev@garfield.co.uk
 Classifier: Development Status :: 4 - Beta
 Classifier: Intended Audience :: Developers
 Classifier: License :: OSI Approved :: Apache Software License
@@ -21,20 +21,20 @@ Dynamic: home-page
 Dynamic: requires-python
 Dynamic: summary
 
-# Kronaxis Router Python SDK
+# Garfield Router Python SDK
 
-Zero-dependency Python client for [Kronaxis Router](https://github.com/kronaxis/kronaxis-router).
+Zero-dependency Python client for [Garfield Router](https://github.com/GarfDev/garfield-router).
 
 ```bash
-pip install kronaxis-router
+pip install garfield-router
 ```
 
 ## Quick Start
 
 ```python
-from kronaxis_router import KronaxisRouter, Tier
+from garfield_router import GarfieldRouter, Tier
 
-router = KronaxisRouter("http://localhost:8050", service="my-app")
+router = GarfieldRouter("http://localhost:8050", service="my-app")
 
 # Simple chat (auto-classified tier)
 response = router.chat("What is the capital of France?")

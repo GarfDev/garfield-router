@@ -1,8 +1,8 @@
 # User Guide
 
-## What Kronaxis Router Does
+## What Garfield Router Does
 
-Kronaxis Router sits between your applications and LLM backends. Every request that would normally go directly to OpenAI, Gemini, vLLM, or Ollama goes through the router instead. The router decides which backend to use based on rules you define, optimising for cost, quality, and availability.
+Garfield Router sits between your applications and LLM backends. Every request that would normally go directly to OpenAI, Gemini, vLLM, or Ollama goes through the router instead. The router decides which backend to use based on rules you define, optimising for cost, quality, and availability.
 
 **The core principle:** route every request to the cheapest model that can reliably deliver the required output.
 
@@ -11,7 +11,7 @@ Kronaxis Router sits between your applications and LLM backends. Every request t
 ### 1. Start the router
 
 ```bash
-./kronaxis-router
+./garfield-router
 ```
 
 ### 2. Point your app at it
@@ -35,8 +35,8 @@ For smarter routing, add headers to your requests:
 ```bash
 curl http://localhost:8050/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "X-Kronaxis-Service: my-app" \
-  -H "X-Kronaxis-Tier: 2" \
+  -H "X-Garfield-Service: my-app" \
+  -H "X-Garfield-Tier: 2" \
   -d '{"model":"default","messages":[{"role":"user","content":"Classify this as positive or negative: Great product!"}],"max_tokens":50}'
 ```
 
@@ -46,15 +46,15 @@ Without headers, the router uses **automatic classification** to determine the r
 
 | Header | Values | Purpose |
 |--------|--------|---------|
-| `X-Kronaxis-Service` | Any string | Identifies your app for cost tracking and rate limiting |
-| `X-Kronaxis-Tier` | `1` (heavy), `2` (light) | Override auto-classification. Tier 1 = reasoning, Tier 2 = extraction |
-| `X-Kronaxis-Priority` | `interactive`, `normal`, `background`, `bulk` | Controls batching and auto-batch routing |
-| `X-Kronaxis-CallType` | Any string | Task type for fine-grained rule matching |
-| `X-Kronaxis-PersonaID` | Any string | Cost attribution to a specific entity |
-| `X-Kronaxis-Graphify` | `compress`/`augment`/`auto`/`off` | Per-request RAG + compression mode |
-| `X-Kronaxis-Response-Schema` | JSON Schema | Validate the model's JSON output; retry on fallback on violation |
-| `X-Kronaxis-Compress-CCR` | `1` | Allow CCR elision (this client can fetch elided blocks back) |
-| `X-Kronaxis-Session-Create` / `-ID` | `true` / id | Upload context once, then send only new turns (see README → Stateful Sessions) |
+| `X-Garfield-Service` | Any string | Identifies your app for cost tracking and rate limiting |
+| `X-Garfield-Tier` | `1` (heavy), `2` (light) | Override auto-classification. Tier 1 = reasoning, Tier 2 = extraction |
+| `X-Garfield-Priority` | `interactive`, `normal`, `background`, `bulk` | Controls batching and auto-batch routing |
+| `X-Garfield-CallType` | Any string | Task type for fine-grained rule matching |
+| `X-Garfield-PersonaID` | Any string | Cost attribution to a specific entity |
+| `X-Garfield-Graphify` | `compress`/`augment`/`auto`/`off` | Per-request RAG + compression mode |
+| `X-Garfield-Response-Schema` | JSON Schema | Validate the model's JSON output; retry on fallback on violation |
+| `X-Garfield-Compress-CCR` | `1` | Allow CCR elision (this client can fetch elided blocks back) |
+| `X-Garfield-Session-Create` / `-ID` | `true` / id | Upload context once, then send only new turns (see README → Stateful Sessions) |
 
 **All headers are optional.** The router works without any of them.
 
@@ -62,7 +62,7 @@ For deeper feature usage — cluster intelligence (KV pinning, queue-aware), con
 
 ## Automatic Tier Classification
 
-When `X-Kronaxis-Tier` is not set, the router analyses your prompt and automatically assigns a tier:
+When `X-Garfield-Tier` is not set, the router analyses your prompt and automatically assigns a tier:
 
 **Tier 1 (heavy reasoning)** is assigned when:
 - The prompt contains planning/strategy/analysis keywords
@@ -140,7 +140,7 @@ Cache behaviour:
 - Streaming requests are never cached
 - Cache key includes: model, messages, max_tokens, top_p, n
 - Default: 1000 entries, 1 hour TTL
-- Response header `X-Kronaxis-Cache: HIT` indicates a cache hit
+- Response header `X-Garfield-Cache: HIT` indicates a cache hit
 
 Configure via environment variables:
 ```

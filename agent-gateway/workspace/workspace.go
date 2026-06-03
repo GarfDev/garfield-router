@@ -35,15 +35,15 @@ type Workspace interface {
 // Spec describes how to construct a Workspace. Set ConfigDirName on
 // worktree types when the runner needs a sibling auxiliary dir.
 type Spec struct {
-	Type           Type
-	Root           string // parent dir; created if missing
-	RequestID      string // surfaces in dir name; defaults to random hex
-	BaseRepo       string // optional source repo to copy in (worktree only)
-	InitCmd        string // optional shell command run after Setup, cwd=Path()
-	AuxDirs        []string // names of sibling aux dirs to create
-	GitInit        bool    // if true (default for worktree), run `git init --quiet`
-	GitUserEmail   string  // optional commit-author email
-	GitUserName    string  // optional commit-author name
+	Type         Type
+	Root         string   // parent dir; created if missing
+	RequestID    string   // surfaces in dir name; defaults to random hex
+	BaseRepo     string   // optional source repo to copy in (worktree only)
+	InitCmd      string   // optional shell command run after Setup, cwd=Path()
+	AuxDirs      []string // names of sibling aux dirs to create
+	GitInit      bool     // if true (default for worktree), run `git init --quiet`
+	GitUserEmail string   // optional commit-author email
+	GitUserName  string   // optional commit-author name
 }
 
 // New constructs a Workspace from the spec.
@@ -55,7 +55,7 @@ func New(spec Spec) (Workspace, error) {
 		spec.RequestID = randomHex(8)
 	}
 	if spec.Root == "" {
-		spec.Root = filepath.Join(os.TempDir(), "kronaxis-workspaces")
+		spec.Root = filepath.Join(os.TempDir(), "garfield-workspaces")
 	}
 	switch spec.Type {
 	case TypeWorktreeEphemeral:
@@ -213,9 +213,9 @@ type stateless struct {
 	dir  string
 }
 
-func (s *stateless) RequestID() string                    { return s.spec.RequestID }
-func (s *stateless) Path() string                         { return s.dir }
-func (s *stateless) AuxPath(_ string) (string, bool)      { return "", false }
+func (s *stateless) RequestID() string               { return s.spec.RequestID }
+func (s *stateless) Path() string                    { return s.dir }
+func (s *stateless) AuxPath(_ string) (string, bool) { return "", false }
 
 func (s *stateless) Setup(_ context.Context) error {
 	s.dir = os.TempDir()

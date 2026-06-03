@@ -12,7 +12,7 @@ import (
 )
 
 // MCP (Model Context Protocol) server over stdio.
-// Connects to a running kronaxis-router HTTP API as a thin client.
+// Connects to a running garfield-router HTTP API as a thin client.
 // Used by Claude Code, Claude Desktop, Cursor, and other MCP-compatible tools.
 
 const mcpProtocolVersion = "2024-11-05"
@@ -107,7 +107,7 @@ func runMCP(_ []string) {
 		fmt.Fprintf(os.Stderr, "[mcp] "+format+"\n", args...)
 	}
 
-	mcpLog("kronaxis-router MCP server starting (router: %s)", routerURL)
+	mcpLog("garfield-router MCP server starting (router: %s)", routerURL)
 
 	scanner := bufio.NewScanner(os.Stdin)
 	// Increase buffer for large messages
@@ -166,7 +166,7 @@ func (s *MCPServer) handleInitialize(id json.RawMessage) *jsonRPCResponse {
 		Result: mcpInitResult{
 			ProtocolVersion: mcpProtocolVersion,
 			Capabilities:    mcpCapabilities{Tools: &struct{}{}},
-			ServerInfo:      mcpServerInfo{Name: "kronaxis-router", Version: version},
+			ServerInfo:      mcpServerInfo{Name: "garfield-router", Version: version},
 		},
 	}
 }
@@ -208,14 +208,14 @@ func (s *MCPServer) handleToolsList(id json.RawMessage) *jsonRPCResponse {
 			Name:        "router_add_backend",
 			Description: "Register a new LLM backend. Provide name, URL, type (vllm/ollama/gemini/openai), model name, and optionally costs and capabilities.",
 			InputSchema: jsonSchema("object", map[string]interface{}{
-				"name":          map[string]interface{}{"type": "string", "description": "Unique backend identifier"},
-				"url":           map[string]interface{}{"type": "string", "description": "Backend URL (e.g. http://localhost:11434)"},
-				"type":          map[string]interface{}{"type": "string", "description": "Backend type", "enum": []string{"vllm", "ollama", "gemini", "openai"}},
-				"model_name":    map[string]interface{}{"type": "string", "description": "Model name at this backend"},
-				"cost_input_1m": map[string]interface{}{"type": "number", "description": "Cost per 1M input tokens (USD)"},
+				"name":           map[string]interface{}{"type": "string", "description": "Unique backend identifier"},
+				"url":            map[string]interface{}{"type": "string", "description": "Backend URL (e.g. http://localhost:11434)"},
+				"type":           map[string]interface{}{"type": "string", "description": "Backend type", "enum": []string{"vllm", "ollama", "gemini", "openai"}},
+				"model_name":     map[string]interface{}{"type": "string", "description": "Model name at this backend"},
+				"cost_input_1m":  map[string]interface{}{"type": "number", "description": "Cost per 1M input tokens (USD)"},
 				"cost_output_1m": map[string]interface{}{"type": "number", "description": "Cost per 1M output tokens (USD)"},
 				"max_concurrent": map[string]interface{}{"type": "integer", "description": "Max concurrent requests (default 10)"},
-				"api_key":       map[string]interface{}{"type": "string", "description": "API key (or env:VAR_NAME)"},
+				"api_key":        map[string]interface{}{"type": "string", "description": "API key (or env:VAR_NAME)"},
 			}, []string{"name", "url", "type", "model_name"}),
 		},
 		{
@@ -241,7 +241,7 @@ func (s *MCPServer) handleToolsList(id json.RawMessage) *jsonRPCResponse {
 						"priority_level": map[string]interface{}{"type": "string"},
 					},
 				},
-				"backends":   map[string]interface{}{"type": "array", "items": map[string]interface{}{"type": "string"}, "description": "Backend names in failover order"},
+				"backends":    map[string]interface{}{"type": "array", "items": map[string]interface{}{"type": "string"}, "description": "Backend names in failover order"},
 				"max_cost_1m": map[string]interface{}{"type": "number", "description": "Max cost per 1M tokens (filters expensive backends)"},
 			}, []string{"name", "priority", "backends"}),
 		},

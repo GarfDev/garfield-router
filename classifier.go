@@ -19,15 +19,15 @@ import (
 // with good quality get stronger negative weights. Keywords that cause
 // quality problems get weaker weights or flip to positive.
 //
-// When the caller explicitly sets X-Kronaxis-Tier, that takes precedence.
+// When the caller explicitly sets X-Garfield-Tier, that takes precedence.
 
 // ComplexityScore is 0-100 where 0 is trivial and 100 is highly complex.
 type ComplexityScore float64
 
 // Default thresholds for backward-compatible tier mapping.
 const (
-	Tier2Ceiling = 35.0  // score <= 35 -> tier 2 (cheap)
-	Tier1Floor   = 65.0  // score >= 65 -> tier 1 (heavy)
+	Tier2Ceiling = 35.0 // score <= 35 -> tier 2 (cheap)
+	Tier1Floor   = 65.0 // score >= 65 -> tier 1 (heavy)
 	// 36-64 = inconclusive (routes to default/fallback)
 )
 
@@ -177,7 +177,7 @@ func (ac *AdaptiveClassifier) ScoreComplexity(req *ChatRequest) ComplexityScore 
 
 	// ── Map raw score to 0-100 ─────────────────────────────────────
 	// Raw range is roughly -40 to +40. Map to 0-100 using sigmoid.
-	normalized := sigmoid(rawScore / 15) * 100
+	normalized := sigmoid(rawScore/15) * 100
 
 	return ComplexityScore(normalized)
 }

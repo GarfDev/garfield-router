@@ -53,10 +53,10 @@ type GraphifyConfig struct {
 	CompressBudgetChars int                    `yaml:"compress_budget_chars"`
 	AutoCompressChars   int                    `yaml:"auto_compress_chars"`
 	AutoAugmentMaxChars int                    `yaml:"auto_augment_max_chars"`
-	ServiceOverrides    map[string]string      `yaml:"service_overrides"` // X-Kronaxis-Service -> mode
+	ServiceOverrides    map[string]string      `yaml:"service_overrides"` // X-Garfield-Service -> mode
 	Embedder            GraphifyEmbedderConfig `yaml:"embedder"`
 
-	// ----- Kronaxis Platform integration (Router <-> Fabric) -----
+	// ----- Garfield Platform integration (Router <-> Fabric) -----
 	// When FabricURL is set, the graphify pre-stage delegates retrieval
 	// to Fabric's /v1/rag endpoint instead of running embedded pgvector +
 	// the local embedder. If unset, embedded behaviour is unchanged so
@@ -93,10 +93,10 @@ type GraphifyConfig struct {
 	CCRThresholdChars int `yaml:"ccr_threshold_chars"`
 	// CCRCapacity bounds the in-process CCR store (entries). 0 → 1024.
 	CCRCapacity int `yaml:"ccr_capacity"`
-	// CCRServices lists X-Kronaxis-Service values whose clients can call
+	// CCRServices lists X-Garfield-Service values whose clients can call
 	// compress_retrieve. CCR elision (which removes content from the prompt)
 	// only happens for these services, or when a request sends
-	// X-Kronaxis-Compress-CCR: 1 — never for a client that cannot retrieve it.
+	// X-Garfield-Compress-CCR: 1 — never for a client that cannot retrieve it.
 	CCRServices []string `yaml:"ccr_services"`
 	// ProseCompressor configures the optional learned (LLMLingua-style) prose
 	// compressor — a self-hosted GPU endpoint the router calls on the
@@ -263,7 +263,7 @@ type ServerConfig struct {
 	PriceFeedURL      string   `yaml:"price_feed_url"`
 	PriceFeedInterval Duration `yaml:"price_feed_interval"` // 0 → 5m
 	// ConsensusArbiter is the backend that resolves disagreements for
-	// X-Kronaxis-Consensus requests. Empty → use the first candidate.
+	// X-Garfield-Consensus requests. Empty → use the first candidate.
 	ConsensusArbiter string `yaml:"consensus_arbiter"`
 }
 
@@ -418,10 +418,10 @@ func applyDefaults(c *Config) {
 		c.Server.QueueScrapeInterval.Duration = 5 * time.Second
 	}
 	if c.Server.Branding.HeaderName == "" {
-		c.Server.Branding.HeaderName = "Kronaxis Router"
+		c.Server.Branding.HeaderName = "Garfield Router"
 	}
 	if c.Server.Branding.ContentText == "" {
-		c.Server.Branding.ContentText = "\n\n---\n*Powered by [Kronaxis Router](https://kronaxis.co.uk)*"
+		c.Server.Branding.ContentText = "\n\n---\n*Powered by [Garfield Router](https://garfield.co.uk)*"
 	}
 	if c.Batching.WindowMS == 0 {
 		c.Batching.WindowMS = 50

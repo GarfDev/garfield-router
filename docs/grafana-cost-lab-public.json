@@ -1,17 +1,17 @@
 {
-  "_comment": "Kronaxis Router public Cost Lab dashboard template. Import into Grafana via Dashboard > Import > paste JSON. Expects a Prometheus datasource named PROMETHEUS scraping kronaxis-router's /metrics endpoint. Edit the datasource name on import to match your environment.",
+  "_comment": "Garfield Router public Cost Lab dashboard template. Import into Grafana via Dashboard > Import > paste JSON. Expects a Prometheus datasource named PROMETHEUS scraping garfield-router's /metrics endpoint. Edit the datasource name on import to match your environment.",
   "annotations": { "list": [] },
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
   "schemaVersion": 39,
-  "tags": ["kronaxis", "router", "cost-lab", "public"],
+  "tags": ["garfield", "router", "cost-lab", "public"],
   "templating": { "list": [] },
   "time": { "from": "now-24h", "to": "now" },
   "timepicker": {},
   "timezone": "browser",
-  "title": "Kronaxis Router — Cost Lab (public)",
-  "uid": "kronaxis-router-cost-lab-public",
+  "title": "Garfield Router — Cost Lab (public)",
+  "uid": "garfield-router-cost-lab-public",
   "version": 1,
   "weekStart": "",
   "panels": [
@@ -22,7 +22,7 @@
       "datasource": "PROMETHEUS",
       "gridPos": { "h": 4, "w": 6, "x": 0, "y": 0 },
       "targets": [
-        { "expr": "kronaxis_router_requests_total", "refId": "A" }
+        { "expr": "garfield_router_requests_total", "refId": "A" }
       ],
       "fieldConfig": { "defaults": { "unit": "short", "color": { "mode": "thresholds" } } },
       "options": { "colorMode": "value", "graphMode": "area", "textMode": "auto" }
@@ -34,9 +34,9 @@
       "datasource": "PROMETHEUS",
       "gridPos": { "h": 8, "w": 12, "x": 6, "y": 0 },
       "targets": [
-        { "expr": "histogram_quantile(0.50, rate(kronaxis_router_routing_decision_seconds_bucket[5m]))", "refId": "A", "legendFormat": "p50" },
-        { "expr": "histogram_quantile(0.95, rate(kronaxis_router_routing_decision_seconds_bucket[5m]))", "refId": "B", "legendFormat": "p95" },
-        { "expr": "histogram_quantile(0.99, rate(kronaxis_router_routing_decision_seconds_bucket[5m]))", "refId": "C", "legendFormat": "p99" }
+        { "expr": "histogram_quantile(0.50, rate(garfield_router_routing_decision_seconds_bucket[5m]))", "refId": "A", "legendFormat": "p50" },
+        { "expr": "histogram_quantile(0.95, rate(garfield_router_routing_decision_seconds_bucket[5m]))", "refId": "B", "legendFormat": "p95" },
+        { "expr": "histogram_quantile(0.99, rate(garfield_router_routing_decision_seconds_bucket[5m]))", "refId": "C", "legendFormat": "p99" }
       ],
       "fieldConfig": { "defaults": { "unit": "s" } }
     },
@@ -47,8 +47,8 @@
       "datasource": "PROMETHEUS",
       "gridPos": { "h": 8, "w": 6, "x": 18, "y": 0 },
       "targets": [
-        { "expr": "kronaxis_router_cost_actual_today_gbp", "refId": "A", "legendFormat": "Actual" },
-        { "expr": "kronaxis_router_cost_counterfactual_frontier_today_gbp", "refId": "B", "legendFormat": "Frontier-only" }
+        { "expr": "garfield_router_cost_actual_today_gbp", "refId": "A", "legendFormat": "Actual" },
+        { "expr": "garfield_router_cost_counterfactual_frontier_today_gbp", "refId": "B", "legendFormat": "Frontier-only" }
       ],
       "fieldConfig": { "defaults": { "unit": "currencyGBP" } }
     },
@@ -59,9 +59,9 @@
       "datasource": "PROMETHEUS",
       "gridPos": { "h": 8, "w": 8, "x": 0, "y": 4 },
       "targets": [
-        { "expr": "sum(increase(kronaxis_router_requests_total{tier=\"1\"}[24h]))", "refId": "A", "legendFormat": "T1 sovereign" },
-        { "expr": "sum(increase(kronaxis_router_requests_total{tier=\"2\"}[24h]))", "refId": "B", "legendFormat": "T2 mid-tier" },
-        { "expr": "sum(increase(kronaxis_router_requests_total{tier=\"3\"}[24h]))", "refId": "C", "legendFormat": "T3 frontier" }
+        { "expr": "sum(increase(garfield_router_requests_total{tier=\"1\"}[24h]))", "refId": "A", "legendFormat": "T1 sovereign" },
+        { "expr": "sum(increase(garfield_router_requests_total{tier=\"2\"}[24h]))", "refId": "B", "legendFormat": "T2 mid-tier" },
+        { "expr": "sum(increase(garfield_router_requests_total{tier=\"3\"}[24h]))", "refId": "C", "legendFormat": "T3 frontier" }
       ],
       "options": { "legend": { "displayMode": "table", "placement": "right" }, "pieType": "donut" }
     },
@@ -72,7 +72,7 @@
       "datasource": "PROMETHEUS",
       "gridPos": { "h": 4, "w": 6, "x": 0, "y": 12 },
       "targets": [
-        { "expr": "rate(kronaxis_router_cache_hits_total[24h]) / clamp_min(rate(kronaxis_router_cache_lookups_total[24h]), 1)", "refId": "A" }
+        { "expr": "rate(garfield_router_cache_hits_total[24h]) / clamp_min(rate(garfield_router_cache_lookups_total[24h]), 1)", "refId": "A" }
       ],
       "fieldConfig": {
         "defaults": {
@@ -94,8 +94,8 @@
       "datasource": "PROMETHEUS",
       "gridPos": { "h": 4, "w": 12, "x": 12, "y": 12 },
       "targets": [
-        { "expr": "kronaxis_router_pool_active_count by (pool)", "refId": "A", "legendFormat": "{{pool}} active" },
-        { "expr": "kronaxis_router_pool_cooldown_count by (pool)", "refId": "B", "legendFormat": "{{pool}} cooldown" }
+        { "expr": "garfield_router_pool_active_count by (pool)", "refId": "A", "legendFormat": "{{pool}} active" },
+        { "expr": "garfield_router_pool_cooldown_count by (pool)", "refId": "B", "legendFormat": "{{pool}} cooldown" }
       ],
       "options": { "colorMode": "background", "graphMode": "none" }
     },
@@ -106,7 +106,7 @@
       "datasource": "PROMETHEUS",
       "gridPos": { "h": 6, "w": 12, "x": 0, "y": 16 },
       "targets": [
-        { "expr": "rate(kronaxis_router_graphify_tokens_saved_total[5m])", "refId": "A", "legendFormat": "tokens saved/sec" }
+        { "expr": "rate(garfield_router_graphify_tokens_saved_total[5m])", "refId": "A", "legendFormat": "tokens saved/sec" }
       ],
       "fieldConfig": { "defaults": { "unit": "short" } }
     },
@@ -117,7 +117,7 @@
       "datasource": "PROMETHEUS",
       "gridPos": { "h": 8, "w": 12, "x": 12, "y": 16 },
       "targets": [
-        { "expr": "sum(increase(kronaxis_router_backend_latency_seconds_bucket[1m])) by (le, backend)", "refId": "A", "format": "heatmap" }
+        { "expr": "sum(increase(garfield_router_backend_latency_seconds_bucket[1m])) by (le, backend)", "refId": "A", "format": "heatmap" }
       ],
       "options": { "calculate": true, "yAxis": { "axisLabel": "latency" } }
     },
@@ -128,7 +128,7 @@
       "datasource": "PROMETHEUS",
       "gridPos": { "h": 6, "w": 12, "x": 0, "y": 22 },
       "targets": [
-        { "expr": "kronaxis_router_kv_tree_node_count", "refId": "A", "instant": true, "format": "table" }
+        { "expr": "garfield_router_kv_tree_node_count", "refId": "A", "instant": true, "format": "table" }
       ]
     },
     {
@@ -138,7 +138,7 @@
       "datasource": "PROMETHEUS",
       "gridPos": { "h": 4, "w": 6, "x": 12, "y": 22 },
       "targets": [
-        { "expr": "kronaxis_router_sessions_active", "refId": "A" }
+        { "expr": "garfield_router_sessions_active", "refId": "A" }
       ]
     },
     {
@@ -148,7 +148,7 @@
       "datasource": "PROMETHEUS",
       "gridPos": { "h": 4, "w": 6, "x": 18, "y": 22 },
       "targets": [
-        { "expr": "kronaxis_router_dpo_pairs_written_total", "refId": "A" }
+        { "expr": "garfield_router_dpo_pairs_written_total", "refId": "A" }
       ]
     }
   ]

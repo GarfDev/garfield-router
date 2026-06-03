@@ -3,7 +3,7 @@ title: "Stop Paying Frontier Prices for Tasks a Local Model Handles Fine"
 published: true
 description: "Small LLMs got good. Here's an open-source Go proxy that auto-classifies prompts and routes to the cheapest capable model, with a quality validation safety net."
 tags: go, llm, opensource, devops
-canonical_url: https://kronaxis.co.uk/blog/llm-routing-cost-savings
+canonical_url: https://garfield.co.uk/blog/llm-routing-cost-savings
 cover_image:
 ---
 
@@ -22,7 +22,7 @@ The remaining 20% genuinely needs the big model. But nobody routes. Every reques
 
 Route 80% of traffic from the frontier tier to a local 9B and your blended cost drops from ~$10 to ~$0.50 per million tokens.
 
-## How Kronaxis Router works
+## How Garfield Router works
 
 Single Go binary. Sits between your app and your model backends. Every request passes through a lightweight rule-based classifier (no LLM call, under 1ms) that assigns a task category:
 
@@ -43,7 +43,7 @@ Savings by default. Automatic safety net.
 ## Architecture
 
 ```
-Client App  -->  Kronaxis Router  -->  Backend A (local 9B, Ollama/vLLM)
+Client App  -->  Garfield Router  -->  Backend A (local 9B, Ollama/vLLM)
                       |           -->  Backend B (local 27B, vLLM)
                       |           -->  Backend C (Gemini Flash)
                       |
@@ -81,7 +81,7 @@ Set a daily dollar limit per service. When hit, the router downgrades to a cheap
 
 ## How this compares to alternatives
 
-| Feature | Kronaxis Router | LiteLLM | OpenRouter | Portkey | Martian |
+| Feature | Garfield Router | LiteLLM | OpenRouter | Portkey | Martian |
 |---|---|---|---|---|---|
 | Self-hosted | Yes | Yes | No | No | No |
 | Cost-based routing | Automatic | Manual | Some | Manual | ML-based |
@@ -96,27 +96,27 @@ Set a daily dollar limit per service. When hit, the router downgrades to a cheap
 | Price | Free | Free/$150+ | Margin | $99+/mo | Usage |
 | Licence | BSL 1.1 | MIT | Closed | Closed | Closed |
 
-LiteLLM is a universal gateway. OpenRouter is zero-setup SaaS. Portkey is observability. Martian is ML routing. Kronaxis Router is a cost optimiser. Different tools for different problems.
+LiteLLM is a universal gateway. OpenRouter is zero-setup SaaS. Portkey is observability. Martian is ML routing. Garfield Router is a cost optimiser. Different tools for different problems.
 
 ## Getting started
 
 ```bash
 # Install
-curl -fsSL https://raw.githubusercontent.com/Kronaxis/kronaxis-router/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/Garfield/garfield-router/main/install.sh | bash
 
 # Auto-detect local models and API keys, generate config
-kronaxis-router init
+garfield-router init
 
 # Start
-kronaxis-router
+garfield-router
 ```
 
-Also available: `brew install kronaxis/tap/kronaxis-router`, `go install`, Docker, deb/rpm.
+Also available: `brew install garfield/tap/garfield-router`, `go install`, Docker, deb/rpm.
 
-For Claude Code and Cursor: `kronaxis-router init --claude` or `kronaxis-router init --cursor` configures the built-in MCP server for conversational management of backends, costs, and rules.
+For Claude Code and Cursor: `garfield-router init --claude` or `garfield-router init --cursor` configures the built-in MCP server for conversational management of backends, costs, and rules.
 
 81 tests. BSL 1.1.
 
-**GitHub:** [github.com/Kronaxis/kronaxis-router](https://github.com/Kronaxis/kronaxis-router)
+**GitHub:** [github.com/Garfield/garfield-router](https://github.com/Garfield/garfield-router)
 
-**Full blog post:** [kronaxis.co.uk/blog/llm-routing-cost-savings](https://kronaxis.co.uk/blog/llm-routing-cost-savings)
+**Full blog post:** [garfield.co.uk/blog/llm-routing-cost-savings](https://garfield.co.uk/blog/llm-routing-cost-savings)

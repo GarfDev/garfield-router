@@ -1,0 +1,8 @@
+README.md
+setup.py
+garfield_router/__init__.py
+garfield_router/client.py
+garfield_router.egg-info/PKG-INFO
+garfield_router.egg-info/SOURCES.txt
+garfield_router.egg-info/dependency_links.txt
+garfield_router.egg-info/top_level.txt

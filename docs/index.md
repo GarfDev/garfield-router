@@ -3,11 +3,11 @@ layout: default
 title: Home
 ---
 
-# Kronaxis Router
+# Garfield Router
 
 **Intelligent LLM proxy that routes every request to the cheapest model capable of delivering the required output.**
 
-A CFO can fill in accounts receivable, but a bookkeeper is 50x cheaper and does the job just as well. Kronaxis Router applies this principle to LLM inference.
+A CFO can fill in accounts receivable, but a bookkeeper is 50x cheaper and does the job just as well. Garfield Router applies this principle to LLM inference.
 
 ## Key Features
 
@@ -29,8 +29,8 @@ A CFO can fill in accounts receivable, but a bookkeeper is 50x cheaper and does 
 ## Quick Start
 
 ```bash
-go build -o kronaxis-router .
-./kronaxis-router
+go build -o garfield-router .
+./garfield-router
 # Open http://localhost:8050
 ```
 
@@ -48,9 +48,9 @@ Point your services at `http://localhost:8050/v1/chat/completions` instead of ca
 
 ## SDKs
 
-- **Python**: `pip install kronaxis-router` -- [SDK docs]({{ site.baseurl }}/sdks/python/)
-- **TypeScript**: `npm install kronaxis-router` -- [SDK docs]({{ site.baseurl }}/sdks/typescript/)
+- **Python**: `pip install garfield-router` -- [SDK docs]({{ site.baseurl }}/sdks/python/)
+- **TypeScript**: `npm install garfield-router` -- [SDK docs]({{ site.baseurl }}/sdks/typescript/)
 
 ## Licence
 
-Business Source License 1.1 (converts to Apache 2.0 on 9 May 2031). Built by [Kronaxis](https://kronaxis.co.uk).
+Business Source License 1.1 (converts to Apache 2.0 on 9 May 2031). Built by [Garfield](https://garfield.co.uk).

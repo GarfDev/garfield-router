@@ -1,6 +1,6 @@
 # Reddit r/MachineLearning Post
 
-**Title:** [P] Kronaxis Router: open-source Go proxy for cost-optimised LLM routing with auto-classification and quality validation
+**Title:** [P] Garfield Router: open-source Go proxy for cost-optimised LLM routing with auto-classification and quality validation
 
 **Body:**
 
@@ -24,9 +24,9 @@ Configurable sampling rate (default 5%). For sampled requests, the router sends 
 
 **Comparison to LiteLLM:**
 
-LiteLLM normalises provider APIs behind a single interface. Kronaxis Router decides which model to call. They are complementary.
+LiteLLM normalises provider APIs behind a single interface. Garfield Router decides which model to call. They are complementary.
 
-| Feature | Kronaxis Router | LiteLLM |
+| Feature | Garfield Router | LiteLLM |
 |---|---|---|
 | Auto-classification routing | Yes | No |
 | Quality validation loop | Yes | No |
@@ -39,4 +39,4 @@ LiteLLM normalises provider APIs behind a single interface. Kronaxis Router deci
 
 70 tests. Python and TypeScript SDKs. Helm chart for Kubernetes.
 
-GitHub: https://github.com/kronaxis/kronaxis-router
+GitHub: https://github.com/GarfDev/garfield-router

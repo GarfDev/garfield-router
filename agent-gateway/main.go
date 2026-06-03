@@ -13,8 +13,8 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/kronaxis/agent-gateway/accounts"
-	"github.com/kronaxis/agent-gateway/registry"
+	"github.com/GarfDev/garfield-router/agent-gateway/accounts"
+	"github.com/GarfDev/garfield-router/agent-gateway/registry"
 )
 
 func main() {
@@ -101,8 +101,8 @@ func main() {
 		logger.Printf("load override profiles from %s: %v", profileDir, err)
 	}
 	audit.Event("profile_registry_loaded", map[string]any{
-		"builtin_count":   len(profileReg.List()),
-		"override_dir":    profileDir,
+		"builtin_count": len(profileReg.List()),
+		"override_dir":  profileDir,
 	})
 
 	// Universal account pool (separate file so legacy auth_pool.yaml stays

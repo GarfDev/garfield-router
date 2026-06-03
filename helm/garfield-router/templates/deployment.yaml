@@ -1,18 +1,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "kronaxis-router.fullname" . }}
+  name: {{ include "garfield-router.fullname" . }}
   labels:
-    {{- include "kronaxis-router.labels" . | nindent 4 }}
+    {{- include "garfield-router.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      {{- include "kronaxis-router.selectorLabels" . | nindent 6 }}
+      {{- include "garfield-router.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
-        {{- include "kronaxis-router.selectorLabels" . | nindent 8 }}
+        {{- include "garfield-router.selectorLabels" . | nindent 8 }}
     spec:
       securityContext:
         runAsNonRoot: true
@@ -68,10 +68,10 @@ spec:
             name: {{ .Values.config.existingConfigMap }}
           {{- else }}
           configMap:
-            name: {{ include "kronaxis-router.fullname" . }}-config
+            name: {{ include "garfield-router.fullname" . }}-config
           {{- end }}
         {{- if .Values.persistence.enabled }}
         - name: data
           persistentVolumeClaim:
-            claimName: {{ include "kronaxis-router.fullname" . }}-data
+            claimName: {{ include "garfield-router.fullname" . }}-data
         {{- end }}

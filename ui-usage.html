@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Garfield Router - Usage</title>
+<style>
+:root{--paper:#f4efe2;--ink:#17130d;--muted:#706758;--line:#2b2418;--accent:#f05a28;--ok:#1f7a3f;--bad:#ad2e24;--panel:#fffaf0;--mono:"SFMono-Regular",Consolas,monospace}*{box-sizing:border-box}body{margin:0;background:linear-gradient(135deg,#f4efe2,#e8dcc5);color:var(--ink);font-family:Georgia,"Times New Roman",serif}body:before{content:"";position:fixed;inset:0;background:repeating-linear-gradient(90deg,rgba(0,0,0,.035) 0 1px,transparent 1px 32px);pointer-events:none}header{padding:28px clamp(18px,4vw,52px);border-bottom:3px solid var(--line);display:flex;justify-content:space-between;gap:18px;align-items:flex-end}h1{font-size:clamp(34px,7vw,84px);line-height:.82;margin:0;letter-spacing:-.07em;text-transform:uppercase}.deck{font:700 12px var(--mono);text-transform:uppercase;color:var(--muted);letter-spacing:.14em}.stamp{border:3px solid var(--line);padding:10px 14px;transform:rotate(-2deg);font:800 13px var(--mono);background:var(--accent);color:#fff}main{padding:26px clamp(18px,4vw,52px);display:grid;gap:22px}.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}.card{background:var(--panel);border:3px solid var(--line);box-shadow:7px 7px 0 var(--line);padding:18px}.label{font:800 11px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}.num{font:900 clamp(28px,4vw,54px) var(--mono);letter-spacing:-.06em;margin-top:8px}.split{display:grid;grid-template-columns:1.2fr .8fr;gap:22px}table{width:100%;border-collapse:collapse;background:var(--panel);border:3px solid var(--line);box-shadow:7px 7px 0 var(--line)}th,td{padding:12px 14px;border-bottom:2px solid var(--line);text-align:left}th{font:900 11px var(--mono);text-transform:uppercase;letter-spacing:.12em;background:#eadbbf}td{font:14px var(--mono)}td.r{text-align:right}.bar{height:9px;background:#dbc9a8;border:2px solid var(--line);margin-top:7px}.bar span{display:block;height:100%;background:var(--accent)}button{border:3px solid var(--line);background:var(--ink);color:var(--paper);font:800 12px var(--mono);padding:10px 14px;cursor:pointer}.err{display:none;border:3px solid var(--bad);background:#ffe3df;color:var(--bad);padding:12px;font:800 13px var(--mono)}@media(max-width:850px){.grid,.split{grid-template-columns:1fr}header{align-items:flex-start;flex-direction:column}.stamp{transform:none}}
+</style>
+</head>
+<body>
+<header><div><div class="deck">live router ledger</div><h1>Usage</h1></div><div class="stamp" id="stamp">AUTH NEEDED</div></header>
+<main>
+<div id="err" class="err"></div>
+<section class="grid">
+  <div class="card"><div class="label">Requests</div><div class="num" id="reqs">0</div></div>
+  <div class="card"><div class="label">Errors</div><div class="num" id="errs">0</div></div>
+  <div class="card"><div class="label">Avg latency</div><div class="num" id="lat">0ms</div></div>
+  <div class="card"><div class="label">Today spend</div><div class="num" id="spend">$0</div></div>
+</section>
+<section class="split">
+  <div><div class="deck">models / backends</div><table><thead><tr><th>Backend</th><th class="r">Requests</th><th class="r">Share</th></tr></thead><tbody id="models"></tbody></table></div>
+  <div><div class="deck">services</div><table><thead><tr><th>Service</th><th class="r">Requests</th><th class="r">Spend</th></tr></thead><tbody id="services"></tbody></table></div>
+</section>
+<section><div class="deck">backend health</div><table><thead><tr><th>Name</th><th>Status</th><th class="r">Active</th><th class="r">Latency</th></tr></thead><tbody id="backends"></tbody></table></section>
+<button id="refresh">Refresh</button>
+</main>
+<script>
+let token=localStorage.getItem('garfield_router_token')||'';const q=new URLSearchParams(location.search).get('token');if(q){token=q.trim();localStorage.setItem('garfield_router_token',token);history.replaceState(null,'',location.pathname)}
+const $=s=>document.querySelector(s);const fmt=n=>new Intl.NumberFormat('en-GB').format(n||0);const money=n=>new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(n||0);
+async function get(path){let h=token?{Authorization:'Bearer '+token}:{};let r=await fetch(path,{headers:h});if(r.status===401){let t=prompt('Router API token');if(t){token=t.trim();localStorage.setItem('garfield_router_token',token);r=await fetch(path,{headers:{Authorization:'Bearer '+token}})}}if(!r.ok)throw Error(path+' -> '+r.status);return r.json()}
+function rows(tbody,items,render){tbody.innerHTML='';items.forEach(x=>{const tr=document.createElement('tr');tr.innerHTML=render(x);tbody.appendChild(tr)})}
+async function refresh(){try{const [stats,costs,health]=await Promise.all([get('/api/stats'),get('/api/costs'),get('/health')]);$('#stamp').textContent='LIVE '+new Date().toLocaleTimeString('en-GB');$('#reqs').textContent=fmt(stats.total_requests);$('#errs').textContent=fmt(stats.total_errors);$('#lat').textContent=Math.round(stats.avg_latency_ms||0)+'ms';const daily=costs.daily_costs||costs.daily||{};const total=Object.values(daily).reduce((a,b)=>a+(b||0),0);$('#spend').textContent=money(total);const byModel=stats.requests_by_model||{};const max=Math.max(1,...Object.values(byModel));rows($('#models'),Object.entries(byModel).sort((a,b)=>b[1]-a[1]),([k,v])=>`<td>${k}<div class="bar"><span style="width:${Math.round(v/max*100)}%"></span></div></td><td class="r">${fmt(v)}</td><td class="r">${Math.round(v/Math.max(1,stats.total_requests)*100)}%</td>`);const bySvc=stats.requests_by_service||{};rows($('#services'),Object.entries(bySvc).sort((a,b)=>b[1]-a[1]),([k,v])=>`<td>${k||'unknown'}</td><td class="r">${fmt(v)}</td><td class="r">${money(daily[k]||0)}</td>`);rows($('#backends'),health.backends||[],b=>`<td>${b.name}</td><td>${b.status}</td><td class="r">${fmt(b.active_requests)}</td><td class="r">${fmt(b.latency_ms)}ms</td>`);$('#err').style.display='none'}catch(e){$('#err').textContent=e.message;$('#err').style.display='block'}}
+$('#refresh').onclick=refresh;refresh();setInterval(refresh,10000);
+</script>
+</body>
+</html>

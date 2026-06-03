@@ -2,13 +2,13 @@
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: {{ include "kronaxis-router.fullname" . }}
+  name: {{ include "garfield-router.fullname" . }}
   labels:
-    {{- include "kronaxis-router.labels" . | nindent 4 }}
+    {{- include "garfield-router.labels" . | nindent 4 }}
 spec:
   selector:
     matchLabels:
-      {{- include "kronaxis-router.selectorLabels" . | nindent 6 }}
+      {{- include "garfield-router.selectorLabels" . | nindent 6 }}
   endpoints:
     - port: http
       interval: {{ .Values.serviceMonitor.interval }}

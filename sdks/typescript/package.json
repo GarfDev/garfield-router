@@ -1,7 +1,7 @@
 {
-  "name": "kronaxis-router",
+  "name": "garfield-router",
   "version": "0.3.0",
-  "description": "TypeScript SDK for Kronaxis Router - intelligent LLM proxy",
+  "description": "TypeScript SDK for Garfield Router - intelligent LLM proxy",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -9,11 +9,11 @@
     "prepublishOnly": "npm run build"
   },
   "keywords": ["llm", "proxy", "router", "openai", "cost-optimization"],
-  "author": "Kronaxis <dev@kronaxis.co.uk>",
+  "author": "Garfield <dev@garfield.co.uk>",
   "license": "BUSL-1.1",
   "repository": {
     "type": "git",
-    "url": "https://github.com/kronaxis/kronaxis-router"
+    "url": "https://github.com/GarfDev/garfield-router"
   },
   "devDependencies": {
     "typescript": "^5.0.0"

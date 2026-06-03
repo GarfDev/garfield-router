@@ -13,27 +13,27 @@ import (
 
 var apiToken = os.Getenv("ROUTER_API_TOKEN")
 
-// extractHeaders pulls Kronaxis-specific routing metadata from request headers.
+// extractHeaders pulls Garfield-specific routing metadata from request headers.
 func extractHeaders(r *http.Request) RouteRequest {
 	tier := 0
-	if t := r.Header.Get("X-Kronaxis-Tier"); t != "" {
+	if t := r.Header.Get("X-Garfield-Tier"); t != "" {
 		fmt.Sscanf(t, "%d", &tier)
 	}
 
-	priority := r.Header.Get("X-Kronaxis-Priority")
+	priority := r.Header.Get("X-Garfield-Priority")
 	if priority == "" {
 		priority = "normal"
 	}
 
 	return RouteRequest{
-		Service:        r.Header.Get("X-Kronaxis-Service"),
-		CallType:       r.Header.Get("X-Kronaxis-CallType"),
+		Service:        r.Header.Get("X-Garfield-Service"),
+		CallType:       r.Header.Get("X-Garfield-CallType"),
 		Priority:       priority,
 		Tier:           tier,
-		PersonaID:      r.Header.Get("X-Kronaxis-PersonaID"),
-		ResponseSchema: r.Header.Get("X-Kronaxis-Response-Schema"),
-		Reflect:        isTruthyHeader(r.Header.Get("X-Kronaxis-Reflect")),
-		Consensus:      isTruthyHeader(r.Header.Get("X-Kronaxis-Consensus")),
+		PersonaID:      r.Header.Get("X-Garfield-PersonaID"),
+		ResponseSchema: r.Header.Get("X-Garfield-Response-Schema"),
+		Reflect:        isTruthyHeader(r.Header.Get("X-Garfield-Reflect")),
+		Consensus:      isTruthyHeader(r.Header.Get("X-Garfield-Consensus")),
 	}
 }
 
@@ -62,8 +62,8 @@ func loggingMiddleware(next http.Handler) http.Handler {
 
 		logger.Printf("%s %s %d %s [%s %s]",
 			r.Method, r.URL.Path, sw.status, duration.Round(time.Millisecond),
-			r.Header.Get("X-Kronaxis-Service"),
-			r.Header.Get("X-Kronaxis-CallType"),
+			r.Header.Get("X-Garfield-Service"),
+			r.Header.Get("X-Garfield-CallType"),
 		)
 	})
 }
@@ -77,8 +77,8 @@ func corsMiddleware(next http.Handler) http.Handler {
 			w.Header().Set("Vary", "Origin")
 		}
 		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Kronaxis-Service, X-Kronaxis-CallType, X-Kronaxis-Priority, X-Kronaxis-Tier, X-Kronaxis-PersonaID")
-		w.Header().Set("Access-Control-Expose-Headers", "X-Powered-By, X-Kronaxis-Router-Version, X-Kronaxis-Backend, X-Kronaxis-Rule, X-Kronaxis-Request-Cost")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Garfield-Service, X-Garfield-CallType, X-Garfield-Priority, X-Garfield-Tier, X-Garfield-PersonaID")
+		w.Header().Set("Access-Control-Expose-Headers", "X-Powered-By, X-Garfield-Router-Version, X-Garfield-Backend, X-Garfield-Rule, X-Garfield-Request-Cost")
 
 		if r.Method == http.MethodOptions {
 			w.WriteHeader(204)

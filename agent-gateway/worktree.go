@@ -47,7 +47,7 @@ func newWorkspace(root, baseRepo, requestID string, retain bool) (*Workspace, er
 			os.RemoveAll(parent)
 			return nil, fmt.Errorf("git init: %w (%s)", err, string(out))
 		}
-		_ = exec.Command("git", "-C", dir, "config", "user.email", "agent@kronaxis.local").Run()
+		_ = exec.Command("git", "-C", dir, "config", "user.email", "agent@garfield.local").Run()
 		_ = exec.Command("git", "-C", dir, "config", "user.name", "agent-gateway").Run()
 		_ = os.WriteFile(filepath.Join(dir, ".gitkeep"), []byte{}, 0o644)
 		_ = exec.Command("git", "-C", dir, "add", ".gitkeep").Run()

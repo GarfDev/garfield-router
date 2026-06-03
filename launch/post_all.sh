@@ -6,7 +6,7 @@
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 echo "════════════════════════════════════════════════"
-echo "  Kronaxis Router Launch Poster"
+echo "  Garfield Router Launch Poster"
 echo "  Opens each platform, copies body to clipboard"
 echo "  You: paste (Ctrl+V) and click submit"
 echo "════════════════════════════════════════════════"
@@ -23,7 +23,7 @@ echo -n "$TITLE" | xclip -selection primary
 cat << 'BODY' | xclip -selection clipboard
 Small models got good. Qwen 9B, Llama 8B, Gemma 4B handle 80% of production LLM workloads with output quality indistinguishable from frontier APIs. The problem is nobody routes. Everything hits the same endpoint.
 
-Kronaxis Router fixes this. Single Go binary, sits between your apps and your models, classifies each request, routes to the cheapest capable backend.
+Garfield Router fixes this. Single Go binary, sits between your apps and your models, classifies each request, routes to the cheapest capable backend.
 
 **How it works for local setups:**
 
@@ -41,9 +41,9 @@ After: 80% on the 9B (3x faster inference, half the VRAM), 20% on the 27B where 
 
 **Install:**
 
-    curl -fsSL https://raw.githubusercontent.com/Kronaxis/kronaxis-router/main/install.sh | bash
-    kronaxis-router init    # auto-detects Ollama, vLLM, cloud API keys
-    kronaxis-router
+    curl -fsSL https://raw.githubusercontent.com/Garfield/garfield-router/main/install.sh | bash
+    garfield-router init    # auto-detects Ollama, vLLM, cloud API keys
+    garfield-router
 
 **vs LiteLLM:** LiteLLM is a universal gateway (100+ providers). This is a cost optimiser. No auto-routing, no quality validation, no caching, no batch API, no LoRA routing. Python (300MB+, ~2K req/s) vs Go (2MB, 22K req/s). Different tools.
 
@@ -51,9 +51,9 @@ After: 80% on the 9B (3x faster inference, half the VRAM), 20% on the 27B where 
 
 81 tests. BSL 1.1. Prometheus metrics, embedded dashboard, MCP server for Claude Code/Cursor.
 
-GitHub: https://github.com/Kronaxis/kronaxis-router
+GitHub: https://github.com/Garfield/garfield-router
 
-Blog with cost arithmetic and full comparison: https://kronaxis.co.uk/blog/llm-routing-cost-savings
+Blog with cost arithmetic and full comparison: https://garfield.co.uk/blog/llm-routing-cost-savings
 BODY
 
 xdg-open "https://www.reddit.com/r/LocalLLaMA/submit?type=TEXT" 2>/dev/null
@@ -71,7 +71,7 @@ read -p "[2/4] Ready to post to r/selfhosted? (Enter to open) " _
 cat << 'BODY' | xclip -selection clipboard
 If you run local LLM inference (Ollama, vLLM, llama.cpp) you've probably thought about running multiple model sizes and routing between them. Small model for easy tasks, large model for hard ones.
 
-Kronaxis Router does exactly that. Single Go binary, one YAML config, no external dependencies, no cloud accounts required.
+Garfield Router does exactly that. Single Go binary, one YAML config, no external dependencies, no cloud accounts required.
 
 **What it does:**
 
@@ -93,11 +93,11 @@ Kronaxis Router does exactly that. Single Go binary, one YAML config, no externa
 
 **Install:**
 
-    curl -fsSL https://raw.githubusercontent.com/Kronaxis/kronaxis-router/main/install.sh | bash
-    kronaxis-router init    # auto-detects Ollama, vLLM on localhost
-    kronaxis-router
+    curl -fsSL https://raw.githubusercontent.com/Garfield/garfield-router/main/install.sh | bash
+    garfield-router init    # auto-detects Ollama, vLLM on localhost
+    garfield-router
 
-Also available: `brew install kronaxis/tap/kronaxis-router`, `go install`, Docker, deb/rpm packages.
+Also available: `brew install garfield/tap/garfield-router`, `go install`, Docker, deb/rpm packages.
 
 **If you also use cloud APIs:**
 
@@ -105,10 +105,10 @@ Supports 7 cloud providers as fallback. Batch API routing gets 50% off on eligib
 
 81 tests. BSL 1.1. No telemetry, no phoning home.
 
-GitHub: https://github.com/Kronaxis/kronaxis-router
+GitHub: https://github.com/Garfield/garfield-router
 BODY
 
-TITLE2="Kronaxis Router: self-hosted LLM proxy that auto-routes to the cheapest capable model (single Go binary, 2MB RAM, no cloud needed, BSL 1.1)"
+TITLE2="Garfield Router: self-hosted LLM proxy that auto-routes to the cheapest capable model (single Go binary, 2MB RAM, no cloud needed, BSL 1.1)"
 echo -n "$TITLE2" | xclip -selection primary
 
 xdg-open "https://www.reddit.com/r/selfhosted/submit?type=TEXT" 2>/dev/null
@@ -128,7 +128,7 @@ The remaining 20% genuinely needs the larger model. Multi-step reasoning, code g
 
 The cost arithmetic: routing 80% of traffic from a $3-15/1M token API to a local model at $0.005/1M drops your blended cost from roughly $10 to $0.50 per million tokens.
 
-We built Kronaxis Router to solve this for our own infrastructure, and we have released the source under BSL 1.1.
+We built Garfield Router to solve this for our own infrastructure, and we have released the source under BSL 1.1.
 
 Single Go binary. Sits between your applications and your model backends. Auto-classifies each request, routes to the cheapest capable tier, validates quality on a sampling basis, and auto-promotes if the cheap model degrades.
 
@@ -139,9 +139,9 @@ How it compares to alternatives:
 
 81 tests. 22K req/s. 2MB memory. BSL 1.1.
 
-GitHub: https://github.com/Kronaxis/kronaxis-router
+GitHub: https://github.com/Garfield/garfield-router
 
-Full cost analysis and comparison: https://kronaxis.co.uk/blog/llm-routing-cost-savings
+Full cost analysis and comparison: https://garfield.co.uk/blog/llm-routing-cost-savings
 
 #LLM #OpenSource #MachineLearning #CostOptimization #DevTools #AI
 BODY
@@ -173,7 +173,7 @@ We released the source for a fix. Thread 🧵'
 
 Route that 80% locally: blended cost drops from ~$10 to ~$0.50/1M.'
 
-'Kronaxis Router: single Go binary, sits between your app and your models.
+'Garfield Router: single Go binary, sits between your app and your models.
 
 Auto-classifies each request (<1ms, no LLM call) and routes to the cheapest capable backend.
 
@@ -194,16 +194,16 @@ vs OpenRouter: adds margin per request. Wrong direction for cost cutting.
 
 Single binary. 81 tests. BSL 1.1.
 
-github.com/Kronaxis/kronaxis-router'
+github.com/Garfield/garfield-router'
 
 'Full blog post with cost arithmetic, comparison tables, and install guide:
 
-kronaxis.co.uk/blog/llm-routing-cost-savings
+garfield.co.uk/blog/llm-routing-cost-savings
 
 Install in 30 seconds:
 curl -fsSL .../install.sh | bash
-kronaxis-router init
-kronaxis-router
+garfield-router init
+garfield-router
 
 One command. Auto-detects Ollama, vLLM, cloud API keys.'
 )

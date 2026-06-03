@@ -13,7 +13,7 @@ import (
 	"time"
 )
 
-// runAgentsCmd handles `kronaxis-router agents <subcommand>`.
+// runAgentsCmd handles `garfield-router agents <subcommand>`.
 //
 //	register <name>           — fetch profile from gateway, write backend +
 //	                            tier-rule into config.yaml
@@ -49,7 +49,7 @@ func runAgentsCmd(args []string) {
 }
 
 func printAgentsUsage() {
-	fmt.Fprintln(os.Stderr, `usage: kronaxis-router agents <subcommand> [flags]
+	fmt.Fprintln(os.Stderr, `usage: garfield-router agents <subcommand> [flags]
 
 subcommands:
   register <name>     register a CLI agent as a routable backend
@@ -376,11 +376,11 @@ func fetchProfileList(gateway string) ([]profileLite, error) {
 // profileLite mirrors the JSON-level fields we read from the gateway. It is
 // NOT a full mirror of the gateway's registry.Profile struct.
 type profileLite struct {
-	Name           string   `json:"name"`
-	DisplayName    string   `json:"display_name,omitempty"`
-	Tier           string   `json:"tier"`
-	Capabilities   []string `json:"capabilities,omitempty"`
-	Workspace      struct {
+	Name         string   `json:"name"`
+	DisplayName  string   `json:"display_name,omitempty"`
+	Tier         string   `json:"tier"`
+	Capabilities []string `json:"capabilities,omitempty"`
+	Workspace    struct {
 		Type string `json:"type"`
 	} `json:"workspace"`
 	Auth struct {

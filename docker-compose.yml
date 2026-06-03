@@ -1,7 +1,7 @@
 version: "2.1"
 
 services:
-  kronaxis-router:
+  garfield-router:
     build:
       context: .
       dockerfile: Dockerfile.balena

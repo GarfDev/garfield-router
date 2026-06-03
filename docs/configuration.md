@@ -11,7 +11,7 @@ server:
   default_timeout: 120s               # Default HTTP timeout
   branding:
     headers: true                     # Add X-Powered-By headers
-    header_name: "Kronaxis Router"    # Branding name
+    header_name: "Garfield Router"    # Branding name
     content_inject: false             # Inject branding into response text
     content_text: "\n\n---\n..."      # Branding text (when content_inject=true)
     content_skip_json: true           # Never inject into JSON responses
@@ -42,12 +42,12 @@ rules:
   - name: my-rule                     # Unique name (required)
     priority: 100                     # Higher = evaluated first
     match:
-      service: ""                     # Match X-Kronaxis-Service (empty=any)
-      call_type: ""                   # Match X-Kronaxis-CallType
-      tier: 0                         # Match X-Kronaxis-Tier (0=any)
+      service: ""                     # Match X-Garfield-Service (empty=any)
+      call_type: ""                   # Match X-Garfield-CallType
+      tier: 0                         # Match X-Garfield-Tier (0=any)
       model: ""                       # Match request model field
       lora: ""                        # Match LoRA adapter name
-      priority_level: ""              # Match X-Kronaxis-Priority
+      priority_level: ""              # Match X-Garfield-Priority
       content_type: ""                # Match detected content type (text/vision)
     backends:                         # Ordered backend preference list
       - cheap-backend
@@ -99,7 +99,7 @@ batching:
 | `ROUTER_ALLOW_PRIVATE_BACKENDS` | (empty) | Set `true` to allow private IP backends |
 | `CACHE_MAX_SIZE` | `1000` | Max cached responses (0=disabled) |
 | `CACHE_TTL_SECONDS` | `3600` | Cache entry TTL |
-| `BATCH_DATA_DIR` | `/tmp/kronaxis-router-batches` | Batch job storage |
+| `BATCH_DATA_DIR` | `/tmp/garfield-router-batches` | Batch job storage |
 | `QUALITY_ENABLED` | (empty) | Set `true` for quality validation |
 | `QUALITY_GATE_ENABLED` | (empty) | Set `true` for the quality gate (cheap→validate→retry) |
 | `QUALITY_GATE_MODE` | `sequential` | `sequential` or `parallel` |
@@ -164,8 +164,8 @@ graphify:
     timeout_ms: 8000
 ```
 
-- **Stateful sessions** need only `DATABASE_URL` set (sessions live in `kr_sessions`); driven by `X-Kronaxis-Session-*` headers, no config block.
-- **Per-request schema validation**: send `X-Kronaxis-Response-Schema: <json-schema>`; set `QUALITY_GATE_FALLBACK` so violations can retry on a stronger backend.
+- **Stateful sessions** need only `DATABASE_URL` set (sessions live in `kr_sessions`); driven by `X-Garfield-Session-*` headers, no config block.
+- **Per-request schema validation**: send `X-Garfield-Response-Schema: <json-schema>`; set `QUALITY_GATE_FALLBACK` so violations can retry on a stronger backend.
 
 See the README sections "Cluster Intelligence", "Stateful Sessions", "Context Compression", and "Production Safety & Intelligence" for behaviour and trade-offs.
 

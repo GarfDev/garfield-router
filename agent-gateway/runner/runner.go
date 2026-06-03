@@ -12,9 +12,9 @@ import (
 
 	"github.com/google/shlex"
 
-	"github.com/kronaxis/agent-gateway/accounts"
-	"github.com/kronaxis/agent-gateway/registry"
-	"github.com/kronaxis/agent-gateway/workspace"
+	"github.com/GarfDev/garfield-router/agent-gateway/accounts"
+	"github.com/GarfDev/garfield-router/agent-gateway/registry"
+	"github.com/GarfDev/garfield-router/agent-gateway/workspace"
 )
 
 // Message is a single chat-completions message.
@@ -25,14 +25,14 @@ type Message struct {
 
 // Request bundles everything the runner needs for one CLI invocation.
 type Request struct {
-	Profile       *registry.Profile
-	Submodel      string
-	Messages      []Message
-	SystemPrompt  string
-	AppendSystem  string
-	Workspace     workspace.Workspace
-	Lease         *accounts.Lease // resolved before the call; runner releases on completion
-	TimeoutSec    int
+	Profile      *registry.Profile
+	Submodel     string
+	Messages     []Message
+	SystemPrompt string
+	AppendSystem string
+	Workspace    workspace.Workspace
+	Lease        *accounts.Lease // resolved before the call; runner releases on completion
+	TimeoutSec   int
 
 	// First-class passthrough fields. Adapters consult them per-profile; the
 	// generic path ignores them. Profile.FlagsPassthrough decides which to

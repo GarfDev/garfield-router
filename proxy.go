@@ -110,9 +110,9 @@ func handleChatCompletions(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Stateful session hydration: if the caller passed
-	// X-Kronaxis-Session-Create or X-Kronaxis-Session-ID, the merged
+	// X-Garfield-Session-Create or X-Garfield-Session-ID, the merged
 	// transcript replaces req.Messages here. New sessions get their ID
-	// surfaced via the X-Kronaxis-Session-ID response header below.
+	// surfaced via the X-Garfield-Session-ID response header below.
 	var (
 		sessionID  string
 		newSession bool
@@ -131,9 +131,9 @@ func handleChatCompletions(w http.ResponseWriter, r *http.Request) {
 		sessionID = id
 		newSession = isNew
 		if sessionID != "" {
-			w.Header().Set("X-Kronaxis-Session-ID", sessionID)
+			w.Header().Set("X-Garfield-Session-ID", sessionID)
 			if newSession {
-				w.Header().Set("X-Kronaxis-Session-Created", "true")
+				w.Header().Set("X-Garfield-Session-Created", "true")
 			}
 			// Re-marshal so downstream forwarders see the merged messages.
 			if newBody, mErr := json.Marshal(req); mErr == nil {
@@ -156,7 +156,7 @@ func handleChatCompletions(w http.ResponseWriter, r *http.Request) {
 			for k, v := range headers {
 				w.Header().Set(k, v)
 			}
-			w.Header().Set("X-Kronaxis-Cache", "HIT")
+			w.Header().Set("X-Garfield-Cache", "HIT")
 			w.WriteHeader(statusCode)
 			w.Write(body)
 			return
@@ -173,7 +173,7 @@ func handleChatCompletions(w http.ResponseWriter, r *http.Request) {
 		cb, cst, ok := semCache.Lookup(sctx, semKey)
 		scancel()
 		if ok {
-			w.Header().Set("X-Kronaxis-Cache", "SEMANTIC")
+			w.Header().Set("X-Garfield-Cache", "SEMANTIC")
 			w.WriteHeader(cst)
 			w.Write(cb)
 			return
@@ -185,10 +185,10 @@ func handleChatCompletions(w http.ResponseWriter, r *http.Request) {
 	// retrieval errors (we never fail a request because graphify is sad).
 	if graphifyMW != nil && graphifyMW.ShouldRun() {
 		if mode, n, saved, err := graphifyMW.Preprocess(r.Context(), &req, r); err == nil && (n > 0 || saved > 0) {
-			w.Header().Set("X-Kronaxis-Graphify", mode)
-			w.Header().Set("X-Kronaxis-Graphify-Chunks", fmt.Sprintf("%d", n))
+			w.Header().Set("X-Garfield-Graphify", mode)
+			w.Header().Set("X-Garfield-Graphify-Chunks", fmt.Sprintf("%d", n))
 			if saved > 0 {
-				w.Header().Set("X-Kronaxis-Graphify-Tokens-Saved", fmt.Sprintf("%d", saved))
+				w.Header().Set("X-Garfield-Graphify-Tokens-Saved", fmt.Sprintf("%d", saved))
 			}
 			// Re-marshal the body so downstream forwarders see the rewritten messages
 			if newBody, err := json.Marshal(req); err == nil {
@@ -249,7 +249,7 @@ func handleChatCompletions(w http.ResponseWriter, r *http.Request) {
 			addBrandingHeaders(w, candidates[0])
 			responseBody := postProcessResponse(cbody, candidates[0].Backend)
 			w.Header().Set("Content-Type", "application/json")
-			w.Header().Set("X-Kronaxis-Consensus", cmode)
+			w.Header().Set("X-Garfield-Consensus", cmode)
 			w.WriteHeader(cstatus)
 			w.Write(responseBody)
 			var chatResp ChatResponse
@@ -381,7 +381,7 @@ func handleChatCompletions(w http.ResponseWriter, r *http.Request) {
 					respBody = gatedBody
 					statusCode = gatedStatus
 					if usedFallback {
-						w.Header().Set("X-Kronaxis-Quality-Gate", "retried")
+						w.Header().Set("X-Garfield-Quality-Gate", "retried")
 					}
 				}
 			} else {
@@ -393,7 +393,7 @@ func handleChatCompletions(w http.ResponseWriter, r *http.Request) {
 					respBody = gatedBody
 					statusCode = gatedStatus
 					if usedFallback {
-						w.Header().Set("X-Kronaxis-Quality-Gate", "retried")
+						w.Header().Set("X-Garfield-Quality-Gate", "retried")
 					}
 				}
 			}
@@ -403,7 +403,7 @@ func handleChatCompletions(w http.ResponseWriter, r *http.Request) {
 		if meta.Reflect && statusCode < 400 {
 			if refined, did := runReflection(&reqCopy, meta, routeResult.Backend, routeResult.ModelName, respBody); did {
 				respBody = refined
-				w.Header().Set("X-Kronaxis-Reflected", "true")
+				w.Header().Set("X-Garfield-Reflected", "true")
 			}
 		}
 
@@ -632,7 +632,7 @@ func forwardToGemini(backend *Backend, _ []byte, req *ChatRequest, apiKey string
 	if resp.StatusCode >= 400 {
 		// Client error (429 rate limit, 403 auth, etc.): pass through to caller
 		errResp := ChatResponse{
-			ID: "chatcmpl-kronaxis", Object: "chat.completion", Created: time.Now().Unix(), Model: model,
+			ID: "chatcmpl-garfield", Object: "chat.completion", Created: time.Now().Unix(), Model: model,
 			Choices: []ChatChoice{{Index: 0, Message: ChatMessage{Role: "assistant", Content: string(respBody)}, FinishReason: "error"}},
 		}
 		result, _ := json.Marshal(errResp)
@@ -762,13 +762,13 @@ func parseGeminiResponse(body []byte, model string) ChatResponse {
 	var gr geminiResponse
 	if err := json.Unmarshal(body, &gr); err != nil {
 		return ChatResponse{
-			ID: "chatcmpl-kronaxis", Object: "chat.completion", Created: time.Now().Unix(), Model: model,
+			ID: "chatcmpl-garfield", Object: "chat.completion", Created: time.Now().Unix(), Model: model,
 			Choices: []ChatChoice{{Index: 0, Message: ChatMessage{Role: "assistant", Content: "error parsing gemini response: " + err.Error()}, FinishReason: "error"}},
 		}
 	}
 
 	resp := ChatResponse{
-		ID:      "chatcmpl-kronaxis",
+		ID:      "chatcmpl-garfield",
 		Object:  "chat.completion",
 		Created: time.Now().Unix(),
 		Model:   model,
@@ -859,7 +859,7 @@ func forwardToOllama(backend *Backend, _ []byte, req *ChatRequest) (int, map[str
 	}
 
 	openAIResp := ChatResponse{
-		ID:      "chatcmpl-kronaxis",
+		ID:      "chatcmpl-garfield",
 		Object:  "chat.completion",
 		Created: time.Now().Unix(),
 		Model:   backend.Config.ModelName,
@@ -1046,7 +1046,7 @@ func injectContentBranding(content string) string {
 	return content + branding.ContentText
 }
 
-// addBrandingHeaders adds Kronaxis branding headers to the response.
+// addBrandingHeaders adds Garfield branding headers to the response.
 func addBrandingHeaders(w http.ResponseWriter, route RouteResult) {
 	configMu.RLock()
 	branding := cfg.Server.Branding
@@ -1054,14 +1054,14 @@ func addBrandingHeaders(w http.ResponseWriter, route RouteResult) {
 
 	if branding.Headers {
 		w.Header().Set("X-Powered-By", branding.HeaderName)
-		w.Header().Set("X-Kronaxis-Router-Version", version)
+		w.Header().Set("X-Garfield-Router-Version", version)
 		if route.Backend != nil {
-			w.Header().Set("X-Kronaxis-Backend", route.Backend.Config.Name)
+			w.Header().Set("X-Garfield-Backend", route.Backend.Config.Name)
 		}
 		if route.Rule != nil {
-			w.Header().Set("X-Kronaxis-Rule", route.Rule.Name)
+			w.Header().Set("X-Garfield-Rule", route.Rule.Name)
 		}
-		w.Header().Set("X-Kronaxis-Complexity", fmt.Sprintf("%.0f", float64(route.Complexity)))
+		w.Header().Set("X-Garfield-Complexity", fmt.Sprintf("%.0f", float64(route.Complexity)))
 	}
 }
 

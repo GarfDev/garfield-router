@@ -1,10 +1,10 @@
-# Kronaxis Router Roadmap
+# Garfield Router Roadmap
 
 Where we're going and why. Features are ordered by implementation priority, not feature number.
 
 ## What exists today
 
-Kronaxis Router is a production-grade LLM proxy (~9,000 lines of Go) that routes requests to the cheapest model capable of delivering the required output quality. It already ships with:
+Garfield Router is a production-grade LLM proxy (~9,000 lines of Go) that routes requests to the cheapest model capable of delivering the required output quality. It already ships with:
 
 - Cost-optimised YAML routing rules with priority ordering and failover
 - 8 backend types (vLLM, OpenAI, Anthropic, Gemini, Ollama, Groq, Together, Fireworks)
@@ -25,7 +25,7 @@ Kronaxis Router is a production-grade LLM proxy (~9,000 lines of Go) that routes
 ### Added 2026-05-10: v0.3.0 release (see CHANGELOG)
 
 - **KV cache aware routing (Phase 1)**: radix tree per backend keyed on chunked prefix hashes; biases routing toward whichever backend has a deep prefix match (vLLM KV is presumed warm there). Atomic lastSeen for race free concurrent walks. Endpoint `GET /api/kv-trees`.
-- **Stateful sessions (Phase 1)**: `kr_sessions` Postgres table; client uploads full transcript once via `X-Kronaxis-Session-Create: true`, then sends only new turns via `X-Kronaxis-Session-ID: <id>`. TTL sweeper, 30 second hot cache. Endpoints `GET/DELETE /v1/sessions[/<id>]`.
+- **Stateful sessions (Phase 1)**: `kr_sessions` Postgres table; client uploads full transcript once via `X-Garfield-Session-Create: true`, then sends only new turns via `X-Garfield-Session-ID: <id>`. TTL sweeper, 30 second hot cache. Endpoints `GET/DELETE /v1/sessions[/<id>]`.
 - **Anthropic cache breakpoint injection**: opt in per backend via `cache_breakpoints: true`. Injects `cache_control: {"type": "ephemeral"}` markers on the stable prefix; stacks multiplicatively with sessions.
 - **Schema validated quality gates (Phase 2)**: santhosh-tekuri/jsonschema/v5 with FNV keyed compile cache; silent retry on next backend on violation.
 - **DPO export to JSONL (Phase 2)**: non blocking buffered writer with key redaction and milestone audit logs. Enabled via `DPO_EXPORT_PATH` env var. Endpoint `GET /api/dpo`.
@@ -36,24 +36,24 @@ Kronaxis Router is a production-grade LLM proxy (~9,000 lines of Go) that routes
 
 ### Added 2026-05-09 (see CHANGELOG)
 
-- **CLI-Agent Gateway expansion (the framework)** -- `agent-gateway/` (port 8055) graduated from a Claude-Code-specific wrapper into a tiered-registry framework that exposes any genuine TUI agent CLI behind a single OpenAI-compatible endpoint. Six built-in profiles: `claude-cli`, `codex-cli`, `aider` (first-class, deep stream parsers) plus `gemini-cli`, `grok-cli`, `llm` (supported, generic streamer). Universal account pool generalised from the previous Anthropic-only pool with provider-aware cooldowns. Profile-declared workspace lifecycle (worktree-ephemeral / dir-ephemeral / stateless). Submodel surface (`model: <agent>/<submodel>` parsed and validated against profile allowlist). Profile-declared graphify default. New API: `GET/POST /v1/agents`, `GET/DELETE /v1/agents/<name>`, `POST /v1/accounts/test`, extended `GET /v1/accounts`. New CLI: `kronaxis-router agents register|list|sync|remove|test`. New router endpoint: `GET /api/agents`. Idempotent rule synthesis writer (`synth.go`) preserves comments + unrelated keys. 50+ tests pass under `go test -race`.
+- **CLI-Agent Gateway expansion (the framework)** -- `agent-gateway/` (port 8055) graduated from a Claude-Code-specific wrapper into a tiered-registry framework that exposes any genuine TUI agent CLI behind a single OpenAI-compatible endpoint. Six built-in profiles: `claude-cli`, `codex-cli`, `aider` (first-class, deep stream parsers) plus `gemini-cli`, `grok-cli`, `llm` (supported, generic streamer). Universal account pool generalised from the previous Anthropic-only pool with provider-aware cooldowns. Profile-declared workspace lifecycle (worktree-ephemeral / dir-ephemeral / stateless). Submodel surface (`model: <agent>/<submodel>` parsed and validated against profile allowlist). Profile-declared graphify default. New API: `GET/POST /v1/agents`, `GET/DELETE /v1/agents/<name>`, `POST /v1/accounts/test`, extended `GET /v1/accounts`. New CLI: `garfield-router agents register|list|sync|remove|test`. New router endpoint: `GET /api/agents`. Idempotent rule synthesis writer (`synth.go`) preserves comments + unrelated keys. 50+ tests pass under `go test -race`.
 - **BSL 1.1 relicense** -- repo relicensed from Apache 2.0 to Business Source License 1.1, converts to Apache 2.0 on 9 May 2031 (Change Date). Source-available with non-commercial Additional Use Grant; commercial production use before the Change Date requires a separate licence.
 
 ### Added 2026-05-08 (see CHANGELOG)
 
-- **graphify pre-stage** -- token-saving RAG that runs before classifier and cost routing. pgvector + sentence-transformers (default `BAAI/bge-small-en-v1.5`, swappable to gemini/openai). Hybrid retrieval (HNSW cosine + BM25 reranking). Modes: `compress`, `augment`, `auto`, `off`. Live re-ingest via fsnotify watcher. Adds `POST /v1/retrieve`, `GET /api/graphify`, `kronaxis-router ingest <paths>`, and graphify Prometheus counters. Disabled by default.
+- **graphify pre-stage** -- token-saving RAG that runs before classifier and cost routing. pgvector + sentence-transformers (default `BAAI/bge-small-en-v1.5`, swappable to gemini/openai). Hybrid retrieval (HNSW cosine + BM25 reranking). Modes: `compress`, `augment`, `auto`, `off`. Live re-ingest via fsnotify watcher. Adds `POST /v1/retrieve`, `GET /api/graphify`, `garfield-router ingest <paths>`, and graphify Prometheus counters. Disabled by default.
 - **agent-gateway sub-service** at `agent-gateway/` (port 8055) -- initial OpenAI-compatible HTTP wrapper around CLI agents. Superseded by the 2026-05-09 framework expansion above.
 - **Claude Code OAuth subscription pooling (personal use only)** -- in-process gate at first run requires user to confirm non-commercial intent; if they pick "commercial" the subscription path is disabled and only API-key adapters remain available.
 
 ## Phase 1: Local cluster intelligence
 
-These features make Kronaxis the best router for anyone running multiple vLLM instances. They compound on each other and require no new dependencies.
+These features make Garfield the best router for anyone running multiple vLLM instances. They compound on each other and require no new dependencies.
 
 ### KV Cache-Aware Routing (Radix Tree Pinning) — shipped in v0.3.0
 
 **Problem:** Round-robin routing across a vLLM cluster forces each node to recompute the KV cache for multi-turn conversations. A 100k-token system prompt gets reprocessed on every turn if the request lands on a different node.
 
-**Solution:** Kronaxis maintains a lightweight radix tree keyed on prompt prefix hashes. When a follow-up message arrives, it routes to the node that already has the KV cache warm from the previous turn. The KV cache hit rate improvement on local clusters is massive: TTFT drops from seconds to milliseconds for cached prefixes.
+**Solution:** Garfield maintains a lightweight radix tree keyed on prompt prefix hashes. When a follow-up message arrives, it routes to the node that already has the KV cache warm from the previous turn. The KV cache hit rate improvement on local clusters is massive: TTFT drops from seconds to milliseconds for cached prefixes.
 
 ```yaml
 backends:
@@ -67,7 +67,7 @@ backends:
 
 **Problem:** Static priority routing can overwhelm a single node while others sit idle. Health checks tell you if a node is alive, not if it's busy.
 
-**Solution:** Kronaxis periodically scrapes the `/metrics` endpoint of local backends, reading `vllm:num_requests_waiting` and `vllm:num_requests_running`. It factors queue depth into backend selection, routing to the node with the lowest active queue. Combined with KV pinning, this means: route to the node with the warmest cache, unless it's overloaded.
+**Solution:** Garfield periodically scrapes the `/metrics` endpoint of local backends, reading `vllm:num_requests_waiting` and `vllm:num_requests_running`. It factors queue depth into backend selection, routing to the node with the lowest active queue. Combined with KV pinning, this means: route to the node with the warmest cache, unless it's overloaded.
 
 ```yaml
 server:
@@ -79,22 +79,22 @@ server:
 
 **Problem:** Agentic workflows (Claude Code, Cursor, custom agents) re-upload the entire conversation context with every HTTP request. A 100k-token system prompt gets sent 50 times during a coding session. This wastes bandwidth, increases latency, and costs money on metered APIs.
 
-**Solution:** The client sends the full context once. Kronaxis stores it and returns a `kronaxis-session-id`. On subsequent turns, the client sends only the session ID and the new message. Kronaxis hydrates the full prompt array server-side before forwarding.
+**Solution:** The client sends the full context once. Garfield stores it and returns a `garfield-session-id`. On subsequent turns, the client sends only the session ID and the new message. Garfield hydrates the full prompt array server-side before forwarding.
 
 ```bash
 # First request: full context
 curl http://localhost:8050/v1/chat/completions \
-  -H "X-Kronaxis-Session-Create: true" \
+  -H "X-Garfield-Session-Create: true" \
   -d '{"messages": [{"role": "system", "content": "...100k tokens..."}]}'
-# Response header: X-Kronaxis-Session-ID: sess_abc123
+# Response header: X-Garfield-Session-ID: sess_abc123
 
 # Subsequent requests: session ID only
 curl http://localhost:8050/v1/chat/completions \
-  -H "X-Kronaxis-Session-ID: sess_abc123" \
+  -H "X-Garfield-Session-ID: sess_abc123" \
   -d '{"messages": [{"role": "user", "content": "Just the new question"}]}'
 ```
 
-This also unlocks provider-side cache optimisation: because Kronaxis controls the message array, it can separate static context from dynamic messages and inject provider-specific cache breakpoints (Anthropic's ephemeral markers, OpenAI's cache hints) at optimal boundaries.
+This also unlocks provider-side cache optimisation: because Garfield controls the message array, it can separate static context from dynamic messages and inject provider-specific cache breakpoints (Anthropic's ephemeral markers, OpenAI's cache hints) at optimal boundaries.
 
 ## Phase 2: Production safety
 
@@ -102,11 +102,11 @@ This also unlocks provider-side cache optimisation: because Kronaxis controls th
 
 **Problem:** The "cheap model first" strategy saves money but breaks production when the cheap model hallucinates invalid JSON. The existing quality gate validates by comparing token overlap against a reference model. That catches gross quality degradation but not structural failures.
 
-**Solution:** Users supply a JSON Schema in the request. Kronaxis validates the cheap model's output against it. If validation fails, it silently retries on the fallback (expensive) model. The client always receives schema-valid JSON.
+**Solution:** Users supply a JSON Schema in the request. Garfield validates the cheap model's output against it. If validation fails, it silently retries on the fallback (expensive) model. The client always receives schema-valid JSON.
 
 ```bash
 curl http://localhost:8050/v1/chat/completions \
-  -H "X-Kronaxis-Response-Schema: {\"type\":\"object\",\"required\":[\"name\",\"score\"]}" \
+  -H "X-Garfield-Response-Schema: {\"type\":\"object\",\"required\":[\"name\",\"score\"]}" \
   -d '{"model": "default", "messages": [...]}'
 ```
 
@@ -131,7 +131,7 @@ backends:
 
 **Problem:** Fine-tuning data for local models is expensive to create manually.
 
-**Solution:** Every time a quality gate fallback fires (cheap model fails, expensive model succeeds), Kronaxis logs the pair: cheap output as "rejected", expensive output as "chosen". This automatically builds a Direct Preference Optimization dataset. Over time, fine-tune your local models on this data and they fail less, reducing cloud spend further.
+**Solution:** Every time a quality gate fallback fires (cheap model fails, expensive model succeeds), Garfield logs the pair: cheap output as "rejected", expensive output as "chosen". This automatically builds a Direct Preference Optimization dataset. Over time, fine-tune your local models on this data and they fail less, reducing cloud spend further.
 
 ```yaml
 quality_gate:
@@ -226,4 +226,4 @@ See [IMPLEMENTATION_PLAN.md](docs/IMPLEMENTATION_PLAN.md) for file-level specs, 
 
 ## Licence
 
-Business Source License 1.1. Source-available with a non-commercial Additional Use Grant; converts to Apache License, Version 2.0 on 9 May 2031 (the Change Date). Commercial production use before that date requires a commercial licence -- contact `contact@kronaxis.co.uk`. See [LICENSE](LICENSE) for the full terms.
+Business Source License 1.1. Source-available with a non-commercial Additional Use Grant; converts to Apache License, Version 2.0 on 9 May 2031 (the Change Date). Commercial production use before that date requires a commercial licence -- contact `contact@garfield.co.uk`. See [LICENSE](LICENSE) for the full terms.

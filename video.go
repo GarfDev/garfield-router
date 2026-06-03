@@ -1,6 +1,6 @@
 package main
 
-// video.go — Video generation routing for Kronaxis Router.
+// video.go — Video generation routing for Garfield Router.
 //
 // Adds /v1/video/generate and /v1/video/* endpoints that route to
 // backends with capability "video" (type: "ltx" or "video").
@@ -44,7 +44,7 @@ type VideoGenerateRequest struct {
 	GuidanceScale     float64 `json:"guidance_scale,omitempty"`
 	Seed              *int64  `json:"seed,omitempty"`
 	OutputFormat      string  `json:"output_format,omitempty"`
-	// Kronaxis metadata (not forwarded to backend)
+	// Garfield metadata (not forwarded to backend)
 	Model    string `json:"model,omitempty"`    // if set, prefer specific backend
 	Vertical string `json:"vertical,omitempty"` // persona vertical — for logging
 }
@@ -78,7 +78,7 @@ func handleVideoGenerate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Proxy to backend — strip Kronaxis-only fields before forwarding
+	// Proxy to backend — strip Garfield-only fields before forwarding
 	stripped, _ := json.Marshal(map[string]interface{}{
 		"prompt":              req.Prompt,
 		"negative_prompt":     req.NegativePrompt,
@@ -127,8 +127,8 @@ func handleVideoGenerate(w http.ResponseWriter, r *http.Request) {
 			w.Header().Add(k, vv)
 		}
 	}
-	w.Header().Set("X-Kronaxis-Backend", backend.Config.Name)
-	w.Header().Set("X-Kronaxis-Duration", elapsed.String())
+	w.Header().Set("X-Garfield-Backend", backend.Config.Name)
+	w.Header().Set("X-Garfield-Duration", elapsed.String())
 	w.WriteHeader(resp.StatusCode)
 	io.Copy(w, resp.Body)
 }

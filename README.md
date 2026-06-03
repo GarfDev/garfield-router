@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="assets/kronaxis-icon.svg" width="64" height="64" alt="Kronaxis">
+  <img src="assets/garfield-icon.svg" width="64" height="64" alt="Garfield">
 </p>
 
-<h1 align="center">Kronaxis Router</h1>
+<h1 align="center">Garfield Router</h1>
 
 <p align="center">
   <strong>Tier-routing LLM proxy for sovereign + custom + frontier models. Sub-5ms decisions, 50&times; cheaper for 80% of requests, with the agentic CLIs you actually use bolted on as OpenAI endpoints.</strong>
@@ -10,16 +10,16 @@
 
 <p align="center">
   <a href="LICENSE">BSL 1.1</a> &middot;
-  <a href="https://kronaxis.co.uk/kronaxis-router">Project page</a> &middot;
-  <a href="https://kronaxis.co.uk/research">Research microsite</a> &middot;
-  <a href="https://kronaxis.co.uk/blog/llm-routing-cost-savings">Blog post</a> &middot;
+  <a href="https://garfield.co.uk/garfield-router">Project page</a> &middot;
+  <a href="https://garfield.co.uk/research">Research microsite</a> &middot;
+  <a href="https://garfield.co.uk/blog/llm-routing-cost-savings">Blog post</a> &middot;
   <a href="examples/">Examples</a> &middot;
   <a href="CHANGELOG.md">Changelog</a>
 </p>
 
 <p align="center">
-  <a href="https://github.com/kronaxis/kronaxis-router/actions/workflows/build.yml"><img src="https://github.com/kronaxis/kronaxis-router/actions/workflows/build.yml/badge.svg" alt="Build"></a>
-  <a href="https://goreportcard.com/report/github.com/kronaxis/kronaxis-router"><img src="https://goreportcard.com/badge/github.com/kronaxis/kronaxis-router" alt="Go Report Card"></a>
+  <a href="https://github.com/GarfDev/garfield-router/actions/workflows/build.yml"><img src="https://github.com/GarfDev/garfield-router/actions/workflows/build.yml/badge.svg" alt="Build"></a>
+  <a href="https://goreportcard.com/report/github.com/GarfDev/garfield-router"><img src="https://goreportcard.com/badge/github.com/GarfDev/garfield-router" alt="Go Report Card"></a>
 </p>
 
 ---
@@ -27,7 +27,7 @@
 Routes every LLM request to the **cheapest backend that can do the job**: sovereign / custom / open-weight 7-9B for the 80% of requests that don't need a frontier model, frontier APIs only for the genuinely hard 20%. Picks in **under 5 ms**, compresses prompts via pgvector RAG before they leave the box, and wraps real terminal agent CLIs (Claude Code, Codex, Aider, Gemini, Grok, llm) so each one is a regular OpenAI endpoint.
 
 ```
-your service ─POST /v1/chat/completions─▶ Kronaxis Router ─▶ sovereign vLLM (7-9B, 50× cheaper)
+your service ─POST /v1/chat/completions─▶ Garfield Router ─▶ sovereign vLLM (7-9B, 50× cheaper)
                                               │            ─▶ frontier API (Anthropic / OpenAI / Gemini)
                                               │            ─▶ agent-gateway → claude / codex / aider CLI
                                               ├─ tier-routes by rule (5 ms p50)
@@ -47,7 +47,7 @@ your service ─POST /v1/chat/completions─▶ Kronaxis Router ─▶ sovereign
 
 ## How it compares
 
-| | Kronaxis Router | LiteLLM | OpenRouter | Helicone |
+| | Garfield Router | LiteLLM | OpenRouter | Helicone |
 |---|---|---|---|---|
 | OpenAI-compatible proxy | ✓ | ✓ | ✓ | ✓ (logs only) |
 | Self-hosted single binary | ✓ (Go, 9.9 MB) | ✓ (Python) | hosted only | hosted only |
@@ -66,17 +66,17 @@ your service ─POST /v1/chat/completions─▶ Kronaxis Router ─▶ sovereign
 
 If you want a hosted "credits + many providers" experience, OpenRouter wins. If you want the best logging dashboard, Helicone. If you want a Python-native multi-provider client, LiteLLM. If you want to **run the proxy yourself, route by cost, and treat Claude Code as an API**, this is the only option that ships those things in one binary.
 
-## Part of the Kronaxis stack
+## Part of the Garfield stack
 
-Kronaxis Router is the infrastructure layer of a source-available stack covering psychographics, synthetic-panel simulation, public proof, and LLM ops:
+Garfield Router is the infrastructure layer of a source-available stack covering psychographics, synthetic-panel simulation, public proof, and LLM ops:
 
-1. [**DYNAMICS-8**](https://github.com/Kronaxis/dynamics-8) — eight-dimension psychographic framework with two new digital-age dimensions (CC BY 4.0 spec)
-2. [**Panel Studio**](https://github.com/Kronaxis/kronaxis-panel-studio) — synthetic consumer panels engine; 1,000 personas in 30 seconds
-3. [**KPM-1**](https://github.com/Kronaxis/kpm1-election-projections) — pre-registered, hash-verified election predictions (the public proof the stack works)
-4. **Kronaxis Router** (this repo) — the tier-routing LLM proxy + agent gateway
-5. [**Kronaxis Fabric**](https://github.com/Kronaxis/kronaxis-fabric) — the memory + coord + orchestrator companion. One Go binary on Postgres. Pairs directly with Router: **Router decides WHICH model the request goes to; Fabric decides WHAT context goes into it.** Together you stop paying frontier prices for context you didn't need to send to a model that didn't need to be that big. The typical "how does X work in this codebase" turn drops from $0.60 (frontier + 120K-token preload) to $0.001 (sovereign 7B + 2KB of relevant memos) when both run together. See the [pairing blog post](https://kronaxis.co.uk/blog/agent-context-memory-fabric).
+1. [**DYNAMICS-8**](https://github.com/Garfield/dynamics-8) — eight-dimension psychographic framework with two new digital-age dimensions (CC BY 4.0 spec)
+2. [**Panel Studio**](https://github.com/Garfield/garfield-panel-studio) — synthetic consumer panels engine; 1,000 personas in 30 seconds
+3. [**KPM-1**](https://github.com/Garfield/kpm1-election-projections) — pre-registered, hash-verified election predictions (the public proof the stack works)
+4. **Garfield Router** (this repo) — the tier-routing LLM proxy + agent gateway
+5. [**Garfield Fabric**](https://github.com/Garfield/garfield-fabric) — the memory + coord + orchestrator companion. One Go binary on Postgres. Pairs directly with Router: **Router decides WHICH model the request goes to; Fabric decides WHAT context goes into it.** Together you stop paying frontier prices for context you didn't need to send to a model that didn't need to be that big. The typical "how does X work in this codebase" turn drops from $0.60 (frontier + 120K-token preload) to $0.001 (sovereign 7B + 2KB of relevant memos) when both run together. See the [pairing blog post](https://garfield.co.uk/blog/agent-context-memory-fabric).
 
-**Each piece is independently usable.** Kronaxis Router runs fine without any of the others — it's a general-purpose tier-routing proxy that any team running mixed sovereign + frontier LLM workloads can drop in. Add Fabric when your agent context preloads get too large to stomach.
+**Each piece is independently usable.** Garfield Router runs fine without any of the others — it's a general-purpose tier-routing proxy that any team running mixed sovereign + frontier LLM workloads can drop in. Add Fabric when your agent context preloads get too large to stomach.
 
 The router exists because, in our own work, our personas run on custom and sovereign LLMs but the management layer needs more — observability, cost ceilings, fallback chains, agent invocation, account pooling, RAG compression. Specifically: running 65,000-persona panels through frontier-API pricing is uneconomical — small open-weight models handle 80% of those requests identically and 50× cheaper, **but only if something can route the request to the right tier in under 5 ms**. That's this. Same shape applies to any large-scale agent / synthetic-data / batch-extraction workload.
 
@@ -84,7 +84,7 @@ The router exists because, in our own work, our personas run on custom and sover
 
 ```bash
 # Just the agent-gateway (Claude Code as OpenAI). Nothing else needed.
-go install github.com/kronaxis/agent-gateway@latest
+go install github.com/GarfDev/garfield-router/agent-gateway@latest
 claude auth login                 # if you haven't already
 agent-gateway -config /dev/stdin <<'EOF'
 port: 8055
@@ -95,10 +95,10 @@ EOF
 curl -N http://localhost:8055/v1/chat/completions \
   -H 'Content-Type: application/json' \
   -d '{"model":"claude-code-agent","stream":true,
-       "messages":[{"role":"user","content":"write hello.go that prints kronaxis"}]}'
+       "messages":[{"role":"user","content":"write hello.go that prints garfield"}]}'
 ```
 
-The final SSE chunk carries a `kronaxis` extras object with the file diff the agent produced. See [`agent-gateway/`](agent-gateway/) for full docs.
+The final SSE chunk carries a `garfield` extras object with the file diff the agent produced. See [`agent-gateway/`](agent-gateway/) for full docs.
 
 For the cost-routing proxy with cloud + local backends, see the [examples/](examples/) directory.
 
@@ -122,7 +122,7 @@ For the cost-routing proxy with cloud + local backends, see the [examples/](exam
 - **Embedded web UI** -- Dashboard, visual flow builder, backend manager, cost analysis, config editor.
 - **API authentication** -- Bearer token auth on `/api/*` endpoints via `ROUTER_API_TOKEN` env var.
 - **OpenAI API compatible** -- Drop-in replacement. Services change one URL.
-- **Graphify pre-stage (RAG)** -- Optional middleware that runs *before* every backend. Replaces fat context with retrieved chunks (compress mode) or augments thin prompts with project context (augment mode). Backed by pgvector + a swappable embedder (default: local sentence-transformers in a Docker sidecar; alternatives: **Ollama** (`type: ollama`, reuses a running Ollama with e.g. `nomic-embed-text` — no extra sidecar), Gemini, OpenAI). Stacks with cost routing and caching for compounding token savings. See `embedding-service/` and `kronaxis-router ingest`.
+- **Graphify pre-stage (RAG)** -- Optional middleware that runs *before* every backend. Replaces fat context with retrieved chunks (compress mode) or augments thin prompts with project context (augment mode). Backed by pgvector + a swappable embedder (default: local sentence-transformers in a Docker sidecar; alternatives: **Ollama** (`type: ollama`, reuses a running Ollama with e.g. `nomic-embed-text` — no extra sidecar), Gemini, OpenAI). Stacks with cost routing and caching for compounding token savings. See `embedding-service/` and `garfield-router ingest`.
 - **Content-aware compression** -- Detects each prompt segment's type and applies the right compressor instead of one lexical pass: JSON compaction + array-of-objects tabularisation, string-literal-aware code comment stripping (safe languages only), and prose passes. An always-on **lossless** tier (JSON + whitespace, keeps comments, never substitutes) runs on all traffic; an aggressive opt-in tier adds null-pruning, tabularisation, comment stripping, a learned **LLMLingua-2 prose compressor** (self-hosted GPU sidecar, see `services/prose-compressor/`), and reversible **CCR** elision (oversized blocks stubbed + expandable via the `compress_retrieve` tool / `GET /v1/compress/retrieve`, gated on client capability so nothing is dropped from a client that can't fetch it back). Measured (tiktoken cl100k): ~36% lossless, up to ~65% on JSON/code-heavy bulk, prose ~30%→~50% learned. Clean-room reimplementation of [headroom](https://github.com/chopratejas/headroom) ideas (Apache-2.0); see `NOTICE`. Config under `graphify` (`structural_compress`, `json_tabularize`, `ccr_enabled`, `prose_compressor`).
 - **Agent Gateway** -- Optional sub-service at `agent-gateway/` (port 8055). Wraps CLI agents (Claude Code, Anthropic SDK, Gemini CLI) as OpenAI-compatible endpoints. Persistent named workspaces for multi-turn, warm pool for ~0.3s cold-start, JSON audit log, Prometheus metrics, live UI, multi-account auth pool with auto-disable on rate limits. Each request can run a real agentic loop in an isolated git worktree and return the diff alongside the assistant text.
 
@@ -130,26 +130,26 @@ For the cost-routing proxy with cloud + local backends, see the [examples/](exam
 
 ```bash
 # One-line install (Linux/macOS)
-curl -fsSL https://raw.githubusercontent.com/Kronaxis/kronaxis-router/main/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/Garfield/garfield-router/main/install.sh | sh
 
 # Homebrew
-brew install kronaxis/tap/kronaxis-router
+brew install garfield/tap/garfield-router
 
 # Go
-go install github.com/kronaxis/kronaxis-router@latest
+go install github.com/GarfDev/garfield-router@latest
 
 # Docker
-docker run -p 8050:8050 ghcr.io/kronaxis/kronaxis-router:latest
+docker run -p 8050:8050 ghcr.io/garfield/garfield-router:latest
 ```
 
 ## Quick Start
 
 ```bash
 # Auto-detect local models and API keys, generate config
-kronaxis-router init
+garfield-router init
 
 # Start the router
-kronaxis-router
+garfield-router
 
 # Dashboard at http://localhost:8050
 ```
@@ -161,11 +161,11 @@ Point your services at `http://localhost:8050/v1/chat/completions` instead of ca
 ## Tool Integration
 
 ```bash
-kronaxis-router init --aider      # Aider: sets OPENAI_API_BASE
-kronaxis-router init --continue    # Continue.dev: generates config.json snippet
-kronaxis-router init --cursor      # Cursor: generates MCP config
-kronaxis-router init --claude       # Claude Code: configures MCP server in ~/.claude/settings.json
-kronaxis-router init --openwebui   # Open WebUI: prints connection settings
+garfield-router init --aider      # Aider: sets OPENAI_API_BASE
+garfield-router init --continue    # Continue.dev: generates config.json snippet
+garfield-router init --cursor      # Cursor: generates MCP config
+garfield-router init --claude       # Claude Code: configures MCP server in ~/.claude/settings.json
+garfield-router init --openwebui   # Open WebUI: prints connection settings
 ```
 
 ## MCP Server (Claude Code, Cursor, Claude Desktop)
@@ -174,13 +174,13 @@ The router includes a built-in [MCP](https://modelcontextprotocol.io) server tha
 
 ```bash
 # One-time setup for Claude Code
-kronaxis-router init --claude
+garfield-router init --claude
 
 # Or manually add to ~/.claude/settings.json:
 {
   "mcpServers": {
-    "kronaxis-router": {
-      "command": "kronaxis-router",
+    "garfield-router": {
+      "command": "garfield-router",
       "args": ["mcp"],
       "env": {
         "ROUTER_URL": "http://localhost:8050"
@@ -210,10 +210,10 @@ Available MCP tools:
 ### Build from source
 
 ```bash
-git clone https://github.com/kronaxis/kronaxis-router.git
-cd kronaxis-router
-go build -o kronaxis-router .
-./kronaxis-router
+git clone https://github.com/GarfDev/garfield-router.git
+cd garfield-router
+go build -o garfield-router .
+./garfield-router
 ```
 
 ## Usage Examples
@@ -223,9 +223,9 @@ go build -o kronaxis-router .
 ```bash
 curl http://localhost:8050/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "X-Kronaxis-Service: my-api" \
-  -H "X-Kronaxis-CallType: summarise" \
-  -H "X-Kronaxis-Tier: 2" \
+  -H "X-Garfield-Service: my-api" \
+  -H "X-Garfield-CallType: summarise" \
+  -H "X-Garfield-Tier: 2" \
   -d '{
     "model": "default",
     "messages": [{"role": "user", "content": "Summarise this in one sentence: ..."}],
@@ -238,8 +238,8 @@ curl http://localhost:8050/v1/chat/completions \
 ```bash
 curl http://localhost:8050/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "X-Kronaxis-Service: my-api" \
-  -H "X-Kronaxis-Tier: 1" \
+  -H "X-Garfield-Service: my-api" \
+  -H "X-Garfield-Tier: 1" \
   -d '{
     "model": "default",
     "messages": [{"role": "user", "content": "Plan a 3-phase migration strategy for..."}],
@@ -283,7 +283,7 @@ curl http://localhost:8050/health
 ## How Routing Works
 
 1. Request arrives at `/v1/chat/completions` (OpenAI-compatible)
-2. Router extracts metadata from `X-Kronaxis-*` headers and request body
+2. Router extracts metadata from `X-Garfield-*` headers and request body
 3. Rules are evaluated in priority order (highest first)
 4. Each rule's backend list is filtered by health, capabilities, LoRA adapters, and cost ceiling
 5. First healthy, capable backend wins
@@ -293,15 +293,15 @@ curl http://localhost:8050/health
 
 | Header | Purpose | Example |
 |--------|---------|---------|
-| `X-Kronaxis-Service` | Calling service name | `my-api` |
-| `X-Kronaxis-CallType` | Task type for rule matching | `summarise`, `classify` |
-| `X-Kronaxis-Priority` | `interactive` / `normal` / `background` / `bulk` | `background` |
-| `X-Kronaxis-Tier` | Capability tier (1=heavy, 2=light) | `2` |
-| `X-Kronaxis-PersonaID` | Cost attribution | `user-123` |
+| `X-Garfield-Service` | Calling service name | `my-api` |
+| `X-Garfield-CallType` | Task type for rule matching | `summarise`, `classify` |
+| `X-Garfield-Priority` | `interactive` / `normal` / `background` / `bulk` | `background` |
+| `X-Garfield-Tier` | Capability tier (1=heavy, 2=light) | `2` |
+| `X-Garfield-PersonaID` | Cost attribution | `user-123` |
 
 Headers are optional. Without them, the router uses default rules and the fallback chain.
 
-When `X-Kronaxis-Tier` is unset, the router auto-classifies request complexity (0–100) and picks the tier itself. The score is surfaced as the `X-Kronaxis-Complexity` response header.
+When `X-Garfield-Tier` is unset, the router auto-classifies request complexity (0–100) and picks the tier itself. The score is surfaced as the `X-Garfield-Complexity` response header.
 
 ## Cluster Intelligence (multi-vLLM)
 
@@ -346,17 +346,17 @@ Agentic clients (Claude Code, Cursor, custom agents) re-upload the whole convers
 ```bash
 # First turn: upload full context, get a session id back
 curl http://localhost:8050/v1/chat/completions \
-  -H "X-Kronaxis-Session-Create: true" \
+  -H "X-Garfield-Session-Create: true" \
   -d '{"messages":[{"role":"system","content":"...100k tokens..."}]}'
-# Response header: X-Kronaxis-Session-ID: sess_abc123
+# Response header: X-Garfield-Session-ID: sess_abc123
 
 # Later turns: send only the id + the new message
 curl http://localhost:8050/v1/chat/completions \
-  -H "X-Kronaxis-Session-ID: sess_abc123" \
+  -H "X-Garfield-Session-ID: sess_abc123" \
   -d '{"messages":[{"role":"user","content":"just the new question"}]}'
 ```
 
-Headers: `X-Kronaxis-Session-Create`, `X-Kronaxis-Session-ID`, `X-Kronaxis-Session-TTL` (request); `X-Kronaxis-Session-Created` (response). Manage sessions at `GET/DELETE /v1/sessions[/<id>]`. Requires `DATABASE_URL` (sessions live in the `kr_sessions` Postgres table with a TTL sweeper + hot cache).
+Headers: `X-Garfield-Session-Create`, `X-Garfield-Session-ID`, `X-Garfield-Session-TTL` (request); `X-Garfield-Session-Created` (response). Manage sessions at `GET/DELETE /v1/sessions[/<id>]`. Requires `DATABASE_URL` (sessions live in the `kr_sessions` Postgres table with a TTL sweeper + hot cache).
 
 ## Cost-Saving Principles
 
@@ -449,7 +449,7 @@ budgets:
 | `ROUTER_API_TOKEN` | (empty) | Bearer token for `/api/*` auth. Unset = open access. |
 | `CACHE_MAX_SIZE` | `1000` | Max cached responses (0 = disabled) |
 | `CACHE_TTL_SECONDS` | `3600` | Cache entry TTL in seconds |
-| `BATCH_DATA_DIR` | `/tmp/kronaxis-router-batches` | Directory for batch job data |
+| `BATCH_DATA_DIR` | `/tmp/garfield-router-batches` | Directory for batch job data |
 | `GEMINI_API_KEY` | (empty) | Referenced via `env:GEMINI_API_KEY` in config |
 
 ## Rate Limiting
@@ -473,18 +473,18 @@ Only the `/v1/chat/completions` endpoint is rate limited. API and UI endpoints a
 Every response includes (when branding is enabled):
 
 ```
-X-Powered-By: Kronaxis Router
-X-Kronaxis-Router-Version: 1.0.0
-X-Kronaxis-Backend: local-large
-X-Kronaxis-Rule: heavy-reasoning
-X-Kronaxis-Cache: HIT          # only on cache hits
-X-Kronaxis-Graphify: lossless  # compression/RAG mode applied: lossless|compress|augment|off
-X-Kronaxis-Graphify-Tokens-Saved: 6   # approx tokens saved by compression
+X-Powered-By: Garfield Router
+X-Garfield-Router-Version: 1.0.0
+X-Garfield-Backend: local-large
+X-Garfield-Rule: heavy-reasoning
+X-Garfield-Cache: HIT          # only on cache hits
+X-Garfield-Graphify: lossless  # compression/RAG mode applied: lossless|compress|augment|off
+X-Garfield-Graphify-Tokens-Saved: 6   # approx tokens saved by compression
 ```
 
 To opt a request into the aggressive (lossy) compression tier, send
-`X-Kronaxis-Graphify: compress`. CCR elision additionally requires
-`X-Kronaxis-Compress-CCR: 1` or an allowlisted `X-Kronaxis-Service`.
+`X-Garfield-Graphify: compress`. CCR elision additionally requires
+`X-Garfield-Compress-CCR: 1` or an allowlisted `X-Garfield-Service`.
 
 ## Database (Optional)
 
@@ -503,7 +503,7 @@ Two modes, plus auto:
 - **auto** -- pick based on the largest message size: large → compress, small → augment, medium → off.
 - **off** -- skip; pass through unchanged.
 
-Selected via `X-Kronaxis-Graphify: compress|augment|auto|off` per request, or globally via `graphify.default` in config.
+Selected via `X-Garfield-Graphify: compress|augment|auto|off` per request, or globally via `graphify.default` in config.
 
 ### Architecture
 
@@ -525,7 +525,7 @@ files → chunker → embedder (sidecar) → pgvector kr_chunks ← retrieve (co
 | `gemini` | `text-embedding-004` | 768 | Cloud, ~$0.00001 / 1k tokens, 5ms |
 | `openai` | `text-embedding-3-small` | 1536 | Cloud |
 
-Switch via `graphify.embedder.type` in config. Changing dim requires `kronaxis-router graphify reset` then re-ingest.
+Switch via `graphify.embedder.type` in config. Changing dim requires `garfield-router graphify reset` then re-ingest.
 
 ### Bring it up
 
@@ -534,33 +534,33 @@ Switch via `graphify.embedder.type` in config. Changing dim requires `kronaxis-r
 docker compose up -d embedding-service
 
 # 2. Ingest a project (chunks → embed → upsert to pgvector)
-DATABASE_URL=postgres://... kronaxis-router ingest /path/to/repo
+DATABASE_URL=postgres://... garfield-router ingest /path/to/repo
 
 # 3. Enable in config.yaml: graphify.enabled: true, graphify.default: "auto"
 
 # 4. Per-request override
 curl http://localhost:8050/v1/chat/completions \
-  -H 'X-Kronaxis-Graphify: augment' \
+  -H 'X-Garfield-Graphify: augment' \
   -H 'Content-Type: application/json' \
   -d '{"model":"...", "messages":[{"role":"user","content":"how does the auth handler work?"}]}'
 
 # Response includes:
-#   X-Kronaxis-Graphify: augment
-#   X-Kronaxis-Graphify-Chunks: 5
-#   X-Kronaxis-Graphify-Tokens-Saved: 1840   (compress mode only)
+#   X-Garfield-Graphify: augment
+#   X-Garfield-Graphify-Chunks: 5
+#   X-Garfield-Graphify-Tokens-Saved: 1840   (compress mode only)
 ```
 
 ### Endpoints
 
 - `POST /v1/retrieve` -- raw retrieval, returns top-K scored chunks. Useful for debugging or external RAG.
 - `GET /api/graphify` -- counters: requests, augments, compresses, chunks retrieved, tokens saved, errors.
-- `/metrics` -- Prometheus counters: `kronaxis_router_graphify_*`.
+- `/metrics` -- Prometheus counters: `garfield_router_graphify_*`.
 
 ### CLI
 
-- `kronaxis-router ingest <paths...> [--reset] [--exclude name1,name2] [-v]` -- ingest into pgvector.
-- `kronaxis-router graphify stats` -- row count + token totals.
-- `kronaxis-router graphify reset` -- drop `kr_chunks` (use when changing embedder dim).
+- `garfield-router ingest <paths...> [--reset] [--exclude name1,name2] [-v]` -- ingest into pgvector.
+- `garfield-router graphify stats` -- row count + token totals.
+- `garfield-router graphify reset` -- drop `kr_chunks` (use when changing embedder dim).
 
 ### What it costs
 
@@ -573,9 +573,9 @@ A content-aware compressor that runs inside the graphify pre-stage. Instead of o
 Two tiers:
 
 - **Always-on lossless** (`always_structural`, default on) — JSON whitespace compaction + prose whitespace; keeps comments, never substitutes content. Runs on all traffic.
-- **Aggressive, opt-in** — per request via `X-Kronaxis-Graphify: compress`. Adds: JSON null/empty pruning + array-of-objects **tabularisation** (`{"__cols__":[…],"__rows__":[[…]]}`), string-literal-aware **code comment stripping** (safe languages only — bash/yaml excluded), and a learned **LLMLingua-2 prose compressor** (self-hosted GPU sidecar, see `services/prose-compressor/`).
+- **Aggressive, opt-in** — per request via `X-Garfield-Graphify: compress`. Adds: JSON null/empty pruning + array-of-objects **tabularisation** (`{"__cols__":[…],"__rows__":[[…]]}`), string-literal-aware **code comment stripping** (safe languages only — bash/yaml excluded), and a learned **LLMLingua-2 prose compressor** (self-hosted GPU sidecar, see `services/prose-compressor/`).
 
-**CCR (reversible elision):** oversized segments can be stashed and replaced with a stub the model expands on demand via the `compress_retrieve` MCP tool or `GET /v1/compress/retrieve?id=<id>`. Elision only happens for clients that can fetch it back — a request with `X-Kronaxis-Compress-CCR: 1` or an allowlisted `X-Kronaxis-Service` — so content is never dropped from a client that can't retrieve it.
+**CCR (reversible elision):** oversized segments can be stashed and replaced with a stub the model expands on demand via the `compress_retrieve` MCP tool or `GET /v1/compress/retrieve?id=<id>`. Elision only happens for clients that can fetch it back — a request with `X-Garfield-Compress-CCR: 1` or an allowlisted `X-Garfield-Service` — so content is never dropped from a client that can't retrieve it.
 
 ```yaml
 graphify:
@@ -594,17 +594,17 @@ graphify:
     timeout_ms: 8000
 ```
 
-Response headers: `X-Kronaxis-Graphify` (mode applied: `lossless`/`compress`/`augment`/`off`), `X-Kronaxis-Graphify-Tokens-Saved`, `X-Kronaxis-Graphify-Chunks`. If the prose endpoint is down or slow, the router silently falls back to the lexical result — a request never fails because compression is unavailable.
+Response headers: `X-Garfield-Graphify` (mode applied: `lossless`/`compress`/`augment`/`off`), `X-Garfield-Graphify-Tokens-Saved`, `X-Garfield-Graphify-Chunks`. If the prose endpoint is down or slow, the router silently falls back to the lexical result — a request never fails because compression is unavailable.
 
 ## Production Safety & Intelligence
 
 Shipped in v0.3.0. All off by default; enable per need.
 
-- **Schema-validated quality gates** — supply a JSON Schema per request via the `X-Kronaxis-Response-Schema` header; the router validates the model's JSON output against it and, on violation, silently retries on the fallback backend so the client gets schema-valid JSON. A request-supplied schema activates gating on its own (no global flag needed), but a fallback must be configured (`QUALITY_GATE_FALLBACK`) for the retry to happen — otherwise the original response is returned unchanged. The broader quality gate (length/refusal/JSON checks) is enabled separately with `QUALITY_GATE_ENABLED=true` (`QUALITY_GATE_MODE`, `QUALITY_GATE_FALLBACK`). Streaming requests are not gated.
+- **Schema-validated quality gates** — supply a JSON Schema per request via the `X-Garfield-Response-Schema` header; the router validates the model's JSON output against it and, on violation, silently retries on the fallback backend so the client gets schema-valid JSON. A request-supplied schema activates gating on its own (no global flag needed), but a fallback must be configured (`QUALITY_GATE_FALLBACK`) for the retry to happen — otherwise the original response is returned unchanged. The broader quality gate (length/refusal/JSON checks) is enabled separately with `QUALITY_GATE_ENABLED=true` (`QUALITY_GATE_MODE`, `QUALITY_GATE_FALLBACK`). Streaming requests are not gated.
 
   ```bash
   curl http://localhost:8050/v1/chat/completions \
-    -H 'X-Kronaxis-Response-Schema: {"type":"object","required":["name","score"]}' \
+    -H 'X-Garfield-Response-Schema: {"type":"object","required":["name","score"]}' \
     -d '{"model":"auto","messages":[{"role":"user","content":"Extract name and score..."}]}'
   ```
 - **Anthropic cache breakpoints** — set `cache_breakpoints: true` on a backend to inject `cache_control: {"type":"ephemeral"}` markers on the stable prefix. Stacks multiplicatively with sessions for provider-side cache hits.
@@ -618,23 +618,23 @@ More opt-in strategies. All off by default; each adds cost/latency only when ena
 
 - **Predictive SLA routing** — each backend keeps a rolling p95 latency window; set `max_ttft_ms` on a rule and the router drops backends whose p95 exceeds it (never leaving zero candidates). Reactive today (route away from observed spikes).
 - **Spot-market arbitrage** — `server.cost_aware_routing: true` routes to the cheapest *eligible* backend (after health/SLA/cost filters). An optional `server.price_feed_url` (JSON map of backend → `{input_1m, output_1m}`, polled on `price_feed_interval`) keeps effective costs live. Cost takes precedence over cache warmth in this mode.
-- **Semantic / fuzzy prompt cache** — on an exact-cache miss, embeds the prompt and returns a cached answer if a stored prompt is cosine **≥ `min_similarity`** (default 0.96). Reuses the graphify embedder + pgvector; only fires on already-cacheable (deterministic) requests. Response header `X-Kronaxis-Cache: SEMANTIC`.
+- **Semantic / fuzzy prompt cache** — on an exact-cache miss, embeds the prompt and returns a cached answer if a stored prompt is cosine **≥ `min_similarity`** (default 0.96). Reuses the graphify embedder + pgvector; only fires on already-cacheable (deterministic) requests. Response header `X-Garfield-Cache: SEMANTIC`.
 
   ```yaml
   semantic_cache:
     enabled: true
     min_similarity: 0.96   # high by default — a near-duplicate returns a prior answer
   ```
-- **System-2 reflection** — send `X-Kronaxis-Reflect: 1` and the router asks the model to review/correct its own answer before returning it (one extra round-trip, non-streaming). Response header `X-Kronaxis-Reflected: true`.
-- **Adversarial consensus** — send `X-Kronaxis-Consensus: 1` to dispatch to several backends; if they agree (Jaccard ≥ 0.8) the agreed answer is returned, otherwise `server.consensus_arbiter` resolves the disagreement. Response header `X-Kronaxis-Consensus: agreed|arbitrated`. Costs N×+1 calls — high-stakes opt-in.
+- **System-2 reflection** — send `X-Garfield-Reflect: 1` and the router asks the model to review/correct its own answer before returning it (one extra round-trip, non-streaming). Response header `X-Garfield-Reflected: true`.
+- **Adversarial consensus** — send `X-Garfield-Consensus: 1` to dispatch to several backends; if they agree (Jaccard ≥ 0.8) the agreed answer is returned, otherwise `server.consensus_arbiter` resolves the disagreement. Response header `X-Garfield-Consensus: agreed|arbitrated`. Costs N×+1 calls — high-stakes opt-in.
 
 ## Agent Gateway
 
-Optional sub-service at `agent-gateway/`. Exposes CLI agents as OpenAI-compatible endpoints, so any kronaxis service that already speaks OpenAI can talk to a real agentic loop without changing client code.
+Optional sub-service at `agent-gateway/`. Exposes CLI agents as OpenAI-compatible endpoints, so any garfield service that already speaks OpenAI can talk to a real agentic loop without changing client code.
 
 ### Why it's separate
 
-Stateless LLM proxying (kronaxis-router's main job) and agentic-loop orchestration are different problems with different lifecycles -- one is request/response, the other holds workspaces, spawns subprocesses, manages tool surfaces. The gateway is its own Go module so the router stays focused on routing.
+Stateless LLM proxying (garfield-router's main job) and agentic-loop orchestration are different problems with different lifecycles -- one is request/response, the other holds workspaces, spawns subprocesses, manages tool surfaces. The gateway is its own Go module so the router stays focused on routing.
 
 ### Adapters
 
@@ -670,7 +670,7 @@ go build -o agent-gateway .
 ./agent-gateway -config config.yaml
 ```
 
-Then point kronaxis-router at it as a regular `type: openai` backend. There's a commented sample stanza in `config.yaml` near the OpenAI examples; uncomment to wire it in.
+Then point garfield-router at it as a regular `type: openai` backend. There's a commented sample stanza in `config.yaml` near the OpenAI examples; uncomment to wire it in.
 
 Full docs: [`agent-gateway/README.md`](agent-gateway/README.md).
 
@@ -679,8 +679,8 @@ Full docs: [`agent-gateway/README.md`](agent-gateway/README.md).
 ```yaml
 # docker-compose.yml
 services:
-  kronaxis-router:
-    build: ./kronaxis-router
+  garfield-router:
+    build: ./garfield-router
     ports:
       - "8050:8050"
     volumes:
@@ -747,7 +747,7 @@ curl http://localhost:8050/api/batch/results?id=batch_1234567890
 
 Results are also delivered via webhook if `callback_url` was set. Supported providers: OpenAI, Anthropic, Gemini, Mistral, Groq, Together AI, Fireworks AI.
 
-Requests with `X-Kronaxis-Priority: bulk` are **automatically** submitted to the batch API when the backend supports it, returning a job ID instead of blocking.
+Requests with `X-Garfield-Priority: bulk` are **automatically** submitted to the batch API when the backend supports it, returning a job ID instead of blocking.
 
 ## Streaming
 
@@ -774,20 +774,20 @@ Scrape the `/metrics` endpoint with Prometheus:
 ```yaml
 # prometheus.yml
 scrape_configs:
-  - job_name: kronaxis-router
+  - job_name: garfield-router
     static_configs:
       - targets: ['localhost:8050']
 ```
 
 Available metrics:
-- `kronaxis_router_requests_total{service,backend,rule}` -- request counter
-- `kronaxis_router_errors_total{service,backend,rule}` -- error counter (4xx/5xx)
-- `kronaxis_router_request_duration_ms_bucket{le}` -- latency histogram
-- `kronaxis_router_cache_hits_total` / `kronaxis_router_cache_misses_total`
-- `kronaxis_router_batch_submitted_total` / `kronaxis_router_batch_completed_total`
-- `kronaxis_router_backend_healthy{backend,type}` -- 1=healthy, 0=down
-- `kronaxis_router_backend_active_requests{backend,type}` -- in-flight count
-- `kronaxis_router_uptime_seconds`
+- `garfield_router_requests_total{service,backend,rule}` -- request counter
+- `garfield_router_errors_total{service,backend,rule}` -- error counter (4xx/5xx)
+- `garfield_router_request_duration_ms_bucket{le}` -- latency histogram
+- `garfield_router_cache_hits_total` / `garfield_router_cache_misses_total`
+- `garfield_router_batch_submitted_total` / `garfield_router_batch_completed_total`
+- `garfield_router_backend_healthy{backend,type}` -- 1=healthy, 0=down
+- `garfield_router_backend_active_requests{backend,type}` -- in-flight count
+- `garfield_router_uptime_seconds`
 
 ## Performance
 
@@ -869,10 +869,10 @@ See [ROADMAP.md](ROADMAP.md) for where the project is heading: KV cache-aware ro
 
 ## Further Reading
 
-- [Stop Paying Frontier Prices for Tasks a Local Model Handles Fine](https://kronaxis.co.uk/blog/llm-routing-cost-savings) -- full blog post with cost arithmetic, quality validation, and comparison to LiteLLM, OpenRouter, Portkey, and Martian
+- [Stop Paying Frontier Prices for Tasks a Local Model Handles Fine](https://garfield.co.uk/blog/llm-routing-cost-savings) -- full blog post with cost arithmetic, quality validation, and comparison to LiteLLM, OpenRouter, Portkey, and Martian
 
 ## Licence
 
-Business Source License 1.1. Source-available; non-commercial use is permitted under the Additional Use Grant. The Licensed Work converts to Apache License, Version 2.0 on 9 May 2031 (the Change Date). Commercial production use before that date requires a commercial licence -- contact `contact@kronaxis.co.uk`. See [LICENSE](LICENSE) for the full terms.
+Business Source License 1.1. Source-available; non-commercial use is permitted under the Additional Use Grant. The Licensed Work converts to Apache License, Version 2.0 on 9 May 2031 (the Change Date). Commercial production use before that date requires a commercial licence -- contact `contact@garfield.co.uk`. See [LICENSE](LICENSE) for the full terms.
 
-Built by [Kronaxis](https://kronaxis.co.uk).
+Built by [Garfield](https://garfield.co.uk).

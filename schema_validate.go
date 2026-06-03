@@ -17,8 +17,9 @@ import (
 // skip the parse + compile cost.
 //
 // Caller usage:
-//   sv := NewSchemaValidator()
-//   ok, violation := sv.Validate(schemaJSON, responseJSON)
+//
+//	sv := NewSchemaValidator()
+//	ok, violation := sv.Validate(schemaJSON, responseJSON)
 //
 // Lookup is O(1); compile is O(schema-size) and happens once per
 // distinct schema string. Cache is bounded by `maxSchemas` (default

@@ -67,9 +67,9 @@ server:
 ### New metrics
 
 ```
-kronaxis_router_kv_pin_hits_total      # Requests routed to a pinned backend
-kronaxis_router_kv_pin_misses_total    # Prefix not found or pinned backend unavailable
-kronaxis_router_kv_pin_entries         # Current trie size (gauge)
+garfield_router_kv_pin_hits_total      # Requests routed to a pinned backend
+garfield_router_kv_pin_misses_total    # Prefix not found or pinned backend unavailable
+garfield_router_kv_pin_entries         # Current trie size (gauge)
 ```
 
 ### Tests (`kvpinning_test.go`)
@@ -102,20 +102,20 @@ Agentic workflows re-upload the entire conversation context with every HTTP requ
 ### Design
 
 **Session creation:**
-1. Client sends a request with `X-Kronaxis-Session-Create: true` header.
+1. Client sends a request with `X-Garfield-Session-Create: true` header.
 2. Router processes the request normally.
 3. Router stores the full messages array (minus the last user message) keyed by a generated session ID.
-4. Response includes `X-Kronaxis-Session-ID: sess_<uuid>` header.
+4. Response includes `X-Garfield-Session-ID: sess_<uuid>` header.
 
 **Session hydration:**
-1. Client sends a request with `X-Kronaxis-Session-ID: sess_<uuid>` header and only the new message(s).
+1. Client sends a request with `X-Garfield-Session-ID: sess_<uuid>` header and only the new message(s).
 2. Router looks up the stored context and prepends it to the request's messages array.
 3. The hydrated request is forwarded to the backend as if the client had sent the full context.
 4. Router updates the stored session with the new messages (appends user message + assistant response).
 
 **Session lifecycle:**
 - Sessions expire after a configurable TTL (default: 2 hours).
-- `X-Kronaxis-Session-End: true` header explicitly destroys a session.
+- `X-Garfield-Session-End: true` header explicitly destroys a session.
 - Max sessions configurable (default: 1000), LRU eviction.
 
 ### Files to change
@@ -144,10 +144,10 @@ server:
 
 | Header | Direction | Purpose |
 |--------|-----------|---------|
-| `X-Kronaxis-Session-Create` | Request | `true` to create a new session from this request's context |
-| `X-Kronaxis-Session-ID` | Request/Response | Session identifier for hydration |
-| `X-Kronaxis-Session-End` | Request | `true` to destroy the session |
-| `X-Kronaxis-Session-Tokens` | Response | Token count of stored session context |
+| `X-Garfield-Session-Create` | Request | `true` to create a new session from this request's context |
+| `X-Garfield-Session-ID` | Request/Response | Session identifier for hydration |
+| `X-Garfield-Session-End` | Request | `true` to destroy the session |
+| `X-Garfield-Session-Tokens` | Response | Token count of stored session context |
 
 ### New API endpoints
 
@@ -159,9 +159,9 @@ server:
 ### New metrics
 
 ```
-kronaxis_router_sessions_active         # Current active sessions (gauge)
-kronaxis_router_session_hydrations_total # Requests hydrated from session context
-kronaxis_router_session_tokens_saved    # Tokens not re-transmitted (counter)
+garfield_router_sessions_active         # Current active sessions (gauge)
+garfield_router_session_hydrations_total # Requests hydrated from session context
+garfield_router_session_tokens_saved    # Tokens not re-transmitted (counter)
 ```
 
 ### Tests (`sessions_test.go`)
@@ -239,8 +239,8 @@ server:
 ### New metrics
 
 ```
-kronaxis_router_backend_queue_depth{backend}     # Scraped queue depth per backend (gauge)
-kronaxis_router_backend_active_inference{backend} # Active inference count per backend (gauge)
+garfield_router_backend_queue_depth{backend}     # Scraped queue depth per backend (gauge)
+garfield_router_backend_active_inference{backend} # Active inference count per backend (gauge)
 ```
 
 ### Tests (`queueaware_test.go`)
@@ -277,7 +277,7 @@ The existing quality gate validates response quality by checking length, JSON va
 ### Design
 
 Add a new quality check: `SchemaValidation`. The user supplies a JSON Schema via:
-- `X-Kronaxis-Response-Schema` header (inline JSON Schema), or
+- `X-Garfield-Response-Schema` header (inline JSON Schema), or
 - `response_format.json_schema` field in the OpenAI request body (native OpenAI structured output)
 
 If the response fails schema validation, the quality gate retries on the fallback backend.
@@ -287,7 +287,7 @@ If the response fails schema validation, the quality gate retries on the fallbac
 | File | Change |
 |------|--------|
 | **`qualitygate.go`** | Add `SchemaJSON string` to `GateChecks`. In `passesChecks()`, add schema validation step: unmarshal response content, validate against schema. Use Go's `encoding/json` for basic type/required-field validation (no external JSON Schema library needed for v1). |
-| **`proxy.go`** | Extract `X-Kronaxis-Response-Schema` header and `response_format.json_schema` from request body. Pass schema string to quality gate. |
+| **`proxy.go`** | Extract `X-Garfield-Response-Schema` header and `response_format.json_schema` from request body. Pass schema string to quality gate. |
 | **`config.go`** | No config changes needed (schema is per-request, not per-rule). |
 
 ### Schema validation (v1: lightweight, no external dependency)
@@ -318,13 +318,13 @@ func validateAgainstSchema(content string, schemaJSON string) bool {
 
 | Header | Direction | Purpose |
 |--------|-----------|---------|
-| `X-Kronaxis-Response-Schema` | Request | JSON Schema for response validation |
+| `X-Garfield-Response-Schema` | Request | JSON Schema for response validation |
 
 ### New metrics
 
 ```
-kronaxis_router_schema_validations_total     # Requests validated against schema
-kronaxis_router_schema_failures_total        # Schema validation failures (retried)
+garfield_router_schema_validations_total     # Requests validated against schema
+garfield_router_schema_failures_total        # Schema validation failures (retried)
 ```
 
 ### Tests (add to `qualitygate_test.go`)
@@ -562,8 +562,8 @@ rules:
 ### New metrics
 
 ```
-kronaxis_router_backend_ttft_p50_ms{backend}   # Rolling P50 TTFT (gauge)
-kronaxis_router_backend_ttft_p95_ms{backend}   # Rolling P95 TTFT (gauge)
+garfield_router_backend_ttft_p50_ms{backend}   # Rolling P50 TTFT (gauge)
+garfield_router_backend_ttft_p95_ms{backend}   # Rolling P95 TTFT (gauge)
 ```
 
 ### Tests (`sla_test.go`)
@@ -692,9 +692,9 @@ ab_tests:
 
 | Header | Feature |
 |--------|---------|
-| `X-Kronaxis-Session-ID` | Session Management |
-| `X-Kronaxis-Session-Tokens` | Session Management |
-| `X-Kronaxis-KV-Pin: HIT` | KV Pinning |
+| `X-Garfield-Session-ID` | Session Management |
+| `X-Garfield-Session-Tokens` | Session Management |
+| `X-Garfield-KV-Pin: HIT` | KV Pinning |
 
 ## New environment variables
 

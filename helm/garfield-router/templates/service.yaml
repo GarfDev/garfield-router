@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "kronaxis-router.fullname" . }}
+  name: {{ include "garfield-router.fullname" . }}
   labels:
-    {{- include "kronaxis-router.labels" . | nindent 4 }}
+    {{- include "garfield-router.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.service.type }}
   ports:
@@ -12,4 +12,4 @@ spec:
       protocol: TCP
       name: http
   selector:
-    {{- include "kronaxis-router.selectorLabels" . | nindent 4 }}
+    {{- include "garfield-router.selectorLabels" . | nindent 4 }}

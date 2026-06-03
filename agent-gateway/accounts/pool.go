@@ -196,10 +196,10 @@ func (m *Manager) Status() []PoolStatus {
 		}
 		p.mu.RUnlock()
 		out = append(out, PoolStatus{
-			Pool:           name,
-			AccountCount:   len(accs),
-			ActiveCount:    active,
-			Accounts:       accs,
+			Pool:         name,
+			AccountCount: len(accs),
+			ActiveCount:  active,
+			Accounts:     accs,
 		})
 	}
 	sort.Slice(out, func(i, j int) bool { return out[i].Pool < out[j].Pool })

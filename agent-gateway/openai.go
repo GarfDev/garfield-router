@@ -6,7 +6,7 @@ type ChatMessage struct {
 }
 
 // ChatCompletionRequest is OpenAI-compatible. Extra non-standard fields are
-// kronaxis pass-through controls; OpenAI clients ignore them. They map to
+// garfield pass-through controls; OpenAI clients ignore them. They map to
 // `claude` CLI flags or to gateway-level concerns (workspaces, skills).
 type ChatCompletionRequest struct {
 	Model       string        `json:"model"`
@@ -16,7 +16,7 @@ type ChatCompletionRequest struct {
 	MaxTokens   *int          `json:"max_tokens,omitempty"`
 	User        string        `json:"user,omitempty"`
 
-	// ── Kronaxis extensions (non-standard, optional) ──
+	// ── Garfield extensions (non-standard, optional) ──
 	SystemPrompt       string   `json:"system_prompt,omitempty"`
 	AppendSystemPrompt string   `json:"append_system_prompt,omitempty"`
 	Agent              string   `json:"agent,omitempty"`
@@ -36,10 +36,10 @@ type ChatCompletionRequest struct {
 }
 
 type Choice struct {
-	Index        int          `json:"index"`
+	Index        int               `json:"index"`
 	Message      *AssistantMessage `json:"message,omitempty"`
-	Delta        *Delta       `json:"delta,omitempty"`
-	FinishReason *string      `json:"finish_reason,omitempty"`
+	Delta        *Delta            `json:"delta,omitempty"`
+	FinishReason *string           `json:"finish_reason,omitempty"`
 }
 
 // Delta is the per-chunk delta in a streaming response.
@@ -97,7 +97,7 @@ type ChatCompletionResponse struct {
 	Model    string          `json:"model"`
 	Choices  []Choice        `json:"choices"`
 	Usage    *Usage          `json:"usage,omitempty"`
-	Kronaxis *KronaxisExtras `json:"kronaxis,omitempty"`
+	Garfield *GarfieldExtras `json:"garfield,omitempty"`
 }
 
 type ChatCompletionChunk struct {
@@ -108,7 +108,7 @@ type ChatCompletionChunk struct {
 	Choices []Choice `json:"choices"`
 }
 
-type KronaxisExtras struct {
+type GarfieldExtras struct {
 	WorkspacePath string `json:"workspace_path,omitempty"`
 	GitDiff       string `json:"git_diff,omitempty"`
 	NumTurns      int    `json:"num_turns,omitempty"`
@@ -120,11 +120,11 @@ type KronaxisExtras struct {
 }
 
 type ModelInfo struct {
-	ID        string   `json:"id"`
-	Object    string   `json:"object"`
-	OwnedBy   string   `json:"owned_by"`
-	Available bool     `json:"available"`
-	Adapter   string   `json:"adapter"`
+	ID        string `json:"id"`
+	Object    string `json:"object"`
+	OwnedBy   string `json:"owned_by"`
+	Available bool   `json:"available"`
+	Adapter   string `json:"adapter"`
 }
 
 type ModelsResponse struct {

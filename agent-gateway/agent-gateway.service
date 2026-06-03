@@ -1,14 +1,14 @@
 [Unit]
-Description=Kronaxis agent-gateway (CLI agents as OpenAI endpoints)
+Description=Garfield agent-gateway (CLI agents as OpenAI endpoints)
 After=network-online.target
 Wants=network-online.target
 
 [Service]
 Type=simple
-User=kronaxis
-Group=kronaxis
-WorkingDirectory=/opt/kronaxis-router/agent-gateway
-ExecStart=/opt/kronaxis-router/agent-gateway/agent-gateway -config config.yaml
+User=garfield
+Group=garfield
+WorkingDirectory=/opt/garfield-router/agent-gateway
+ExecStart=/opt/garfield-router/agent-gateway/agent-gateway -config config.yaml
 Restart=on-failure
 RestartSec=5s
 StandardOutput=journal

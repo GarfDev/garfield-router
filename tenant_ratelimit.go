@@ -438,17 +438,17 @@ func (rl *TenantRateLimiter) snapshot() (allowed map[string]int64, limited map[s
 // extractTenant resolves the tenant ID for a request.
 //
 // Resolution order:
-//  1. X-Kronaxis-Tenant-ID header (canonical; every BoS agent should set this)
-//  2. X-Kronaxis-Service header as a coarse fallback (legacy callers)
+//  1. X-Garfield-Tenant-ID header (canonical; every BoS agent should set this)
+//  2. X-Garfield-Service header as a coarse fallback (legacy callers)
 //  3. "" -- caller is unattributed and routed to the lower-limit bucket
 func extractTenant(r *http.Request) string {
-	if t := strings.TrimSpace(r.Header.Get("X-Kronaxis-Tenant-ID")); t != "" {
+	if t := strings.TrimSpace(r.Header.Get("X-Garfield-Tenant-ID")); t != "" {
 		return t
 	}
 	// Legacy fallback: many existing internal callers set Service but not
 	// Tenant-ID. Treat the service name as the tenant for now so existing
 	// usage doesn't all collapse onto "unattributed" and starve.
-	if s := strings.TrimSpace(r.Header.Get("X-Kronaxis-Service")); s != "" {
+	if s := strings.TrimSpace(r.Header.Get("X-Garfield-Service")); s != "" {
 		return s
 	}
 	return ""

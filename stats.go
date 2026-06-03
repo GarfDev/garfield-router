@@ -70,5 +70,5 @@ func recordStat(meta RouteRequest, route RouteResult, latency time.Duration, suc
 	prom.RecordRequest(svc, backendName, ruleName, statusCode, latency)
 }
 
-func incActive()  { activeReqs.Add(1) }
-func decActive()  { activeReqs.Add(-1) }
+func incActive() { activeReqs.Add(1) }
+func decActive() { activeReqs.Add(-1) }

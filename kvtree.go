@@ -51,9 +51,9 @@ func (n *kvNode) touch(now time.Time) {
 //   - Per-tree node cap (default 10_000) drops the oldest leaf chains
 //     when exceeded. Sweep also runs periodically to evict by maxAge.
 type KVTree struct {
-	root      *kvNode
-	maxAge    time.Duration
-	maxNodes  int
+	root     *kvNode
+	maxAge   time.Duration
+	maxNodes int
 
 	// approximate node counter; incremented on Insert, decremented on
 	// Sweep. Not strictly accurate under heavy concurrent insert+sweep

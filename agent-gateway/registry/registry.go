@@ -39,8 +39,8 @@ type Event struct {
 // Registry holds profiles loaded from the embedded built-ins plus zero or
 // more override directories (last write wins).
 type Registry struct {
-	mu       sync.RWMutex
-	profiles map[string]*Profile
+	mu          sync.RWMutex
+	profiles    map[string]*Profile
 	overrideDir string
 }
 

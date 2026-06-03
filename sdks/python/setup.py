@@ -1,14 +1,14 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="kronaxis-router",
+    name="garfield-router",
     version="0.3.0",
-    description="Python SDK for Kronaxis Router - intelligent LLM proxy",
+    description="Python SDK for Garfield Router - intelligent LLM proxy",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
-    author="Kronaxis",
-    author_email="dev@kronaxis.co.uk",
-    url="https://github.com/kronaxis/kronaxis-router",
+    author="Garfield",
+    author_email="dev@garfield.co.uk",
+    url="https://github.com/GarfDev/garfield-router",
     packages=find_packages(),
     python_requires=">=3.8",
     install_requires=[],  # Zero dependencies -- uses stdlib urllib

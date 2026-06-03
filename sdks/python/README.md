@@ -1,17 +1,17 @@
-# Kronaxis Router Python SDK
+# Garfield Router Python SDK
 
-Zero-dependency Python client for [Kronaxis Router](https://github.com/kronaxis/kronaxis-router).
+Zero-dependency Python client for [Garfield Router](https://github.com/GarfDev/garfield-router).
 
 ```bash
-pip install kronaxis-router
+pip install garfield-router
 ```
 
 ## Quick Start
 
 ```python
-from kronaxis_router import KronaxisRouter, Tier
+from garfield_router import GarfieldRouter, Tier
 
-router = KronaxisRouter("http://localhost:8050", service="my-app")
+router = GarfieldRouter("http://localhost:8050", service="my-app")
 
 # Simple chat (auto-classified tier)
 response = router.chat("What is the capital of France?")

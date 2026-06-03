@@ -14,19 +14,19 @@ OpenAI-compatible chat completions proxy. This is the main endpoint.
 
 | Header | Type | Description |
 |--------|------|-------------|
-| `X-Kronaxis-Service` | string | Service name for routing, budgets, rate limits. Also drives graphify mode via `service_overrides` map. |
-| `X-Kronaxis-CallType` | string | Task type for rule matching |
-| `X-Kronaxis-Priority` | string | `interactive`, `normal`, `background`, `bulk` |
-| `X-Kronaxis-Tier` | int | `1` (heavy reasoning), `2` (structured extraction) |
-| `X-Kronaxis-PersonaID` | string | Cost attribution identifier |
-| `X-Kronaxis-Graphify` | string | `compress` / `augment` / `auto` / `off`. Overrides global default + service override. |
-| `X-Kronaxis-Response-Schema` | string (JSON) | JSON Schema to validate the model's JSON output against; on violation the gate retries on the fallback backend (needs `QUALITY_GATE_FALLBACK`). |
-| `X-Kronaxis-Compress-CCR` | `1` | Opt this client in to CCR elision (it can fetch elided blocks via `compress_retrieve`). |
-| `X-Kronaxis-Session-Create` | `true` | Store this transcript and return a session id. |
-| `X-Kronaxis-Session-ID` | string | Hydrate a stored session; send only the new turn. |
-| `X-Kronaxis-Session-TTL` | duration | Override the session TTL on create. |
-| `X-Kronaxis-Reflect` | `1` | Run a System-2 review pass on the answer before returning (non-streaming). |
-| `X-Kronaxis-Consensus` | `1` | Dispatch to several backends; return the agreed answer or an arbiter's resolution. |
+| `X-Garfield-Service` | string | Service name for routing, budgets, rate limits. Also drives graphify mode via `service_overrides` map. |
+| `X-Garfield-CallType` | string | Task type for rule matching |
+| `X-Garfield-Priority` | string | `interactive`, `normal`, `background`, `bulk` |
+| `X-Garfield-Tier` | int | `1` (heavy reasoning), `2` (structured extraction) |
+| `X-Garfield-PersonaID` | string | Cost attribution identifier |
+| `X-Garfield-Graphify` | string | `compress` / `augment` / `auto` / `off`. Overrides global default + service override. |
+| `X-Garfield-Response-Schema` | string (JSON) | JSON Schema to validate the model's JSON output against; on violation the gate retries on the fallback backend (needs `QUALITY_GATE_FALLBACK`). |
+| `X-Garfield-Compress-CCR` | `1` | Opt this client in to CCR elision (it can fetch elided blocks via `compress_retrieve`). |
+| `X-Garfield-Session-Create` | `true` | Store this transcript and return a session id. |
+| `X-Garfield-Session-ID` | string | Hydrate a stored session; send only the new turn. |
+| `X-Garfield-Session-TTL` | duration | Override the session TTL on create. |
+| `X-Garfield-Reflect` | `1` | Run a System-2 review pass on the answer before returning (non-streaming). |
+| `X-Garfield-Consensus` | `1` | Dispatch to several backends; return the agreed answer or an arbiter's resolution. |
 
 **Response:** Standard OpenAI ChatCompletion response.
 
@@ -34,19 +34,19 @@ OpenAI-compatible chat completions proxy. This is the main endpoint.
 
 | Header | Description |
 |--------|-------------|
-| `X-Powered-By` | `Kronaxis Router` |
-| `X-Kronaxis-Router-Version` | Router version |
-| `X-Kronaxis-Backend` | Backend that served the request |
-| `X-Kronaxis-Rule` | Rule that matched |
-| `X-Kronaxis-Cache` | `HIT` (exact) or `SEMANTIC` (fuzzy near-duplicate) if served from cache |
-| `X-Kronaxis-Reflected` | `true` if a System-2 reflection pass refined the answer |
-| `X-Kronaxis-Consensus` | `agreed` or `arbitrated` when consensus mode ran |
-| `X-Kronaxis-Graphify` | Mode actually used (`lossless` / `compress` / `augment`; only present when it ran) |
-| `X-Kronaxis-Graphify-Chunks` | Number of chunks injected |
-| `X-Kronaxis-Graphify-Tokens-Saved` | Approximate input tokens saved by compression |
-| `X-Kronaxis-Complexity` | Auto-classified complexity score (0–100) when tier was unset |
-| `X-Kronaxis-Quality-Gate` | `retried` if the quality gate fell back to a stronger backend |
-| `X-Kronaxis-Session-ID` / `X-Kronaxis-Session-Created` | Session id (and whether newly created) |
+| `X-Powered-By` | `Garfield Router` |
+| `X-Garfield-Router-Version` | Router version |
+| `X-Garfield-Backend` | Backend that served the request |
+| `X-Garfield-Rule` | Rule that matched |
+| `X-Garfield-Cache` | `HIT` (exact) or `SEMANTIC` (fuzzy near-duplicate) if served from cache |
+| `X-Garfield-Reflected` | `true` if a System-2 reflection pass refined the answer |
+| `X-Garfield-Consensus` | `agreed` or `arbitrated` when consensus mode ran |
+| `X-Garfield-Graphify` | Mode actually used (`lossless` / `compress` / `augment`; only present when it ran) |
+| `X-Garfield-Graphify-Chunks` | Number of chunks injected |
+| `X-Garfield-Graphify-Tokens-Saved` | Approximate input tokens saved by compression |
+| `X-Garfield-Complexity` | Auto-classified complexity score (0–100) when tier was unset |
+| `X-Garfield-Quality-Gate` | `retried` if the quality gate fell back to a stronger backend |
+| `X-Garfield-Session-ID` / `X-Garfield-Session-Created` | Session id (and whether newly created) |
 
 **Special behaviour for `bulk` priority:** If the target backend supports batch APIs, returns HTTP 202 with a batch job instead of a synchronous response.
 
@@ -77,7 +77,7 @@ Raw retrieval against `kr_chunks`. Useful for debugging or for callers who want 
   "results": [
     {
       "id": 12345,
-      "source_path": "kronaxis-router/agent-gateway/auth_pool.go",
+      "source_path": "garfield-router/agent-gateway/auth_pool.go",
       "chunk_idx": 3,
       "content": "[file: ...]\n...",
       "score": 0.78,
@@ -122,7 +122,7 @@ Router health status with backend details.
 ```json
 {
   "status": "ok",
-  "service": "kronaxis-router",
+  "service": "garfield-router",
   "version": "1.0.0",
   "uptime_seconds": 3600,
   "backends_total": 4,
@@ -323,7 +323,7 @@ Endpoints added in v0.3.0 and later. See the README for behaviour and config.
 | `/api/shadow/stats` | GET | Shadow-routing comparison stats (Jaccard similarity) |
 | `/api/dpo` | GET | DPO preference-pair export status |
 
-Queue-aware load balancing has no endpoint of its own; per-backend `queue_depth` and `active_inference` appear in `GET /api/backends` and `GET /health`. Schema-validated quality gating is driven by the `X-Kronaxis-Response-Schema` request header (see the proxy endpoint above).
+Queue-aware load balancing has no endpoint of its own; per-backend `queue_depth` and `active_inference` appear in `GET /api/backends` and `GET /health`. Schema-validated quality gating is driven by the `X-Garfield-Response-Schema` request header (see the proxy endpoint above).
 
 The `compress_retrieve` MCP tool wraps `/v1/compress/retrieve` for MCP clients.
 

@@ -1,4 +1,4 @@
-"""Embedding sidecar for kronaxis-router's graphify pre-stage.
+"""Embedding sidecar for garfield-router's graphify pre-stage.
 
 Loads a Sentence-Transformers model once at startup and exposes:
   POST /embed       {"texts": ["..."]}        -> {"embeddings": [[...]], "model": "...", "dim": N}

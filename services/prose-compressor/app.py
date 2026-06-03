@@ -1,4 +1,4 @@
-"""Learned prose-compression service for kronaxis-router.
+"""Learned prose-compression service for garfield-router.
 
 Wraps LLMLingua-2 (a lightweight token-classification model, NOT a 7B causal LM)
 behind a tiny HTTP API. The router calls POST /compress on the aggressive
@@ -30,7 +30,7 @@ MODEL = os.getenv(
 DEVICE = os.getenv("PROSE_DEVICE", "cuda" if torch.cuda.is_available() else "cpu")
 PORT = int(os.getenv("PROSE_PORT", "8056"))
 
-app = FastAPI(title="kronaxis prose-compressor")
+app = FastAPI(title="garfield prose-compressor")
 compressor = PromptCompressor(model_name=MODEL, use_llmlingua2=True, device_map=DEVICE)
 
 # Punctuation / newlines we never want dropped — keeps the output readable and

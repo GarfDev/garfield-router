@@ -35,8 +35,8 @@ func TestApplyDefaults(t *testing.T) {
 	if c.Batching.MaxBatchSize != 8 {
 		t.Errorf("default batch size should be 8, got %d", c.Batching.MaxBatchSize)
 	}
-	if c.Server.Branding.HeaderName != "Kronaxis Router" {
-		t.Errorf("default branding should be Kronaxis Router, got %s", c.Server.Branding.HeaderName)
+	if c.Server.Branding.HeaderName != "Garfield Router" {
+		t.Errorf("default branding should be Garfield Router, got %s", c.Server.Branding.HeaderName)
 	}
 }
 

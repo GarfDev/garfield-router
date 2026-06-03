@@ -13,7 +13,7 @@ import (
 )
 
 // Session is a server stored conversation transcript. Clients upload the
-// full message array once with X-Kronaxis-Session-Create: true, get back
+// full message array once with X-Garfield-Session-Create: true, get back
 // a session ID, then send only the new turn on subsequent calls.
 //
 // Storage: Postgres kr_sessions table (created in runMigrations). Messages
@@ -46,7 +46,7 @@ type SessionStoreImpl struct {
 
 // NewSessionStore returns a store backed by the given DB connection.
 // defaultTTLSeconds is applied to new sessions when the caller doesn't
-// override it via X-Kronaxis-Session-TTL.
+// override it via X-Garfield-Session-TTL.
 func NewSessionStore(db *sql.DB, defaultTTLSeconds int) *SessionStoreImpl {
 	if defaultTTLSeconds <= 0 {
 		defaultTTLSeconds = 3600

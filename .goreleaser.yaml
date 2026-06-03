@@ -1,19 +1,19 @@
-# GoReleaser config for kronaxis-router
+# GoReleaser config for garfield-router
 # Run: goreleaser release --clean
 # Test: goreleaser build --snapshot --clean
 
 version: 2
 
-project_name: kronaxis-router
+project_name: garfield-router
 
 before:
   hooks:
     - go mod tidy
 
 builds:
-  - id: kronaxis-router
+  - id: garfield-router
     main: .
-    binary: kronaxis-router
+    binary: garfield-router
     env:
       - CGO_ENABLED=0
     goos:
@@ -57,13 +57,13 @@ changelog:
 
 release:
   github:
-    owner: Kronaxis
-    name: kronaxis-router
+    owner: Garfield
+    name: garfield-router
   draft: false
   prerelease: auto
   name_template: "v{{.Version}}"
   header: |
-    ## Kronaxis Router v{{.Version}}
+    ## Garfield Router v{{.Version}}
 
     Intelligent LLM proxy with cost-optimised routing.
 
@@ -71,16 +71,16 @@ release:
 
     ```bash
     # One-line install (Linux/macOS)
-    curl -fsSL https://raw.githubusercontent.com/Kronaxis/kronaxis-router/main/install.sh | sh
+    curl -fsSL https://raw.githubusercontent.com/Garfield/garfield-router/main/install.sh | sh
 
     # Homebrew
-    brew install kronaxis/tap/kronaxis-router
+    brew install garfield/tap/garfield-router
 
     # Go
-    go install github.com/kronaxis/kronaxis-router@v{{.Version}}
+    go install github.com/GarfDev/garfield-router@v{{.Version}}
     ```
 
-# Homebrew formula is hand committed to Kronaxis/homebrew-tap via the
+# Homebrew formula is hand committed to Garfield/homebrew-tap via the
 # GitHub Contents API after each release tag. See the post-release
 # script in scripts/publish-homebrew-formula.sh. Avoids needing a
 # HOMEBREW_TAP_TOKEN secret on this repo and keeps the release workflow
@@ -91,10 +91,10 @@ release:
 
 nfpms:
   - id: packages
-    package_name: kronaxis-router
-    vendor: Kronaxis
-    homepage: https://github.com/Kronaxis/kronaxis-router
-    maintainer: Kronaxis <dev@kronaxis.co.uk>
+    package_name: garfield-router
+    vendor: Garfield
+    homepage: https://github.com/Garfield/garfield-router
+    maintainer: Garfield <dev@garfield.co.uk>
     description: Intelligent LLM proxy with cost-optimised routing
     license: BUSL-1.1
     formats:
@@ -102,5 +102,5 @@ nfpms:
       - rpm
     contents:
       - src: config.yaml
-        dst: /etc/kronaxis-router/config.yaml
+        dst: /etc/garfield-router/config.yaml
         type: config

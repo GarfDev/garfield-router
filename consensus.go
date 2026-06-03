@@ -8,7 +8,7 @@ import (
 	"sync/atomic"
 )
 
-// Adversarial consensus (ROADMAP #18). Opt-in via X-Kronaxis-Consensus: 1.
+// Adversarial consensus (ROADMAP #18). Opt-in via X-Garfield-Consensus: 1.
 // The request is dispatched to several backends concurrently; if their answers
 // agree (Jaccard similarity over the configured threshold) the agreed answer is
 // returned, otherwise an arbiter model resolves the disagreement. Costs N×+1

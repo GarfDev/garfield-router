@@ -1,8 +1,8 @@
-{{- define "kronaxis-router.name" -}}
+{{- define "garfield-router.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
-{{- define "kronaxis-router.fullname" -}}
+{{- define "garfield-router.fullname" -}}
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -15,14 +15,14 @@
 {{- end }}
 {{- end }}
 
-{{- define "kronaxis-router.labels" -}}
+{{- define "garfield-router.labels" -}}
 helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version }}
-{{ include "kronaxis-router.selectorLabels" . }}
+{{ include "garfield-router.selectorLabels" . }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}
 
-{{- define "kronaxis-router.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "kronaxis-router.name" . }}
+{{- define "garfield-router.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "garfield-router.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}

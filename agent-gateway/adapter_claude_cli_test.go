@@ -33,11 +33,11 @@ func TestParseClaudeStream_TextAndToolCalls(t *testing.T) {
 	close(events)
 
 	var (
-		gotText      strings.Builder
-		toolStarts   []ToolEvent
-		toolDeltas   []ToolEvent
-		toolEnds     []ToolEvent
-		doneEvent    *AgentEvent
+		gotText    strings.Builder
+		toolStarts []ToolEvent
+		toolDeltas []ToolEvent
+		toolEnds   []ToolEvent
+		doneEvent  *AgentEvent
 	)
 	for ev := range events {
 		switch ev.Type {

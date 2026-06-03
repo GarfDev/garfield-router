@@ -20,8 +20,8 @@ type RateLimiter struct {
 }
 
 type tokenBucket struct {
-	tokens    float64
-	maxTokens float64
+	tokens     float64
+	maxTokens  float64
 	refillRate float64 // tokens per second
 	lastRefill time.Time
 	mu         sync.Mutex
@@ -125,7 +125,7 @@ func rateLimitMiddleware(next http.Handler) http.Handler {
 			return
 		}
 
-		service := r.Header.Get("X-Kronaxis-Service")
+		service := r.Header.Get("X-Garfield-Service")
 		if !rateLim.Allow(service) {
 			w.Header().Set("Retry-After", "1")
 			writeErrorJSON(w, 429, "rate limit exceeded for service: "+service)

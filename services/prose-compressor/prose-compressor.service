@@ -1,11 +1,11 @@
 [Unit]
-Description=Kronaxis learned prose-compressor (LLMLingua-2) for kronaxis-router
+Description=Garfield learned prose-compressor (LLMLingua-2) for garfield-router
 After=network-online.target
 Wants=network-online.target
 
 [Service]
 Type=simple
-User=kronaxis
+User=garfield
 WorkingDirectory=/opt/prose-compressor
 Environment=PROSE_PORT=8056
 Environment=PROSE_DEVICE=cuda

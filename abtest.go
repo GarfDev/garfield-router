@@ -11,30 +11,30 @@ import (
 // Configure in config.yaml under ab_tests.
 
 type ABTestConfig struct {
-	Name       string  `yaml:"name" json:"name"`
-	Match      RuleMatch `yaml:"match" json:"match"`
-	VariantA   string  `yaml:"variant_a" json:"variant_a"`     // backend name
-	VariantB   string  `yaml:"variant_b" json:"variant_b"`     // backend name
-	SplitPct   int     `yaml:"split_pct" json:"split_pct"`     // % of traffic to variant B (0-100)
-	Active     bool    `yaml:"active" json:"active"`
+	Name     string    `yaml:"name" json:"name"`
+	Match    RuleMatch `yaml:"match" json:"match"`
+	VariantA string    `yaml:"variant_a" json:"variant_a"` // backend name
+	VariantB string    `yaml:"variant_b" json:"variant_b"` // backend name
+	SplitPct int       `yaml:"split_pct" json:"split_pct"` // % of traffic to variant B (0-100)
+	Active   bool      `yaml:"active" json:"active"`
 }
 
 type ABTestResult struct {
-	Name       string  `json:"name"`
-	VariantA   ABVariantStats `json:"variant_a"`
-	VariantB   ABVariantStats `json:"variant_b"`
+	Name     string         `json:"name"`
+	VariantA ABVariantStats `json:"variant_a"`
+	VariantB ABVariantStats `json:"variant_b"`
 }
 
 type ABVariantStats struct {
-	Backend    string  `json:"backend"`
-	Requests   int64   `json:"requests"`
-	AvgLatMS   float64 `json:"avg_latency_ms"`
-	TotalCost  float64 `json:"total_cost"`
-	AvgTokens  float64 `json:"avg_output_tokens"`
-	ErrorRate  float64 `json:"error_rate"`
-	totalLat   int64
-	errors     int64
-	totalTok   int64
+	Backend   string  `json:"backend"`
+	Requests  int64   `json:"requests"`
+	AvgLatMS  float64 `json:"avg_latency_ms"`
+	TotalCost float64 `json:"total_cost"`
+	AvgTokens float64 `json:"avg_output_tokens"`
+	ErrorRate float64 `json:"error_rate"`
+	totalLat  int64
+	errors    int64
+	totalTok  int64
 }
 
 type ABTestManager struct {

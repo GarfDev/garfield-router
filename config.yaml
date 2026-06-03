@@ -1,5 +1,5 @@
-# Kronaxis Router - Configuration
-# https://github.com/kronaxis/kronaxis-router
+# Garfield Router - Configuration
+# https://github.com/GarfDev/garfield-router
 #
 # This config demonstrates cost-optimised LLM routing out of the box.
 # The core principle: route every request to the CHEAPEST model that can
@@ -25,14 +25,14 @@ server:
   cost_aware_routing: false
   price_feed_url: ""
   price_feed_interval: 5m
-  # Adversarial consensus arbiter (for X-Kronaxis-Consensus requests). Empty =
+  # Adversarial consensus arbiter (for X-Garfield-Consensus requests). Empty =
   # use the first candidate to resolve disagreements.
   consensus_arbiter: ""
   branding:
-    headers: true                    # X-Powered-By: Kronaxis Router on every response
-    header_name: "Kronaxis Router"
+    headers: true                    # X-Powered-By: Garfield Router on every response
+    header_name: "Garfield Router"
     content_inject: false            # Set true for hosted/SaaS free tier
-    content_text: "\n\n---\n*Powered by [Kronaxis Router](https://kronaxis.co.uk)*"
+    content_text: "\n\n---\n*Powered by [Garfield Router](https://garfield.co.uk)*"
     content_skip_json: true          # Never inject into structured JSON responses
 
 # ──────────────────────────────────────────────────────────────────────
@@ -125,7 +125,7 @@ backends:
   # as a "model". Each request runs in an ephemeral git worktree and
   # returns a diff alongside the assistant text. Internal use only --
   # uses the host's `claude auth login` credentials.
-  # Service: kronaxis-router/agent-gateway/  (port 8055)
+  # Service: garfield-router/agent-gateway/  (port 8055)
   # See: docs/plans/2026-05-08-agent-gateway-design.md
   #
   # - name: claude-code-agent
@@ -281,7 +281,7 @@ batching:
 # (/v1/chat/completions + /v1/video/generate). Stops a runaway tenant
 # from starving every other tenant.
 #
-# Tenant resolution: X-Kronaxis-Tenant-ID header > X-Kronaxis-Service
+# Tenant resolution: X-Garfield-Tenant-ID header > X-Garfield-Service
 # header > "unattributed" bucket. Internal services should be in
 # bypass_tenants.
 #
@@ -317,13 +317,13 @@ tenant_rate_limits:
 #   - DATABASE_URL pointing at a Postgres with pgvector
 #   - An embedding backend (default: local sentence-transformers sidecar)
 #
-# Run `kronaxis-router ingest /path/to/repo` to populate kr_chunks.
+# Run `garfield-router ingest /path/to/repo` to populate kr_chunks.
 # ──────────────────────────────────────────────────────────────────────
 
 graphify:
   enabled: false               # Flip to true when the embedding service is up
   default: "off"               # off | augment | compress | auto
-                               # Per-request override via X-Kronaxis-Graphify header.
+                               # Per-request override via X-Garfield-Graphify header.
   ingest_roots:
     - /path/to/your/project
   ingest_excludes: []          # Plus built-in defaults (.git, node_modules, etc.)
@@ -340,7 +340,7 @@ graphify:
   # ── Content-aware compression (headroom-inspired) ──────────────────
   # Lossless tier (always_structural) runs on ALL traffic: JSON compaction +
   # prose whitespace, keeps comments, never substitutes. The aggressive tier
-  # (per request via X-Kronaxis-Graphify: compress) adds the lossy steps below.
+  # (per request via X-Garfield-Graphify: compress) adds the lossy steps below.
   always_structural: true      # lossless tier on all traffic (default true)
   json_tabularize: false       # hoist repeated keys from arrays of objects (lossless)
   json_drop_nulls: false       # prune null/empty JSON fields (lossy)
@@ -349,7 +349,7 @@ graphify:
   ccr_enabled: false
   ccr_threshold_chars: 4000
   ccr_capacity: 1024
-  ccr_services: []             # X-Kronaxis-Service values allowed to receive CCR stubs
+  ccr_services: []             # X-Garfield-Service values allowed to receive CCR stubs
   # Learned prose compressor (self-hosted LLMLingua-2 GPU sidecar; lossy).
   # See services/prose-compressor/. Off unless url is set + enabled.
   prose_compressor:
@@ -377,7 +377,7 @@ graphify:
   # Concurrency: parallel embed batches during ingest (one-shot OR watch).
   ingest_concurrency: 4
 
-  # Per-service auto-mode: when X-Kronaxis-Service is set and matches a key
+  # Per-service auto-mode: when X-Garfield-Service is set and matches a key
   # below, use that mode instead of `default`. Lets each service opt into a
   # sensible default. Keys are example service names — replace with your own.
   service_overrides:

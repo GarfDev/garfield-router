@@ -16,7 +16,7 @@ func TestWorktreeEphemeral_LifecycleAndGitInit(t *testing.T) {
 		RequestID:    "abc-123",
 		AuxDirs:      []string{"claude-config"},
 		GitInit:      true,
-		GitUserEmail: "agent@kronaxis.local",
+		GitUserEmail: "agent@garfield.local",
 		GitUserName:  "Agent",
 	})
 	if err != nil {

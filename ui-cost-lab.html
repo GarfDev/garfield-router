@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Kronaxis Router — Cost Lab</title>
+<title>Garfield Router — Cost Lab</title>
 <style>
   :root {
     --bg: #0d1117;
@@ -111,7 +111,7 @@
 <header>
   <div>
     <h1>Cost Lab</h1>
-    <div class="subtitle">Kronaxis Router · live receipts</div>
+    <div class="subtitle">Garfield Router · live receipts</div>
   </div>
   <nav id="tabs">
     <button class="active" data-view="today">Today</button>
@@ -192,11 +192,11 @@
   const $$ = sel => Array.from(document.querySelectorAll(sel));
   const fmtUSD = (n, currency = 'GBP') => new Intl.NumberFormat('en-GB', { style: 'currency', currency }).format(n || 0);
   const fmtNum = n => new Intl.NumberFormat('en-GB').format(n || 0);
-  let apiToken = localStorage.getItem('kronaxis_router_token') || '';
+  let apiToken = localStorage.getItem('garfield_router_token') || '';
   const tokenFromURL = new URLSearchParams(location.search).get('token');
   if (tokenFromURL) {
     apiToken = tokenFromURL.trim();
-    localStorage.setItem('kronaxis_router_token', apiToken);
+    localStorage.setItem('garfield_router_token', apiToken);
     history.replaceState(null, '', location.pathname);
   }
 
@@ -213,7 +213,7 @@
       const token = prompt('Router API token required for Cost Lab');
       if (token) {
         apiToken = token.trim();
-        localStorage.setItem('kronaxis_router_token', apiToken);
+        localStorage.setItem('garfield_router_token', apiToken);
         res = await fetch(path, { headers: { Authorization: 'Bearer ' + apiToken } });
       }
     }

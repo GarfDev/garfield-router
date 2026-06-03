@@ -25,25 +25,25 @@ func NewCostForecaster(tracker *CostTracker) *CostForecaster {
 // ForecastResult is one service's projected end-of-day spend and budget
 // exhaustion ETA. Multiple ForecastResults are returned by the API.
 type ForecastResult struct {
-	Service                string  `json:"service"`
-	BudgetUSD              float64 `json:"budget_usd"`
-	SpentSoFarUSD          float64 `json:"spent_so_far_usd"`
-	HoursElapsed           float64 `json:"hours_elapsed"`
-	HoursRemaining         float64 `json:"hours_remaining"`
-	ProjectedTotalUSD      float64 `json:"projected_total_usd"`
-	ProjectedOverBudget    bool    `json:"projected_over_budget"`
-	BudgetExhaustionTime   string  `json:"budget_exhaustion_time,omitempty"` // RFC3339 if extrapolated to hit budget today
-	BurnRateUSDPerHour     float64 `json:"burn_rate_usd_per_hour"`
+	Service              string  `json:"service"`
+	BudgetUSD            float64 `json:"budget_usd"`
+	SpentSoFarUSD        float64 `json:"spent_so_far_usd"`
+	HoursElapsed         float64 `json:"hours_elapsed"`
+	HoursRemaining       float64 `json:"hours_remaining"`
+	ProjectedTotalUSD    float64 `json:"projected_total_usd"`
+	ProjectedOverBudget  bool    `json:"projected_over_budget"`
+	BudgetExhaustionTime string  `json:"budget_exhaustion_time,omitempty"` // RFC3339 if extrapolated to hit budget today
+	BurnRateUSDPerHour   float64 `json:"burn_rate_usd_per_hour"`
 }
 
 // Forecast computes one ForecastResult per configured service+budget.
 // Services with no budget configured are skipped.
 //
 // Algorithm (deliberately simple to remain interpretable):
-//  - hours_elapsed = (time-of-day in UTC) / 1h
-//  - burn_rate = spent_so_far / hours_elapsed (zero before 0.1 h)
-//  - projected_total = burn_rate × 24
-//  - exhaustion_time = now + (budget - spent_so_far) / burn_rate (when burn rate > 0)
+//   - hours_elapsed = (time-of-day in UTC) / 1h
+//   - burn_rate = spent_so_far / hours_elapsed (zero before 0.1 h)
+//   - projected_total = burn_rate × 24
+//   - exhaustion_time = now + (budget - spent_so_far) / burn_rate (when burn rate > 0)
 //
 // Linear extrapolation is right for steady workloads. For bursty
 // workloads it overestimates early in the day and undercounts late;
@@ -104,9 +104,9 @@ func handleCostForecast(w http.ResponseWriter, r *http.Request) {
 	}
 	results := costForecaster.Forecast()
 	_ = json.NewEncoder(w).Encode(map[string]any{
-		"object":      "list",
-		"as_of":       time.Now().UTC().Format(time.RFC3339),
-		"data":        results,
+		"object": "list",
+		"as_of":  time.Now().UTC().Format(time.RFC3339),
+		"data":   results,
 	})
 }
 

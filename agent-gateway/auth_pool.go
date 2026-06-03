@@ -44,11 +44,11 @@ type Account struct {
 	WindowMaxUSD   float64  `yaml:"window_max_usd,omitempty" json:"window_max_usd,omitempty"`
 
 	// runtime health
-	disabled       atomic.Bool
-	disabledUntil  atomic.Int64
-	lastError      atomic.Value // string
-	successCount   atomic.Uint64
-	failureCount   atomic.Uint64
+	disabled      atomic.Bool
+	disabledUntil atomic.Int64
+	lastError     atomic.Value // string
+	successCount  atomic.Uint64
+	failureCount  atomic.Uint64
 
 	// runtime: rolling window counters (cleared when window expires)
 	winMu             sync.Mutex
@@ -326,22 +326,22 @@ func (p *AuthPool) Snapshot() []AccountSummary {
 				pct = (usd / a.WindowMaxUSD) * 100
 			}
 			out = append(out, AccountSummary{
-				ID:                  a.ID,
-				Provider:            provider,
-				Enabled:             a.IsEnabled(),
-				Available:           a.IsAvailable(),
-				Notes:               a.Notes,
-				SuccessCount:        a.successCount.Load(),
-				FailureCount:        a.failureCount.Load(),
-				LastError:           le,
-				WindowDurationSec:   int(windowDur.Seconds()),
-				WindowResetsAt:      resetsAt,
-				WindowRequests:      reqs,
-				WindowTokensTotal:   tok,
-				WindowUSDEquiv:      usd,
-				WindowMaxUSD:        a.WindowMaxUSD,
-				WindowPctConsumed:   pct,
-				LifetimeInputTokens: a.totalInputTok.Load(),
+				ID:                   a.ID,
+				Provider:             provider,
+				Enabled:              a.IsEnabled(),
+				Available:            a.IsAvailable(),
+				Notes:                a.Notes,
+				SuccessCount:         a.successCount.Load(),
+				FailureCount:         a.failureCount.Load(),
+				LastError:            le,
+				WindowDurationSec:    int(windowDur.Seconds()),
+				WindowResetsAt:       resetsAt,
+				WindowRequests:       reqs,
+				WindowTokensTotal:    tok,
+				WindowUSDEquiv:       usd,
+				WindowMaxUSD:         a.WindowMaxUSD,
+				WindowPctConsumed:    pct,
+				LifetimeInputTokens:  a.totalInputTok.Load(),
 				LifetimeOutputTokens: a.totalOutputTok.Load(),
 			})
 		}
@@ -389,11 +389,12 @@ func providerForAdapter(adapterName string) string {
 // API-default 5-minute cooldown.
 //
 // Kinds:
-//   ""           ok / unrelated
-//   "rate_limit" 429 or rate-limit text -> cool down
-//   "auth"       401/403 / invalid_api_key -> permanent disable
-//   "credit"     insufficient credit / billing -> permanent disable
-//   "transient"  network / 5xx -> brief cooldown
+//
+//	""           ok / unrelated
+//	"rate_limit" 429 or rate-limit text -> cool down
+//	"auth"       401/403 / invalid_api_key -> permanent disable
+//	"credit"     insufficient credit / billing -> permanent disable
+//	"transient"  network / 5xx -> brief cooldown
 func classifyAccountError(errMsg, provider string) (string, time.Duration) {
 	if errMsg == "" {
 		return "", 0

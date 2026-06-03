@@ -190,7 +190,7 @@ L:
 	rec.DurationMS = time.Since(startTime).Milliseconds()
 	rec.InputTokens = totalIn
 	rec.OutputTokens = totalOut
-	
+
 	s.metrics.RequestFinished(rec.Adapter, model, rec.Status, rec.DurationMS, 0, 1)
 	s.audit.Request(*rec)
 }
@@ -287,7 +287,7 @@ L:
 	rec.DurationMS = time.Since(startTime).Milliseconds()
 	rec.InputTokens = totalIn
 	rec.OutputTokens = totalOut
-	
+
 	s.metrics.RequestFinished(rec.Adapter, model, rec.Status, rec.DurationMS, 0, 1)
 	s.audit.Request(*rec)
 }

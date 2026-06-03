@@ -6,7 +6,7 @@
 
 We run a mix of local vLLM instances (9B and 27B quantised models) alongside cloud APIs for overflow. The routing logic kept getting duplicated across services, and we had no central view of what was costing what or why.
 
-So we built Kronaxis Router. Single Go binary that sits in front of your model backends and makes the routing decision for you.
+So we built Garfield Router. Single Go binary that sits in front of your model backends and makes the routing decision for you.
 
 **How it works for local vLLM setups:**
 
@@ -30,4 +30,4 @@ Config is a single YAML file. Prometheus metrics built in. Embedded web dashboar
 
 70 tests. BSL 1.1. Python and TypeScript SDKs included.
 
-GitHub: https://github.com/kronaxis/kronaxis-router
+GitHub: https://github.com/GarfDev/garfield-router

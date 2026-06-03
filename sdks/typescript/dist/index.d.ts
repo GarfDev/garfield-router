@@ -1,14 +1,14 @@
 /**
- * Kronaxis Router TypeScript SDK.
+ * Garfield Router TypeScript SDK.
  *
  * Zero-dependency client that wraps the OpenAI-compatible API with
  * automatic routing metadata for cost-optimised backend selection.
  *
  * @example
  * ```typescript
- * import { KronaxisRouter, Tier } from 'kronaxis-router';
+ * import { GarfieldRouter, Tier } from 'garfield-router';
  *
- * const router = new KronaxisRouter('http://localhost:8050', { service: 'my-app' });
+ * const router = new GarfieldRouter('http://localhost:8050', { service: 'my-app' });
  * const response = await router.chat('Summarise this...', { tier: Tier.Light });
  * ```
  */
@@ -48,7 +48,7 @@ export interface RouterConfig {
     apiToken?: string;
     timeout?: number;
 }
-export declare class KronaxisRouter {
+export declare class GarfieldRouter {
     private baseUrl;
     private service;
     private defaultTier;

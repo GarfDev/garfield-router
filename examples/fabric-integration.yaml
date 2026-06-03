@@ -1,4 +1,4 @@
-# Kronaxis Platform integration: Router delegates its RAG pre-stage to
+# Garfield Platform integration: Router delegates its RAG pre-stage to
 # Fabric instead of running embedded pgvector + sentence-transformers.
 #
 # Architecture:
@@ -23,7 +23,7 @@
 #     also supported -- set fabric_url and leave DATABASE_URL unset.
 #
 # Run:
-#   FABRIC_KEY=test-key-1 kronaxis-router serve --config examples/fabric-integration.yaml
+#   FABRIC_KEY=test-key-1 garfield-router serve --config examples/fabric-integration.yaml
 
 server:
   port: 8050
@@ -56,7 +56,7 @@ graphify:
   default: "augment"
   top_k: 8
 
-  # Kronaxis Platform integration: delegate to Fabric.
+  # Garfield Platform integration: delegate to Fabric.
   fabric_url: "http://fabric-host:8201"
   fabric_key: "env:FABRIC_KEY"
   fabric_timeout_ms: 5000

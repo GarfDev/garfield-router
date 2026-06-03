@@ -38,7 +38,7 @@ func handleSessions(w http.ResponseWriter, r *http.Request) {
 		})
 	default:
 		w.Header().Set("Allow", "GET")
-		writeErrorJSON(w, http.StatusMethodNotAllowed, "use POST /v1/chat/completions with X-Kronaxis-Session-Create header to create")
+		writeErrorJSON(w, http.StatusMethodNotAllowed, "use POST /v1/chat/completions with X-Garfield-Session-Create header to create")
 	}
 }
 
@@ -86,23 +86,23 @@ func handleSessionItem(w http.ResponseWriter, r *http.Request) {
 // in use. Returns (sessionID, hydratedRequest, isNewSession, err).
 //
 // Behaviour:
-//   - X-Kronaxis-Session-Create: true → create a new session from the
+//   - X-Garfield-Session-Create: true → create a new session from the
 //     full incoming messages, then process the request normally; the
 //     session ID lands in a response header before the body is sent.
-//   - X-Kronaxis-Session-ID: <id> → hydrate the stored messages, append
+//   - X-Garfield-Session-ID: <id> → hydrate the stored messages, append
 //     the new ones from the request, and forward the merged array.
 //   - Neither header → return (nil, original request, false, nil).
 func hydrateSessionRequest(ctx context.Context, r *http.Request, req *ChatRequest) (sessionID string, isNew bool, err error) {
 	if sessionStore == nil {
 		return "", false, nil
 	}
-	if v := strings.ToLower(r.Header.Get("X-Kronaxis-Session-Create")); v == "true" || v == "1" || v == "yes" {
+	if v := strings.ToLower(r.Header.Get("X-Garfield-Session-Create")); v == "true" || v == "1" || v == "yes" {
 		raw, mErr := json.Marshal(req.Messages)
 		if mErr != nil {
 			return "", false, mErr
 		}
 		ttl := 0
-		if v := r.Header.Get("X-Kronaxis-Session-TTL"); v != "" {
+		if v := r.Header.Get("X-Garfield-Session-TTL"); v != "" {
 			if n, _ := strconv.Atoi(v); n > 0 {
 				ttl = n
 			}
@@ -113,7 +113,7 @@ func hydrateSessionRequest(ctx context.Context, r *http.Request, req *ChatReques
 		}
 		return sess.ID, true, nil
 	}
-	if id := strings.TrimSpace(r.Header.Get("X-Kronaxis-Session-ID")); id != "" {
+	if id := strings.TrimSpace(r.Header.Get("X-Garfield-Session-ID")); id != "" {
 		sess, gErr := sessionStore.Get(ctx, id)
 		if gErr != nil {
 			return "", false, gErr

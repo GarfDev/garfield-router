@@ -6,7 +6,7 @@ import (
 )
 
 // System-2 reflection loops (ROADMAP #15). When a request opts in via
-// X-Kronaxis-Reflect: 1, the router takes the model's first answer, asks the
+// X-Garfield-Reflect: 1, the router takes the model's first answer, asks the
 // same backend to review it for errors/omissions, and returns the corrected
 // answer. Opt-in only (it costs a second round-trip) and never on streaming.
 // Best-effort: any failure returns the original answer unchanged.

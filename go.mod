@@ -1,4 +1,4 @@
-module github.com/kronaxis/kronaxis-router
+module github.com/GarfDev/garfield-router
 
 go 1.22
 

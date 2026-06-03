@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-# Kronaxis Router installer
-# Usage: curl -fsSL https://raw.githubusercontent.com/Kronaxis/kronaxis-router/main/install.sh | bash
+# Garfield Router installer
+# Usage: curl -fsSL https://raw.githubusercontent.com/Garfield/garfield-router/main/install.sh | bash
 set -e
 
-REPO="Kronaxis/kronaxis-router"
+REPO="Garfield/garfield-router"
 INSTALL_DIR="${INSTALL_DIR:-/usr/local/bin}"
-BINARY="kronaxis-router"
+BINARY="garfield-router"
 
 # Detect OS
 detect_os() {
@@ -66,7 +66,7 @@ install() {
     URL="https://github.com/${REPO}/releases/download/v${VERSION}/${FILENAME}"
     CHECKSUM_URL="https://github.com/${REPO}/releases/download/v${VERSION}/checksums.txt"
 
-    echo "Installing kronaxis-router v${VERSION} (${OS}/${ARCH})"
+    echo "Installing garfield-router v${VERSION} (${OS}/${ARCH})"
 
     TMPDIR=$(mktemp -d)
     trap 'rm -rf "$TMPDIR"' EXIT
@@ -119,19 +119,19 @@ install() {
     fi
 
     echo ""
-    echo "Installed kronaxis-router v${VERSION} to ${INSTALL_DIR}/${BINARY}"
+    echo "Installed garfield-router v${VERSION} to ${INSTALL_DIR}/${BINARY}"
     echo ""
 
     # Quick start
     echo "Quick start:"
-    echo "  kronaxis-router init         # auto-detect backends, generate config"
-    echo "  kronaxis-router              # start the router"
-    echo "  kronaxis-router mcp          # start as MCP server (Claude Code integration)"
+    echo "  garfield-router init         # auto-detect backends, generate config"
+    echo "  garfield-router              # start the router"
+    echo "  garfield-router mcp          # start as MCP server (Claude Code integration)"
     echo ""
     echo "Integration:"
-    echo "  kronaxis-router init --claude   # configure Claude Code MCP"
-    echo "  kronaxis-router init --aider    # configure Aider"
-    echo "  kronaxis-router init --cursor   # configure Cursor"
+    echo "  garfield-router init --claude   # configure Claude Code MCP"
+    echo "  garfield-router init --aider    # configure Aider"
+    echo "  garfield-router init --cursor   # configure Cursor"
     echo ""
 }
 

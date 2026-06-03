@@ -8,8 +8,8 @@ import (
 
 // liveBus fans out RequestRecords to subscribed SSE clients.
 type liveBus struct {
-	mu      sync.RWMutex
-	subs    map[chan RequestRecord]struct{}
+	mu   sync.RWMutex
+	subs map[chan RequestRecord]struct{}
 }
 
 func newLiveBus() *liveBus {

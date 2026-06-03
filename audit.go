@@ -21,21 +21,21 @@ type AuditConfig struct {
 }
 
 type AuditEntry struct {
-	Timestamp  string `json:"timestamp"`
-	Service    string `json:"service"`
-	CallType   string `json:"call_type"`
-	Priority   string `json:"priority"`
-	Tier       int    `json:"tier"`
-	Backend    string `json:"backend"`
-	Rule       string `json:"rule"`
-	StatusCode int    `json:"status_code"`
-	LatencyMS  int64  `json:"latency_ms"`
-	InputTokens  int  `json:"input_tokens"`
-	OutputTokens int  `json:"output_tokens"`
-	Cost       float64 `json:"cost"`
-	Prompt     string `json:"prompt,omitempty"`
-	Response   string `json:"response,omitempty"`
-	Cached     bool   `json:"cached"`
+	Timestamp    string  `json:"timestamp"`
+	Service      string  `json:"service"`
+	CallType     string  `json:"call_type"`
+	Priority     string  `json:"priority"`
+	Tier         int     `json:"tier"`
+	Backend      string  `json:"backend"`
+	Rule         string  `json:"rule"`
+	StatusCode   int     `json:"status_code"`
+	LatencyMS    int64   `json:"latency_ms"`
+	InputTokens  int     `json:"input_tokens"`
+	OutputTokens int     `json:"output_tokens"`
+	Cost         float64 `json:"cost"`
+	Prompt       string  `json:"prompt,omitempty"`
+	Response     string  `json:"response,omitempty"`
+	Cached       bool    `json:"cached"`
 }
 
 type AuditLogger struct {
@@ -61,14 +61,14 @@ func newAuditLogger(config AuditConfig) *AuditLogger {
 
 	// Default redaction patterns (always active)
 	defaults := []string{
-		`\b[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}\b`,           // email
-		`\b\d{3}[-.]?\d{3}[-.]?\d{4}\b`,                                      // US phone
-		`\b(?:0\d{4}|\+44\s?\d{4})\s?\d{6}\b`,                                // UK phone
-		`\b\d{3}-\d{2}-\d{4}\b`,                                              // SSN
-		`\b(?:\d{4}[-\s]?){3}\d{4}\b`,                                        // credit card
-		`\b[A-Z]{1,2}\d{1,2}\s?\d[A-Z]{2}\b`,                                // UK postcode
-		`\b\d{5}(?:-\d{4})?\b`,                                               // US ZIP
-		`\bsk-[a-zA-Z0-9]{20,}\b`,                                            // API keys (sk-...)
+		`\b[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}\b`,             // email
+		`\b\d{3}[-.]?\d{3}[-.]?\d{4}\b`,                                    // US phone
+		`\b(?:0\d{4}|\+44\s?\d{4})\s?\d{6}\b`,                              // UK phone
+		`\b\d{3}-\d{2}-\d{4}\b`,                                            // SSN
+		`\b(?:\d{4}[-\s]?){3}\d{4}\b`,                                      // credit card
+		`\b[A-Z]{1,2}\d{1,2}\s?\d[A-Z]{2}\b`,                               // UK postcode
+		`\b\d{5}(?:-\d{4})?\b`,                                             // US ZIP
+		`\bsk-[a-zA-Z0-9]{20,}\b`,                                          // API keys (sk-...)
 		`\bey[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{20,}\b`, // JWT tokens
 	}
 	for _, d := range defaults {

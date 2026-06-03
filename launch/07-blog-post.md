@@ -19,7 +19,7 @@ The 20% of requests that genuinely need frontier capability (multi-step reasonin
 
 If 80% of your traffic moves from the $3-15 tier to the $0.005 tier, that is not an incremental saving. It is a structural cost reduction.
 
-## What Kronaxis Router does
+## What Garfield Router does
 
 It sits between your application and your models. One URL. Every incoming request passes through a lightweight classifier (rule-based, no LLM call, under 1ms overhead) that determines what the request actually needs:
 
@@ -43,7 +43,7 @@ This closes the feedback loop. Savings by default, automatic safety net.
 
 Seven providers (OpenAI, Anthropic, Gemini, Mistral, Groq, Together, Fireworks) offer 50% discounts on batch API requests. The catch is they require a different submission flow (file upload, polling, webhook).
 
-Kronaxis Router handles this transparently. Tag a request as `bulk` priority and it auto-submits to the provider's batch endpoint. You get the result via polling or webhook callback. For overnight enrichment jobs, training data generation, or any latency-insensitive workload, this halves your cloud costs on top of the routing savings.
+Garfield Router handles this transparently. Tag a request as `bulk` priority and it auto-submits to the provider's batch endpoint. You get the result via polling or webhook callback. For overnight enrichment jobs, training data generation, or any latency-insensitive workload, this halves your cloud costs on top of the routing savings.
 
 ## Response caching
 
@@ -59,20 +59,20 @@ Set a daily dollar limit per service. When the limit is hit, the router does not
 
 ```bash
 # Install (Linux/macOS)
-curl -fsSL https://raw.githubusercontent.com/Kronaxis/kronaxis-router/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/Garfield/garfield-router/main/install.sh | bash
 
 # Auto-detect your backends and generate config
-kronaxis-router init
+garfield-router init
 
 # Start
-kronaxis-router
+garfield-router
 ```
 
 The `init` command probes for local Ollama and vLLM instances and checks your environment for cloud API keys (Gemini, OpenAI, Anthropic, Groq, Together, Fireworks). It generates a config with backends, routing rules, budgets, and rate limits.
 
-Also available via Homebrew (`brew install kronaxis/tap/kronaxis-router`), Go install, or Docker.
+Also available via Homebrew (`brew install garfield/tap/garfield-router`), Go install, or Docker.
 
-For Claude Code and Cursor users: `kronaxis-router init --claude` or `kronaxis-router init --cursor` configures the MCP server automatically, giving your AI assistant tools to manage routing, costs, and backends conversationally.
+For Claude Code and Cursor users: `garfield-router init --claude` or `garfield-router init --cursor` configures the MCP server automatically, giving your AI assistant tools to manage routing, costs, and backends conversationally.
 
 ## What it is not
 
@@ -90,7 +90,7 @@ LiteLLM is the most established open-source LLM gateway. It supports 100+ provid
 
 Where it does not compete:
 
-| Capability | LiteLLM | Kronaxis Router |
+| Capability | LiteLLM | Garfield Router |
 |---|---|---|
 | **Intelligent routing** | Manual: you pick the model per request | Automatic: classifier assigns tier, routes to cheapest capable backend |
 | **Quality validation** | None | 5% sampling against reference model, auto-promote on degradation |
@@ -102,7 +102,7 @@ Where it does not compete:
 | **Deployment** | pip install + Python runtime | Single binary, zero dependencies |
 | **Provider count** | 100+ | 4 types (vLLM, Ollama, OpenAI-compat, Gemini), which covers most backends |
 
-LiteLLM is a universal gateway. Kronaxis Router is a cost optimiser. Different tools for different problems. If you need broad provider coverage and already run Python infrastructure, LiteLLM is a good choice. If you want to minimise LLM spend with automatic quality assurance, this is purpose-built for that.
+LiteLLM is a universal gateway. Garfield Router is a cost optimiser. Different tools for different problems. If you need broad provider coverage and already run Python infrastructure, LiteLLM is a good choice. If you want to minimise LLM spend with automatic quality assurance, this is purpose-built for that.
 
 ### vs OpenRouter
 
@@ -112,7 +112,7 @@ The trade-off is cost. OpenRouter adds a margin on top of provider pricing (typi
 
 OpenRouter does not support local models, has no quality validation, no budget enforcement, and no batch API routing.
 
-| | OpenRouter | Kronaxis Router |
+| | OpenRouter | Garfield Router |
 |---|---|---|
 | **Setup** | Zero (SaaS) | One binary + config |
 | **Cost** | Provider price + margin | Provider price only (self-hosted) |
@@ -138,7 +138,7 @@ Our classifier is deliberately simple (rule-based, under 1ms, zero network calls
 
 ### Summary table
 
-| Feature | Kronaxis Router | LiteLLM | OpenRouter | Portkey | Martian |
+| Feature | Garfield Router | LiteLLM | OpenRouter | Portkey | Martian |
 |---|---|---|---|---|---|
 | Self-hosted | Yes | Yes | No | No | No |
 | Open source | BSL 1.1 | MIT | No | No | No |
@@ -166,4 +166,4 @@ For teams whose primary goal is spending less on LLM inference without sacrifici
 - 22,770 req/s throughput, 5ms P50 latency, 2MB memory under load
 - BSL 1.1
 
-GitHub: https://github.com/Kronaxis/kronaxis-router
+GitHub: https://github.com/Garfield/garfield-router

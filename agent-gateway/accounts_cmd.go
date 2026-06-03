@@ -13,7 +13,7 @@ import (
 	"golang.org/x/term"
 	"gopkg.in/yaml.v3"
 
-	"github.com/kronaxis/agent-gateway/accounts"
+	"github.com/GarfDev/garfield-router/agent-gateway/accounts"
 )
 
 // runAccountsCmd handles `agent-gateway accounts <subcommand>`.

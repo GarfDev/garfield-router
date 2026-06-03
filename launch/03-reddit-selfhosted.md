@@ -1,12 +1,12 @@
 # Reddit r/selfhosted Post
 
-**Title:** Kronaxis Router: self-hosted LLM proxy that routes to the cheapest capable model (single Go binary, no cloud dependency, BSL 1.1)
+**Title:** Garfield Router: self-hosted LLM proxy that routes to the cheapest capable model (single Go binary, no cloud dependency, BSL 1.1)
 
 **Body:**
 
 If you are running local LLM inference (Ollama, vLLM, llama.cpp, text-generation-inference), you have probably thought about running multiple model sizes and routing between them. Small model for simple tasks, large model for hard ones.
 
-Kronaxis Router does exactly that. Single Go binary, one YAML config file, no external dependencies, no cloud accounts required.
+Garfield Router does exactly that. Single Go binary, one YAML config file, no external dependencies, no cloud accounts required.
 
 **What it does:**
 
@@ -32,4 +32,4 @@ The router supports 7 cloud providers (OpenAI, Anthropic, Gemini, Mistral, Groq,
 
 70 tests. BSL 1.1. No telemetry, no phoning home.
 
-GitHub: https://github.com/kronaxis/kronaxis-router
+GitHub: https://github.com/GarfDev/garfield-router

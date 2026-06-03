@@ -355,12 +355,12 @@ func TestExtractTenant_HeaderPrecedence(t *testing.T) {
 	}{
 		{
 			name:    "tenant header wins",
-			headers: map[string]string{"X-Kronaxis-Tenant-ID": "acme", "X-Kronaxis-Service": "bulk-extractor"},
+			headers: map[string]string{"X-Garfield-Tenant-ID": "acme", "X-Garfield-Service": "bulk-extractor"},
 			want:    "acme",
 		},
 		{
 			name:    "service header is fallback",
-			headers: map[string]string{"X-Kronaxis-Service": "bulk-extractor"},
+			headers: map[string]string{"X-Garfield-Service": "bulk-extractor"},
 			want:    "bulk-extractor",
 		},
 		{
@@ -370,7 +370,7 @@ func TestExtractTenant_HeaderPrecedence(t *testing.T) {
 		},
 		{
 			name:    "whitespace stripped",
-			headers: map[string]string{"X-Kronaxis-Tenant-ID": "  acme  "},
+			headers: map[string]string{"X-Garfield-Tenant-ID": "  acme  "},
 			want:    "acme",
 		},
 	}
@@ -406,7 +406,7 @@ func TestTenantRateLimitMiddleware_Returns429OnBurst(t *testing.T) {
 
 	mkReq := func() *http.Request {
 		r := httptest.NewRequest(http.MethodPost, "/v1/chat/completions", nil)
-		r.Header.Set("X-Kronaxis-Tenant-ID", "burst-tenant")
+		r.Header.Set("X-Garfield-Tenant-ID", "burst-tenant")
 		return r
 	}
 
@@ -448,7 +448,7 @@ func TestTenantRateLimitMiddleware_NonMeteredPathBypasses(t *testing.T) {
 
 	for i := 0; i < 10; i++ {
 		r := httptest.NewRequest(http.MethodGet, "/health", nil)
-		r.Header.Set("X-Kronaxis-Tenant-ID", "spammer")
+		r.Header.Set("X-Garfield-Tenant-ID", "spammer")
 		w := httptest.NewRecorder()
 		h.ServeHTTP(w, r)
 		if w.Code != 200 {
@@ -552,7 +552,7 @@ func TestTenantRateLimitMiddleware_ErrorBodyFormat(t *testing.T) {
 	h := tenantRateLimitMiddleware(next)
 	mk := func() *http.Request {
 		r := httptest.NewRequest(http.MethodPost, "/v1/chat/completions", nil)
-		r.Header.Set("X-Kronaxis-Tenant-ID", "needy")
+		r.Header.Set("X-Garfield-Tenant-ID", "needy")
 		return r
 	}
 	// burn the burst
@@ -586,7 +586,7 @@ func TestPackageInit_NoTenantRateLimWhenUnset(t *testing.T) {
 	next := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(200) })
 	h := tenantRateLimitMiddleware(next)
 	r := httptest.NewRequest(http.MethodPost, "/v1/chat/completions", nil)
-	r.Header.Set("X-Kronaxis-Tenant-ID", "anyone")
+	r.Header.Set("X-Garfield-Tenant-ID", "anyone")
 	w := httptest.NewRecorder()
 	h.ServeHTTP(w, r)
 	if w.Code != 200 {

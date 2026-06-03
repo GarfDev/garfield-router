@@ -1,15 +1,15 @@
 apiVersion: v2
-name: kronaxis-router
+name: garfield-router
 description: Intelligent LLM proxy with cost-optimised routing
 type: application
 version: 0.1.0
 appVersion: "1.0.0"
-home: https://github.com/kronaxis/kronaxis-router
+home: https://github.com/GarfDev/garfield-router
 sources:
-  - https://github.com/kronaxis/kronaxis-router
+  - https://github.com/GarfDev/garfield-router
 maintainers:
-  - name: Kronaxis
-    email: dev@kronaxis.co.uk
+  - name: Garfield
+    email: dev@garfield.co.uk
 keywords:
   - llm
   - proxy

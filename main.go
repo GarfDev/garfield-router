@@ -47,7 +47,7 @@ func main() {
 	if len(os.Args) > 1 {
 		switch os.Args[1] {
 		case "version", "--version", "-v":
-			fmt.Printf("kronaxis-router v%s (%s, %s)\n", version, commit, date)
+			fmt.Printf("garfield-router v%s (%s, %s)\n", version, commit, date)
 			return
 		case "init":
 			runInit(os.Args[2:])
@@ -70,7 +70,7 @@ func main() {
 }
 
 func runServer() {
-	logger.Printf("kronaxis-router v%s starting", version)
+	logger.Printf("garfield-router v%s starting", version)
 
 	configPath := env("CONFIG_PATH", "config.yaml")
 	// Support -config / --config flag (overrides env var)
@@ -217,7 +217,7 @@ func runServer() {
 	// Graphify pre-stage: optional embedder + middleware. If embedder is
 	// configured but unreachable, log and continue (router still works).
 	//
-	// Kronaxis Platform integration: when graphify.fabric_url is set we
+	// Garfield Platform integration: when graphify.fabric_url is set we
 	// can run in "fabric-only" mode -- no local embedder, no local
 	// kr_chunks table. Retrieval is delegated to the Fabric service.
 	gcfg := cfg.Graphify.WithDefaults()
@@ -325,6 +325,8 @@ func runServer() {
 	mux.HandleFunc("/api/shadow/stats", handleShadowResults)
 	mux.HandleFunc("/cost-lab", handleCostLab)
 	mux.HandleFunc("/cost-lab/", handleCostLab)
+	mux.HandleFunc("/usage", handleUsage)
+	mux.HandleFunc("/usage/", handleUsage)
 
 	// Video generation — routes to ltx-video backends
 	mux.HandleFunc("/v1/video/generate", handleVideoGenerate)
@@ -379,7 +381,7 @@ func handleHealth(w http.ResponseWriter, r *http.Request) {
 	}
 	writeJSON(w, 200, map[string]interface{}{
 		"status":           "ok",
-		"service":          "kronaxis-router",
+		"service":          "garfield-router",
 		"version":          version,
 		"time":             time.Now().UTC().Format(time.RFC3339),
 		"uptime_seconds":   int(time.Since(startupTime).Seconds()),
@@ -446,8 +448,8 @@ func handleClassifierStats(w http.ResponseWriter, r *http.Request) {
 }
 
 func generateDefaultConfig(path string) {
-	defaultYAML := `# Kronaxis Router - Auto-generated default config
-# See https://github.com/kronaxis/kronaxis-router for full documentation.
+	defaultYAML := `# Garfield Router - Auto-generated default config
+# See https://github.com/GarfDev/garfield-router for full documentation.
 
 server:
   port: 8050
@@ -455,7 +457,7 @@ server:
   default_timeout: 120s
   branding:
     headers: true
-    header_name: "Kronaxis Router"
+    header_name: "Garfield Router"
 
 backends:
   - name: local

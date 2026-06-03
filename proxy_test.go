@@ -84,7 +84,7 @@ func TestProxyHandler_BasicRequest(t *testing.T) {
 	body := `{"model":"test","messages":[{"role":"user","content":"hi"}],"max_tokens":100}`
 	req := httptest.NewRequest("POST", "/v1/chat/completions", strings.NewReader(body))
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("X-Kronaxis-Service", "test-svc")
+	req.Header.Set("X-Garfield-Service", "test-svc")
 
 	rr := httptest.NewRecorder()
 	handleChatCompletions(rr, req)
@@ -226,7 +226,7 @@ func TestProxyHandler_BudgetReject(t *testing.T) {
 	body := `{"model":"test","messages":[{"role":"user","content":"hi"}]}`
 	req := httptest.NewRequest("POST", "/v1/chat/completions", strings.NewReader(body))
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("X-Kronaxis-Service", "expensive-svc")
+	req.Header.Set("X-Garfield-Service", "expensive-svc")
 
 	rr := httptest.NewRecorder()
 	handleChatCompletions(rr, req)
@@ -266,7 +266,7 @@ func TestProxyHandler_CacheHit(t *testing.T) {
 	if rr1.Code != 200 {
 		t.Fatalf("first request failed: %d", rr1.Code)
 	}
-	if rr1.Header().Get("X-Kronaxis-Cache") == "HIT" {
+	if rr1.Header().Get("X-Garfield-Cache") == "HIT" {
 		t.Error("first request should not be a cache hit")
 	}
 
@@ -279,7 +279,7 @@ func TestProxyHandler_CacheHit(t *testing.T) {
 	if rr2.Code != 200 {
 		t.Fatalf("second request failed: %d", rr2.Code)
 	}
-	if rr2.Header().Get("X-Kronaxis-Cache") != "HIT" {
+	if rr2.Header().Get("X-Garfield-Cache") != "HIT" {
 		t.Error("second request should be a cache hit")
 	}
 
@@ -398,8 +398,8 @@ func TestHealthEndpoint(t *testing.T) {
 	if health["status"] != "ok" {
 		t.Error("health status should be ok")
 	}
-	if health["service"] != "kronaxis-router" {
-		t.Error("service name should be kronaxis-router")
+	if health["service"] != "garfield-router" {
+		t.Error("service name should be garfield-router")
 	}
 }
 
@@ -420,13 +420,13 @@ func TestMetricsEndpoint(t *testing.T) {
 	body, _ := io.ReadAll(rr.Body)
 	content := string(body)
 
-	if !strings.Contains(content, "kronaxis_router_requests_total") {
+	if !strings.Contains(content, "garfield_router_requests_total") {
 		t.Error("metrics should contain request counter")
 	}
-	if !strings.Contains(content, "kronaxis_router_backend_healthy") {
+	if !strings.Contains(content, "garfield_router_backend_healthy") {
 		t.Error("metrics should contain backend health gauge")
 	}
-	if !strings.Contains(content, "kronaxis_router_uptime_seconds") {
+	if !strings.Contains(content, "garfield_router_uptime_seconds") {
 		t.Error("metrics should contain uptime gauge")
 	}
 }

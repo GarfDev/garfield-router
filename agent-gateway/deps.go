@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/kronaxis/agent-gateway/accounts"
-	"github.com/kronaxis/agent-gateway/registry"
+	"github.com/GarfDev/garfield-router/agent-gateway/accounts"
+	"github.com/GarfDev/garfield-router/agent-gateway/registry"
 )
 
 // Type aliases keep the rest of the main package readable while still

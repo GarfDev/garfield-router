@@ -1,6 +1,6 @@
 # Example configurations
 
-Copy-paste configs for common kronaxis-router deployments. Each file is a complete `config.yaml` that runs as-is once you fill in API keys / GPU URLs.
+Copy-paste configs for common garfield-router deployments. Each file is a complete `config.yaml` that runs as-is once you fill in API keys / GPU URLs.
 
 | File | What it does |
 |---|---|
@@ -17,21 +17,21 @@ Copy-paste configs for common kronaxis-router deployments. Each file is a comple
 
 ```bash
 # Pick one, edit your API keys and backend URLs, then:
-kronaxis-router serve --config examples/hybrid.yaml
+garfield-router serve --config examples/hybrid.yaml
 ```
 
 Or with Docker:
 
 ```bash
 docker run -p 8050:8050 -v $(pwd)/examples/hybrid.yaml:/app/config.yaml \
-  ghcr.io/kronaxis/kronaxis-router:latest
+  ghcr.io/garfield/garfield-router:latest
 ```
 
 ## Common adjustments
 
 - **Backend URLs**: replace `http://localhost:8000` (vLLM examples) with your actual server.
 - **API keys**: each cloud backend needs `api_key: "env:NAME"` -- set the env var when running.
-- **Per-service tuning**: routing rules match on `X-Kronaxis-Service` and other headers; rename them to your services.
+- **Per-service tuning**: routing rules match on `X-Garfield-Service` and other headers; rename them to your services.
 - **Feature flags**: `graphify.enabled`, `agent_gateway`, `auth_pool_file` are all opt-in; turn them on when you're ready.
 
 See the main [README](../README.md) for the full feature list and the rationale.

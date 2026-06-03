@@ -74,11 +74,11 @@ func TestInjectQwenThinkingDisabled_NonQwen(t *testing.T) {
 
 func TestStripThinkTagsStreaming(t *testing.T) {
 	tests := []struct {
-		name         string
-		chunk        string
-		inBlock      bool
-		expectOut    string
-		expectBlock  bool
+		name        string
+		chunk       string
+		inBlock     bool
+		expectOut   string
+		expectBlock bool
 	}{
 		{"no tags", "hello world", false, "hello world", false},
 		{"open tag starts block", "before<think>inside", false, "before", true},

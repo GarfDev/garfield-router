@@ -4,7 +4,7 @@
 
 ```
                 ┌─────────────────────────────────────────────────────┐
-                │             Kronaxis Router  :8050                 │
+                │             Garfield Router  :8050                 │
    Requests ──>│                                                     │
                 │  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌─────┐│──> Local vLLM
                 │  │ Cache    │  │ Graphify │  │Classifier│  │     ││──> Vast.ai
@@ -49,9 +49,9 @@
 Steps marked **NEW** are the graphify pre-stage added 2026-05-08.
 
 1. **Receive** -- OpenAI-compatible POST to `/v1/chat/completions`
-2. **Extract** -- Parse request body, extract `X-Kronaxis-*` headers
+2. **Extract** -- Parse request body, extract `X-Garfield-*` headers
 3. **Cache check** -- Return cached response for deterministic requests (cache.go)
-4. **Graphify pre-stage** **(NEW)** -- If enabled, augment thin prompts with retrieved chunks or compress fat ones (graphify_middleware.go). Mode comes from `X-Kronaxis-Graphify` header, then `X-Kronaxis-Service` override map, then global default. Skipped silently on retrieval errors -- never fails a request.
+4. **Graphify pre-stage** **(NEW)** -- If enabled, augment thin prompts with retrieved chunks or compress fat ones (graphify_middleware.go). Mode comes from `X-Garfield-Graphify` header, then `X-Garfield-Service` override map, then global default. Skipped silently on retrieval errors -- never fails a request.
 5. **Classify** -- Auto-assign tier if not explicitly set (classifier.go)
 6. **Budget check** -- Reject or prepare downgrade if budget exceeded (costs.go)
 7. **Auto-batch** -- For `bulk` priority on batch-capable backends, submit async (batch.go)
@@ -65,7 +65,7 @@ Steps marked **NEW** are the graphify pre-stage added 2026-05-08.
 15. **Cache store** -- Cache deterministic successful responses
 16. **Quality sample** -- Randomly validate cheap-model output against reference
 17. **Log** -- Record to stats, Prometheus metrics, cost tracker, audit log
-18. **Return** -- Send response to caller with branding headers (including `X-Kronaxis-Graphify`, `X-Kronaxis-Graphify-Chunks`, `X-Kronaxis-Graphify-Tokens-Saved` when graphify ran)
+18. **Return** -- Send response to caller with branding headers (including `X-Garfield-Graphify`, `X-Garfield-Graphify-Chunks`, `X-Garfield-Graphify-Tokens-Saved` when graphify ran)
 
 ## File Structure
 
@@ -122,11 +122,11 @@ Steps marked **NEW** are the graphify pre-stage added 2026-05-08.
 
 **YAML config with hot-reload.** Edit the file, rules update in 5 seconds. No restart, no downtime. API can also update rules programmatically.
 
-**Heuristic classifier, not ML.** The auto-tier classifier uses keyword matching and structural analysis, not a neural network. This means zero latency overhead, no additional dependencies, and deterministic behaviour. If classification accuracy matters, callers can set `X-Kronaxis-Tier` explicitly.
+**Heuristic classifier, not ML.** The auto-tier classifier uses keyword matching and structural analysis, not a neural network. This means zero latency overhead, no additional dependencies, and deterministic behaviour. If classification accuracy matters, callers can set `X-Garfield-Tier` explicitly.
 
 **Jaccard similarity for quality validation.** A simple word-overlap metric rather than embedding cosine similarity. This avoids needing to call an embedding model (which would add latency and cost to the validation loop). Accuracy is lower but sufficient for detecting gross quality degradation.
 
-**Business Source License 1.1.** Source-available. Non-commercial internal use is permitted under the Additional Use Grant; commercial production use before the Change Date (9 May 2031) requires a commercial licence from Kronaxis Limited (`contact@kronaxis.co.uk`). After the Change Date the Licensed Work converts automatically to the Apache License, Version 2.0. Your config file (with specific backends, rules, and API keys) is your data and stays private.
+**Business Source License 1.1.** Source-available. Non-commercial internal use is permitted under the Additional Use Grant; commercial production use before the Change Date (9 May 2031) requires a commercial licence from Garfield Limited (`contact@garfield.co.uk`). After the Change Date the Licensed Work converts automatically to the Apache License, Version 2.0. Your config file (with specific backends, rules, and API keys) is your data and stays private.
 
 **Graphify lives in the router, not as a sidecar.** Token-saving retrieval is conceptually a routing decision -- "send fewer tokens to whichever backend gets picked" stacks naturally with the router's existing levers (cache, classifier, batch). The embedding sidecar is the only out-of-process piece, and only because Python's sentence-transformers ecosystem is the one to use. Retrieval, chunking, watching, and ingestion are all in-process Go for zero per-request hops.
 

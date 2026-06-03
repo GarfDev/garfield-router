@@ -179,10 +179,10 @@ func (e *DPOExporter) appendOne(pair DPOPair) {
 // training dataset.
 //
 // Redaction rules:
-//  - Any key in redactKeys is removed from Metadata if present.
-//  - The prompt is not modified (PII redaction in raw text needs a
-//    real classifier; out of scope for this layer). If you need that,
-//    pre-process the prompt before calling Submit.
+//   - Any key in redactKeys is removed from Metadata if present.
+//   - The prompt is not modified (PII redaction in raw text needs a
+//     real classifier; out of scope for this layer). If you need that,
+//     pre-process the prompt before calling Submit.
 func (e *DPOExporter) redact(pair DPOPair) DPOPair {
 	if len(e.redactKeys) == 0 || pair.Metadata == nil {
 		return pair

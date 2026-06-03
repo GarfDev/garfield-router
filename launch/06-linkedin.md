@@ -8,7 +8,7 @@ Most LLM traffic in production systems is structured extraction, summarisation, 
 
 The analogy I keep coming back to: a CFO can fill in accounts receivable, but a bookkeeper is 50x cheaper and does the job just as well. You would not pay CFO rates for bookkeeping. Yet that is exactly what happens when every API call hits the same expensive endpoint.
 
-We built Kronaxis Router to solve this for our own infrastructure, and we have released the source under BSL 1.1.
+We built Garfield Router to solve this for our own infrastructure, and we have released the source under BSL 1.1.
 
 It is a single Go binary that sits between your applications and your model backends. It auto-classifies each incoming request, routes to the cheapest capable model tier, validates quality on a sampling basis, and auto-promotes requests if the cheap model's output degrades. Per-service cost budgets enforce spending limits with automatic downgrade.
 
@@ -18,4 +18,4 @@ In our production environment, 80% of traffic moved to the cheap tier with no qu
 
 70 tests. Python and TypeScript SDKs. Helm chart for Kubernetes deployments.
 
-GitHub: https://github.com/kronaxis/kronaxis-router
+GitHub: https://github.com/GarfDev/garfield-router

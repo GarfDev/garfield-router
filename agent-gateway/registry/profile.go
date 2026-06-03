@@ -116,7 +116,7 @@ type GraphifySpec struct {
 }
 
 // RoutingDefault describes how rule synthesis should slot the agent into
-// kronaxis-router rules.
+// garfield-router rules.
 type RoutingDefault struct {
 	Tier      int       `yaml:"tier" json:"tier"`
 	CostClass CostClass `yaml:"cost_class,omitempty" json:"cost_class,omitempty"`
@@ -132,20 +132,20 @@ type LimitsSpec struct {
 
 // Profile is the canonical description of a registered TUI CLI agent.
 type Profile struct {
-	Name            string         `yaml:"name" json:"name"`
-	DisplayName     string         `yaml:"display_name,omitempty" json:"display_name,omitempty"`
-	Description     string         `yaml:"description,omitempty" json:"description,omitempty"`
-	Tier            Tier           `yaml:"tier" json:"tier"`
-	CLI             CLISpec        `yaml:"cli" json:"cli"`
-	Output          OutputSpec     `yaml:"output" json:"output"`
-	Workspace       WorkspaceSpec  `yaml:"workspace" json:"workspace"`
-	Submodel        SubmodelSpec   `yaml:"submodel,omitempty" json:"submodel,omitempty"`
-	Auth            AuthSpec       `yaml:"auth" json:"auth"`
-	Graphify        GraphifySpec   `yaml:"graphify,omitempty" json:"graphify,omitempty"`
-	Capabilities    []string       `yaml:"capabilities,omitempty" json:"capabilities,omitempty"`
-	RoutingDefault  RoutingDefault `yaml:"routing_default,omitempty" json:"routing_default,omitempty"`
-	FlagsPassthrough []string      `yaml:"flags_passthrough,omitempty" json:"flags_passthrough,omitempty"`
-	Limits          LimitsSpec     `yaml:"limits,omitempty" json:"limits,omitempty"`
+	Name             string         `yaml:"name" json:"name"`
+	DisplayName      string         `yaml:"display_name,omitempty" json:"display_name,omitempty"`
+	Description      string         `yaml:"description,omitempty" json:"description,omitempty"`
+	Tier             Tier           `yaml:"tier" json:"tier"`
+	CLI              CLISpec        `yaml:"cli" json:"cli"`
+	Output           OutputSpec     `yaml:"output" json:"output"`
+	Workspace        WorkspaceSpec  `yaml:"workspace" json:"workspace"`
+	Submodel         SubmodelSpec   `yaml:"submodel,omitempty" json:"submodel,omitempty"`
+	Auth             AuthSpec       `yaml:"auth" json:"auth"`
+	Graphify         GraphifySpec   `yaml:"graphify,omitempty" json:"graphify,omitempty"`
+	Capabilities     []string       `yaml:"capabilities,omitempty" json:"capabilities,omitempty"`
+	RoutingDefault   RoutingDefault `yaml:"routing_default,omitempty" json:"routing_default,omitempty"`
+	FlagsPassthrough []string       `yaml:"flags_passthrough,omitempty" json:"flags_passthrough,omitempty"`
+	Limits           LimitsSpec     `yaml:"limits,omitempty" json:"limits,omitempty"`
 	// Source records where the profile came from (builtin filename or
 	// override path). Empty until a registry sets it.
 	Source string `yaml:"-" json:"source,omitempty"`

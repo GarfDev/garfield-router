@@ -8,7 +8,7 @@ import (
 
 // graphifyEnsureSchema creates the kr_chunks table + indexes if they don't
 // exist. The pgvector dim is captured at first creation; switching embedding
-// models with a different dim requires `kronaxis-router graphify reset`.
+// models with a different dim requires `garfield-router graphify reset`.
 func graphifyEnsureSchema(ctx context.Context, db *sql.DB, dim int) error {
 	if dim <= 0 {
 		return fmt.Errorf("graphify: invalid embedding dim %d", dim)

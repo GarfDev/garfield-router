@@ -1,7 +1,7 @@
 # Wrap Claude Code as an OpenAI-compatible endpoint.
 #
 # This example shows the agent-gateway sub-service (the unique thing about
-# kronaxis-router): it spawns the real `claude` CLI in stream-json mode, in
+# garfield-router): it spawns the real `claude` CLI in stream-json mode, in
 # an isolated git worktree, and returns a normal OpenAI streaming response
 # plus a `git diff` of any files the agent touched.
 #
@@ -14,14 +14,14 @@
 #   - `git` on PATH (used for ephemeral worktree per request)
 #
 # Run:
-#   cd kronaxis-router
+#   cd garfield-router
 #   ./agent-gateway/agent-gateway -config examples/agent-gateway-claude-code.yaml
 #
 # Test:
 #   curl -N http://localhost:8055/v1/chat/completions \
 #     -H 'Content-Type: application/json' \
 #     -d '{"model":"claude-code-agent","stream":true,
-#          "messages":[{"role":"user","content":"write hello.go that prints kronaxis"}]}'
+#          "messages":[{"role":"user","content":"write hello.go that prints garfield"}]}'
 
 # This file is for the agent-gateway binary, not the router.
 # It uses the agent-gateway's flat config schema.

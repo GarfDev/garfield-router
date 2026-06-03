@@ -1,4 +1,4 @@
-"""Kronaxis Router client that wraps OpenAI API calls with routing metadata."""
+"""Garfield Router client that wraps OpenAI API calls with routing metadata."""
 
 from enum import IntEnum
 from typing import Optional, List, Dict, Any
@@ -14,8 +14,8 @@ class Tier(IntEnum):
     LIGHT = 2      # Structured extraction, classification, scoring
 
 
-class KronaxisRouter:
-    """Client for Kronaxis Router.
+class GarfieldRouter:
+    """Client for Garfield Router.
 
     Wraps the OpenAI-compatible /v1/chat/completions endpoint with
     automatic routing metadata (tier, service, priority, call type).
@@ -128,20 +128,20 @@ class KronaxisRouter:
 
         headers = {
             "Content-Type": "application/json",
-            "X-Kronaxis-Service": self.service,
+            "X-Garfield-Service": self.service,
         }
 
         t = tier if tier is not None else self.default_tier
         if t != Tier.AUTO:
-            headers["X-Kronaxis-Tier"] = str(int(t))
+            headers["X-Garfield-Tier"] = str(int(t))
 
         p = priority or self.default_priority
-        headers["X-Kronaxis-Priority"] = p
+        headers["X-Garfield-Priority"] = p
 
         if call_type:
-            headers["X-Kronaxis-CallType"] = call_type
+            headers["X-Garfield-CallType"] = call_type
         if persona_id:
-            headers["X-Kronaxis-PersonaID"] = persona_id
+            headers["X-Garfield-PersonaID"] = persona_id
         if self.api_token:
             headers["Authorization"] = f"Bearer {self.api_token}"
 
@@ -220,7 +220,7 @@ class KronaxisRouter:
 
 
 class RouterError(Exception):
-    """Error from Kronaxis Router."""
+    """Error from Garfield Router."""
     def __init__(self, status_code: int, message: str):
         self.status_code = status_code
         self.message = message
