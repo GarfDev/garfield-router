@@ -1059,6 +1059,46 @@ func handleStreaming(
 	}
 	defer resp.Body.Close()
 
+	// Some ChiaSeGPU CX plans accept non-streaming chat completions but return a
+	// JSON error body from the streaming endpoint. OpenCode needs streaming, so
+	// keep the same CX backend/plan and synthesize SSE from a non-stream retry.
+	if backend.Config.Name == "chiasegpu-cx-gpt-5-5" {
+		peek := make([]byte, 4096)
+		n, readErr := resp.Body.Read(peek)
+		firstChunk := peek[:n]
+		if n > 0 && bytes.HasPrefix(bytes.TrimSpace(firstChunk), []byte("{\"error\"")) {
+			fallbackBody, ferr := setRequestStream(body, false)
+			if ferr != nil {
+				writeErrorJSON(w, 502, "failed to prepare non-stream fallback")
+				return
+			}
+			statusCode, respHeaders, respBody, ferr := forwardToBackend(backend, route.ModelName, fallbackBody, req, meta, backend.APIKey())
+			latency := time.Since(start)
+			if ferr != nil {
+				recordStat(meta, route, latency, false)
+				logRequest(meta, route, 0, 0, latency, false, ferr.Error())
+				writeErrorJSON(w, 502, "backend error: "+ferr.Error())
+				return
+			}
+			for k, v := range respHeaders {
+				w.Header().Set(k, v)
+			}
+			writeChatResponseAsSSE(w, statusCode, respBody)
+			var chatResp ChatResponse
+			json.Unmarshal(respBody, &chatResp)
+			inputTokens, outputTokens := estimateTokens(req, &chatResp)
+			recordStat(meta, route, latency, statusCode < 400)
+			logRequest(meta, route, inputTokens, outputTokens, latency, statusCode < 400, "")
+			return
+		}
+		if n > 0 {
+			resp.Body = io.NopCloser(io.MultiReader(bytes.NewReader(firstChunk), resp.Body))
+		} else if readErr != nil && readErr != io.EOF {
+			writeErrorJSON(w, 502, "backend stream read failed")
+			return
+		}
+	}
+
 	flusher, ok := w.(http.Flusher)
 	if !ok {
 		writeErrorJSON(w, 500, "streaming not supported")
@@ -1106,6 +1146,78 @@ func handleStreaming(
 	latency := time.Since(start)
 	recordStat(meta, route, latency, true)
 	logRequest(meta, route, inputTokens, outputTokens, latency, true, "")
+}
+
+func setRequestStream(body []byte, stream bool) ([]byte, error) {
+	var raw map[string]interface{}
+	if err := json.Unmarshal(body, &raw); err != nil {
+		return nil, err
+	}
+	raw["stream"] = stream
+	return json.Marshal(raw)
+}
+
+func writeChatResponseAsSSE(w http.ResponseWriter, statusCode int, body []byte) {
+	if statusCode >= 400 {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(statusCode)
+		w.Write(body)
+		return
+	}
+
+	var resp ChatResponse
+	if err := json.Unmarshal(body, &resp); err != nil {
+		writeErrorJSON(w, 502, "failed to parse non-stream fallback")
+		return
+	}
+
+	content := ""
+	finish := "stop"
+	if len(resp.Choices) > 0 {
+		if s, ok := resp.Choices[0].Message.Content.(string); ok {
+			content = s
+		}
+		if resp.Choices[0].FinishReason != "" {
+			finish = resp.Choices[0].FinishReason
+		}
+	}
+
+	flusher, _ := w.(http.Flusher)
+	w.Header().Set("Content-Type", "text/event-stream")
+	w.Header().Set("Cache-Control", "no-cache")
+	w.Header().Set("Connection", "keep-alive")
+	w.Header().Set("X-Accel-Buffering", "no")
+	w.WriteHeader(200)
+	writeSSEChunk(w, resp.Model, map[string]interface{}{"role": "assistant"}, "")
+	if content != "" {
+		writeSSEChunk(w, resp.Model, map[string]interface{}{"content": content}, "")
+	}
+	writeSSEChunk(w, resp.Model, map[string]interface{}{}, finish)
+	w.Write([]byte("data: [DONE]\n\n"))
+	if flusher != nil {
+		flusher.Flush()
+	}
+}
+
+func writeSSEChunk(w http.ResponseWriter, model string, delta map[string]interface{}, finishReason string) {
+	chunk := map[string]interface{}{
+		"id":      fmt.Sprintf("chatcmpl-garfield-%d", time.Now().UnixNano()),
+		"object":  "chat.completion.chunk",
+		"created": time.Now().Unix(),
+		"model":   model,
+		"choices": []map[string]interface{}{{
+			"index":         0,
+			"delta":         delta,
+			"finish_reason": nil,
+		}},
+	}
+	if finishReason != "" {
+		chunk["choices"].([]map[string]interface{})[0]["finish_reason"] = finishReason
+	}
+	b, _ := json.Marshal(chunk)
+	w.Write([]byte("data: "))
+	w.Write(b)
+	w.Write([]byte("\n\n"))
 }
 
 // postProcessResponse handles think tag stripping and content branding.
